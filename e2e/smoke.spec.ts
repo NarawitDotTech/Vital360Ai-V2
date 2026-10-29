@@ -16,7 +16,7 @@ test("root redirects to /th/ and capture pages require consent", async ({ page }
 
 test("consent -> skin photo upload -> result with disclaimer", async ({ page }) => {
   await page.goto("/th/");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("ตรวจสุขภาพ");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("คัดกรองสุขภาพ");
 
   await page.getByRole("link", { name: "เริ่มตรวจ" }).click();
   await expect(page).toHaveURL(/\/th\/consent\/$/);

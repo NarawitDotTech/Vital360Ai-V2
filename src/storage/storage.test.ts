@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { consentGate, CONSENT_VERSION, makeConsentRecord } from "./consent-gate";
 import {
   CACHE_PREFIX,
@@ -105,5 +105,34 @@ describe("storage", () => {
     expect(localStorage.getItem("v360.pref")).toBeNull();
     expect(localStorage.getItem("other.key")).toBe("keep");
     delete (globalThis as { caches?: unknown }).caches;
+  });
+
+  it("deleteAllData rejects (does not report success) while the database delete stays blocked", async () => {
+    vi.useFakeTimers();
+    const spy = vi.spyOn(indexedDB, "deleteDatabase").mockImplementation(() => {
+      const req = {} as IDBOpenDBRequest;
+      setTimeout(() => (req.onblocked as (() => void) | null)?.(), 0);
+      return req;
+    });
+    try {
+      const p = deleteAllData();
+      const assertion = expect(p).rejects.toThrow(/another tab/);
+      await vi.advanceTimersByTimeAsync(10_000);
+      await assertion;
+    } finally {
+      spy.mockRestore();
+      vi.useRealTimers();
+    }
+  });
+
+  it("deleteAllData unregisters service workers", async () => {
+    const unregister = vi.fn(async () => true);
+    Object.defineProperty(navigator, "serviceWorker", {
+      configurable: true,
+      value: { getRegistrations: async () => [{ unregister }, { unregister }] },
+    });
+    await deleteAllData();
+    expect(unregister).toHaveBeenCalledTimes(2);
+    delete (navigator as unknown as { serviceWorker?: unknown }).serviceWorker;
   });
 });

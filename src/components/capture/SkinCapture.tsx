@@ -14,6 +14,10 @@ export function SkinCapture() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const mountedRef = useRef(false);
+  const openingRef = useRef(false);
+  const primaryRef = useRef<HTMLButtonElement>(null);
+  const prevCameraOn = useRef(false);
   const [cameraOn, setCameraOn] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -24,12 +28,30 @@ export function SkinCapture() {
     setCameraOn(false);
   }, []);
 
-  useEffect(() => stopCamera, [stopCamera]);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      stopCamera();
+    };
+  }, [stopCamera]);
+
+  // the primary button is swapped (open <-> take photo): keep keyboard focus on the new one
+  useEffect(() => {
+    if (prevCameraOn.current !== cameraOn) primaryRef.current?.focus();
+    prevCameraOn.current = cameraOn;
+  }, [cameraOn]);
 
   async function startCamera() {
+    if (streamRef.current || openingRef.current) return;
+    openingRef.current = true;
     setMessage(null);
     try {
       const stream = await openCamera("environment");
+      if (!mountedRef.current || streamRef.current) {
+        stopStream(stream); // unmounted during the permission prompt, or a second stream already exists
+        return;
+      }
       streamRef.current = stream;
       setCameraOn(true);
       // the <video> element is mounted by the state change above
@@ -41,7 +63,9 @@ export function SkinCapture() {
         }
       });
     } catch {
-      setMessage(t.skin.cameraOff);
+      if (mountedRef.current) setMessage(t.skin.cameraOff);
+    } finally {
+      openingRef.current = false;
     }
   }
 
@@ -112,7 +136,7 @@ export function SkinCapture() {
       <div className="stack-sm">
         {cameraOn ? (
           <>
-            <button type="button" className="btn btn-primary btn-big" onClick={takePhoto} disabled={busy}>
+            <button ref={primaryRef} type="button" className="btn btn-primary btn-big" onClick={takePhoto} disabled={busy}>
               <span aria-hidden="true">📷</span> {t.skin.takePhoto}
             </button>
             <button type="button" className="btn btn-secondary" onClick={stopCamera} disabled={busy}>
@@ -120,7 +144,7 @@ export function SkinCapture() {
             </button>
           </>
         ) : (
-          <button type="button" className="btn btn-primary btn-big" onClick={startCamera} disabled={busy}>
+          <button ref={primaryRef} type="button" className="btn btn-primary btn-big" onClick={startCamera} disabled={busy}>
             <span aria-hidden="true">📷</span> {t.skin.openCamera}
           </button>
         )}

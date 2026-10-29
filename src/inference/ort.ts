@@ -4,6 +4,7 @@
 //   audio: input [1,1,T,64] float32 log-mel (see mel.ts), T = onnx.frames ?? 501 (pad/crop), 16 kHz
 //   output: [1,nLabels] raw logits.
 import { logMel } from "./mel";
+import type * as OrtApi from "onnxruntime-web";
 import type { ModelEntry, ModalityInput } from "./types";
 
 export interface LogitsRunner {
@@ -17,6 +18,18 @@ async function sha256Hex(buf: ArrayBuffer): Promise<string> {
   return Array.from(d, (b) => b.toString(16).padStart(2, "0")).join("");
 }
 
+// ORT's wasm binaries are 15-30 MB (over the 25 MiB per-file limit of the static host), so the runtime is NOT
+// bundled: it is loaded at runtime from a pinned jsDelivr path, same version as package.json. Only the types
+// come from the npm package (type-only import: nothing is emitted). Keep in sync with package.json and CSP.
+const ORT_VERSION = "1.31.1";
+const ORT_BASE = `https://cdn.jsdelivr.net/npm/onnxruntime-web@${ORT_VERSION}/dist/`;
+
+async function loadOrt(): Promise<typeof OrtApi> {
+  const ort = (await import(/* webpackIgnore: true */ /* turbopackIgnore: true */ `${ORT_BASE}ort.bundle.min.mjs`)) as typeof OrtApi;
+  ort.env.wasm.wasmPaths = ORT_BASE;
+  return ort;
+}
+
 export async function createOrtRunner(entry: ModelEntry): Promise<LogitsRunner> {
   if (!entry.url) throw new Error("createOrtRunner called without url");
   const res = await fetch(entry.url);
@@ -26,7 +39,7 @@ export async function createOrtRunner(entry: ModelEntry): Promise<LogitsRunner> 
     const got = await sha256Hex(buf);
     if (got !== entry.sha256.toLowerCase()) throw new Error(`Model ${entry.id}: sha256 mismatch`);
   }
-  const ort = await import("onnxruntime-web");
+  const ort = await loadOrt();
   let session;
   try {
     session = await ort.InferenceSession.create(buf, { executionProviders: ["webgpu", "wasm"] });

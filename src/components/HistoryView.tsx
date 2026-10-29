@@ -3,8 +3,11 @@
 import { useEffect, useState } from "react";
 import { bcp47, format } from "@/i18n";
 import { clearHistory, deleteHistory, listHistory, type HistoryEntry } from "@/storage/db";
+import { Disclaimer } from "./Disclaimer";
 import { useI18n } from "./I18nProvider";
+import { isMockModel, MockNotice } from "./ResultCard";
 import { TierIcon } from "./TierBadge";
+import { UrgentGuide } from "./UrgentGuide";
 
 export function HistoryView() {
   const { locale, t } = useI18n();
@@ -62,6 +65,8 @@ export function HistoryView() {
     <div className="stack">
       <h1>{t.history.title}</h1>
       <p className="text-muted">{t.history.note}</p>
+      <Disclaimer />
+      <UrgentGuide />
       {error && (
         <p role="alert" className="notice notice-danger">
           {t.history.loadFailed}
@@ -97,6 +102,7 @@ export function HistoryView() {
                       )}
                     </div>
                   </div>
+                  {isMockModel(e.modelVersion) && <div className="mt-3"><MockNotice /></div>}
                   <button
                     type="button"
                     className="btn btn-secondary mt-3 !bg-white"

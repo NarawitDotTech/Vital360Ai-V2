@@ -117,14 +117,31 @@ export async function clearHistory(): Promise<void> {
 
 // ---- delete everything ------------------------------------------------------
 
+const DELETE_TIMEOUT_MS = 8000;
+
+/** Resolves only when the database is really gone. If another tab keeps it open past the timeout, rejects. */
 function deleteDatabase(name: string): Promise<void> {
   return new Promise((resolve, reject) => {
     if (typeof indexedDB === "undefined") return resolve();
     const req = indexedDB.deleteDatabase(name);
-    req.onsuccess = () => resolve();
-    req.onerror = () => reject(req.error ?? new Error("deleteDatabase failed"));
-    // Another tab holds a connection open: it closes on versionchange in a moment. Do not hang forever.
-    req.onblocked = () => setTimeout(resolve, 1000);
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    req.onsuccess = () => {
+      clearTimeout(timer);
+      resolve();
+    };
+    req.onerror = () => {
+      clearTimeout(timer);
+      reject(req.error ?? new Error("deleteDatabase failed"));
+    };
+    // Another tab holds a connection open: it should close on versionchange. Keep waiting for success,
+    // but never report success while blocked, and do not hang forever.
+    req.onblocked = () => {
+      clearTimeout(timer);
+      timer = setTimeout(
+        () => reject(new Error("Could not delete: the app is open in another tab. Close other tabs and try again.")),
+        DELETE_TIMEOUT_MS,
+      );
+    };
   });
 }
 
@@ -140,11 +157,20 @@ function clearPrefixed(storage: Storage | undefined) {
 
 /**
  * Wipe everything the app stored on this device: the IndexedDB database, Cache Storage entries
- * created by the app (names starting with CACHE_PREFIX), and the app's session/local storage keys.
+ * created by the app (names starting with CACHE_PREFIX), the service worker registration, and the app's session/local storage keys.
  * Account data on a server (if ever used) is deleted via the backend, not here.
  */
 export async function deleteAllData(): Promise<void> {
   const errors: unknown[] = [];
+  try {
+    // first, so a live worker cannot re-fill the caches we are about to delete
+    if (typeof navigator !== "undefined" && navigator.serviceWorker?.getRegistrations) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map((r) => r.unregister()));
+    }
+  } catch (e) {
+    errors.push(e);
+  }
   try {
     await deleteDatabase(DB_NAME);
   } catch (e) {

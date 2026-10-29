@@ -5,11 +5,33 @@ import { format } from "@/i18n";
 import { useI18n } from "./I18nProvider";
 import { TierIcon } from "./TierBadge";
 
+export function isMockModel(modelVersion: string): boolean {
+  return modelVersion.startsWith("mock");
+}
+
+export function labelText(t: ReturnType<typeof useI18n>["t"], label: string): string {
+  return t.results.labels[label] ?? label;
+}
+
+/** Prominent notice for results that come from the placeholder (mock) model. */
+export function MockNotice() {
+  const { t } = useI18n();
+  return (
+    <p role="note" className="notice notice-warn text-lg font-bold" data-testid="mock-notice">
+      <span aria-hidden="true">⚠ </span>
+      {t.results.mockTitle}. <span className="font-normal">{t.results.mockText}</span>
+    </p>
+  );
+}
+
 export function resultSpeech(p: Prediction, t: ReturnType<typeof useI18n>["t"]): string {
   const tier = t.tiers[p.tier];
-  const parts = [`${t.results.modality[p.modality]}. ${tier.word}.`, tier.sentence, `${t.results.nextStep}: ${tier.next}`];
+  const parts: string[] = [];
+  if (isMockModel(p.modelVersion)) parts.push(`${t.results.mockTitle}. ${t.results.mockText}`);
+  parts.push(`${t.results.modality[p.modality]}. ${tier.word}.`, tier.sentence);
   const bpm = p.extras?.breathsPerMin;
-  if (bpm !== undefined) parts.splice(2, 0, format(t.results.breaths, { n: Math.round(bpm) }) + ".");
+  if (bpm !== undefined) parts.push(format(t.results.breaths, { n: Math.round(bpm) }) + ".");
+  parts.push(`${t.results.nextStep}: ${tier.next}`, `${t.disclaimer.title}. ${t.disclaimer.text}`, `${t.urgent.title}. ${t.urgent.intro}`);
   return parts.join(" ");
 }
 
@@ -25,6 +47,7 @@ export function ResultCard({ p, headingLevel = 2 }: { p: Prediction; headingLeve
       <H id={`tier-${p.modality}`} className="font-semibold">
         {t.results.modality[p.modality]}
       </H>
+      {isMockModel(p.modelVersion) && <div className="mt-2"><MockNotice /></div>}
       <div className="mt-2 flex items-center gap-4">
         <TierIcon tier={p.tier} />
         <p className="tier-word">{tier.word}</p>
@@ -48,7 +71,7 @@ export function ResultCard({ p, headingLevel = 2 }: { p: Prediction; headingLeve
           <ul className="space-y-1">
             {probs.map(([k, v]) => (
               <li key={k} className="flex items-center gap-2">
-                <span className="w-1/2 break-words">{k}</span>
+                <span className="w-1/2 break-words">{labelText(t, k)}</span>
                 <span className="font-semibold tabular-nums">{Math.round(v * 100)}%</span>
               </li>
             ))}

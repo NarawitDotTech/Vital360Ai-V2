@@ -15,6 +15,8 @@ export function AudioCapture() {
   const { locale, t } = useI18n();
   const router = useRouter();
   const abortRef = useRef<AbortController | null>(null);
+  const primaryRef = useRef<HTMLButtonElement>(null);
+  const prevActive = useRef(false);
   const [phase, setPhase] = useState<"idle" | "ambient" | "recording" | "analysing">("idle");
   const [left, setLeft] = useState(RECORD_SEC);
   const [message, setMessage] = useState<string | null>(null);
@@ -75,6 +77,12 @@ export function AudioCapture() {
   }
 
   const active = phase === "ambient" || phase === "recording";
+  // the primary button is swapped (start <-> stop): keep keyboard focus on the new one
+  useEffect(() => {
+    if (prevActive.current !== active) primaryRef.current?.focus();
+    prevActive.current = active;
+  }, [active]);
+
   return (
     <div className="stack">
       <CaptureSteps title={t.audio.title} steps={[t.audio.step1, t.audio.step2, t.audio.step3]} spoken={t.audio.spoken} />
@@ -87,23 +95,27 @@ export function AudioCapture() {
 
       {phase === "ambient" && <p role="status" className="notice">{t.audio.checking}</p>}
       {phase === "recording" && (
-        <div className="card card-tinted stack-sm" role="status">
+        <div className="card card-tinted stack-sm">
+          {/* announced at milestones only (start, 5 s left), not every second */}
+          <p role="status" className="sr-only">
+            {left <= 5 ? format(t.audio.remaining, { n: 5 }) : t.audio.recording}
+          </p>
           <p className="text-xl font-bold">
             <span aria-hidden="true">🎤 </span>
             {t.audio.recording}
           </p>
-          <progress max={RECORD_SEC} value={RECORD_SEC - left} aria-label={format(t.audio.remaining, { n: left })} />
-          <p className="text-lg">{format(t.audio.remaining, { n: left })}</p>
+          <progress max={RECORD_SEC} value={RECORD_SEC - left} aria-label={t.audio.recording} />
+          <p className="text-lg" aria-hidden="true">{format(t.audio.remaining, { n: left })}</p>
         </div>
       )}
       {phase === "analysing" && <p role="status">{t.common.working}</p>}
 
       {active ? (
-        <button type="button" className="btn btn-secondary" onClick={stop}>
+        <button ref={primaryRef} type="button" className="btn btn-secondary" onClick={stop}>
           {t.audio.stop}
         </button>
       ) : (
-        <button type="button" className="btn btn-primary btn-big" onClick={start} disabled={phase === "analysing"}>
+        <button ref={primaryRef} type="button" className="btn btn-primary btn-big" onClick={start} disabled={phase === "analysing"}>
           <span aria-hidden="true">🎤</span> {t.audio.start}
         </button>
       )}

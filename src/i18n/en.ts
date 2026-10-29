@@ -22,7 +22,7 @@ export const en: Dict = {
     language: "Language",
     brandHome: "Vitals 360 AI home",
     footerNote: "Early screening tool only. Not a diagnosis.",
-    working: "Checking, please wait…",
+    working: "Processing, please wait…",
     problem: "Something went wrong. Please try again. If it keeps happening, close and reopen the app.",
   },
   header: {
@@ -30,9 +30,9 @@ export const en: Dict = {
     switchText: "ภาษาไทย",
   },
   home: {
-    title: "Health check on your phone",
+    title: "Early health screening on your phone",
     intro:
-      "Use your phone's camera and microphone to check your skin, lung sounds and breathing, one step at a time. Your data stays on your device.",
+      "Use your phone's camera and microphone to screen your skin, lung sounds and breathing, one step at a time. Your data stays on your device.",
     start: "Start screening",
     startHint: "About 2 minutes per check",
     history: "History",
@@ -152,6 +152,23 @@ export const en: Dict = {
     saveFailed: "Could not save. Please try again.",
     again: "Check something else",
     viewHistory: "See history",
+    mockTitle: "Demo model, not a real screening",
+    mockText: "This result is made up to demonstrate the screens. It does not come from a tested model. Do not use it for any health decision.",
+    labels: {
+      benign: "Looks ordinary",
+      "needs-review": "Worth having a clinician look",
+      "urgent-referral": "See a clinician soon",
+      normal: "Nothing of concern",
+      wheeze: "Breath sound like a whistle",
+      crackle: "Breath sound like crackling",
+      "cough-abnormal": "Cough sound a clinician should hear",
+      slow: "Breathing on the slow side",
+      fast: "Breathing on the fast side",
+      low: "Combined signal is low",
+      moderate: "Combined signal is moderate",
+      high: "Combined signal is high",
+      uncertain: "Cannot tell yet",
+    },
     modality: {
       skin: "Skin",
       audio: "Cough / breathing sound",
@@ -161,7 +178,7 @@ export const en: Dict = {
   },
   tiers: {
     green: {
-      word: "Normal",
+      word: "No concern seen",
       sentence: "From this early check, we did not see signs of concern.",
       next: "Look after your health as usual. If you have symptoms or feel unsure, see a doctor.",
     },

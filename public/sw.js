@@ -2,16 +2,19 @@
  *
  * - Install: precache the app shell = every page of the static export plus the JS/CSS they reference
  *   (found by scanning the fetched HTML, then one level of the JS for lazy chunks). No build step needed.
- * - /models/*  : cache-first in its own cache, so model files survive app updates.
- * - /_next/static/* and icons: cache-first (hashed, immutable).
+ * - /models/manifest.json: network-first (it is the switch that enables a real model), cache as offline fallback.
+ * - other /models/*: cache-first in their own cache, so model files survive app updates.
+ * - /_next/static/*, icons and same-origin .wasm/.mjs: cache-first (hashed / immutable).
  * - pages and everything else: network-first, falling back to the cache (offline).
- * Bump VERSION when this file's logic changes. Old vitals360-* caches are deleted on activate.
+ * VERSION is stamped per build by scripts/stamp-sw.mjs (run after `next build`; hash of out/), so every deploy
+ * gets fresh shell caches and old vitals360-* caches are deleted on activate. The models cache has its own fixed
+ * name so big model files are not re-downloaded on every app update.
  * deleteAllData() in src/storage/db.ts deletes every cache whose name starts with "vitals360-".
  */
-const VERSION = "v1";
+const VERSION = "dev"; // replaced in out/sw.js by scripts/stamp-sw.mjs
 const PREFIX = "vitals360-";
 const SHELL = PREFIX + "shell-" + VERSION;
-const MODELS = PREFIX + "models-" + VERSION;
+const MODELS = PREFIX + "models-v1";
 const KEEP = [SHELL, MODELS];
 
 const LOCALES = ["th", "en"];
@@ -75,20 +78,22 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-async function cacheFirst(req, cacheName) {
+async function cacheFirst(event, cacheName) {
+  const req = event.request;
   const cache = await caches.open(cacheName);
   const hit = await cache.match(req);
   if (hit) return hit;
   const res = await fetch(req);
-  if (res.ok && res.status === 200) cache.put(req, res.clone());
+  if (res.ok && res.status === 200) event.waitUntil(cache.put(req, res.clone()));
   return res;
 }
 
-async function networkFirst(req) {
-  const cache = await caches.open(SHELL);
+async function networkFirst(event, cacheName = SHELL) {
+  const req = event.request;
+  const cache = await caches.open(cacheName);
   try {
     const res = await fetch(req);
-    if (res.ok) cache.put(req, res.clone());
+    if (res.ok) event.waitUntil(cache.put(req, res.clone()));
     return res;
   } catch (err) {
     const hit = (await cache.match(req)) || (await cache.match(req, { ignoreSearch: true }));
@@ -108,13 +113,15 @@ self.addEventListener("fetch", (event) => {
   if (url.origin !== self.location.origin) return;
   if (req.headers.has("range")) return; // let the browser handle partial requests (media)
 
-  if (url.pathname.startsWith("/models/")) {
-    event.respondWith(cacheFirst(req, MODELS));
-  } else if (url.pathname.startsWith("/_next/static/") || /\.(?:png|svg|ico|webmanifest)$/.test(url.pathname)) {
-    event.respondWith(cacheFirst(req, SHELL));
+  if (url.pathname === "/models/manifest.json") {
+    event.respondWith(networkFirst(event, MODELS));
+  } else if (url.pathname.startsWith("/models/")) {
+    event.respondWith(cacheFirst(event, MODELS));
+  } else if (url.pathname.startsWith("/_next/static/") || /\.(?:png|svg|ico|webmanifest|wasm|mjs)$/.test(url.pathname)) {
+    event.respondWith(cacheFirst(event, SHELL));
   } else if (url.pathname === "/sw.js") {
     return;
   } else {
-    event.respondWith(networkFirst(req));
+    event.respondWith(networkFirst(event));
   }
 });

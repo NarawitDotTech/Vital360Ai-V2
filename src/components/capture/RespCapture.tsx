@@ -18,6 +18,10 @@ export function RespCapture() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const mountedRef = useRef(false);
+  const openingRef = useRef(false);
+  const primaryRef = useRef<HTMLButtonElement>(null);
+  const prevCameraOn = useRef(false);
   const [cameraOn, setCameraOn] = useState(false);
   const [aspect, setAspect] = useState(4 / 3);
   const [phase, setPhase] = useState<"idle" | "measuring" | "analysing">("idle");
@@ -31,12 +35,30 @@ export function RespCapture() {
     setCameraOn(false);
     setPhase("idle");
   }, []);
-  useEffect(() => stopCamera, [stopCamera]);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      stopCamera();
+    };
+  }, [stopCamera]);
+
+  // the primary button is swapped (open <-> start): keep keyboard focus on the new one
+  useEffect(() => {
+    if (prevCameraOn.current !== cameraOn) primaryRef.current?.focus();
+    prevCameraOn.current = cameraOn;
+  }, [cameraOn]);
 
   async function startCamera() {
+    if (streamRef.current || openingRef.current) return;
+    openingRef.current = true;
     setMessage(null);
     try {
       const stream = await openCamera("environment");
+      if (!mountedRef.current || streamRef.current) {
+        stopStream(stream); // unmounted during the permission prompt, or a second stream already exists
+        return;
+      }
       streamRef.current = stream;
       setCameraOn(true);
       requestAnimationFrame(() => {
@@ -47,7 +69,9 @@ export function RespCapture() {
         void v.play().catch(() => {});
       });
     } catch {
-      setMessage(t.resp.cameraOff);
+      if (mountedRef.current) setMessage(t.resp.cameraOff);
+    } finally {
+      openingRef.current = false;
     }
   }
 
@@ -107,17 +131,21 @@ export function RespCapture() {
       )}
 
       {phase === "measuring" && (
-        <div className="card card-tinted stack-sm" role="status">
+        <div className="card card-tinted stack-sm">
+          {/* announced at milestones only (start, 10 s, 5 s), not every second */}
+          <p role="status" className="sr-only">
+            {left <= 5 ? format(t.resp.remaining, { n: 5 }) : left <= 10 ? format(t.resp.remaining, { n: 10 }) : t.resp.measuring}
+          </p>
           <p className="text-xl font-bold">{t.resp.measuring}</p>
-          <progress max={SECONDS} value={SECONDS - left} aria-label={format(t.resp.remaining, { n: left })} />
-          <p className="text-lg">{format(t.resp.remaining, { n: left })}</p>
+          <progress max={SECONDS} value={SECONDS - left} aria-label={t.resp.measuring} />
+          <p className="text-lg" aria-hidden="true">{format(t.resp.remaining, { n: left })}</p>
         </div>
       )}
       {phase === "analysing" && <p role="status">{t.common.working}</p>}
 
       {cameraOn ? (
         <>
-          <button type="button" className="btn btn-primary btn-big" onClick={measure} disabled={phase !== "idle"}>
+          <button ref={primaryRef} type="button" className="btn btn-primary btn-big" onClick={measure} disabled={phase !== "idle"}>
             <span aria-hidden="true">🎥</span> {t.resp.start}
           </button>
           <button type="button" className="btn btn-secondary" onClick={stopCamera}>
@@ -125,7 +153,7 @@ export function RespCapture() {
           </button>
         </>
       ) : (
-        <button type="button" className="btn btn-primary btn-big" onClick={startCamera}>
+        <button ref={primaryRef} type="button" className="btn btn-primary btn-big" onClick={startCamera}>
           <span aria-hidden="true">🎥</span> {t.resp.openCamera}
         </button>
       )}
