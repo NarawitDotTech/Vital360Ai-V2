@@ -95,15 +95,15 @@ describe("storage", () => {
 
     await deleteAllData();
 
+    // check the database is gone before reading (reading would re-create it)
+    const dbs = await indexedDB.databases();
+    expect(dbs.map((d) => d.name)).not.toContain(DB_NAME);
     expect(await getConsent()).toBeNull();
     expect(await listHistory()).toEqual([]);
     expect([...store.keys()]).toEqual(["someone-elses-cache"]);
     expect(sessionStorage.getItem("v360.session")).toBeNull();
     expect(localStorage.getItem("v360.pref")).toBeNull();
     expect(localStorage.getItem("other.key")).toBe("keep");
-    // the database itself is gone
-    const dbs = await indexedDB.databases();
-    expect(dbs.map((d) => d.name)).not.toContain(DB_NAME);
     delete (globalThis as { caches?: unknown }).caches;
   });
 });

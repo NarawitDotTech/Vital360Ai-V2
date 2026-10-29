@@ -3,7 +3,7 @@
 /*
   Brand: teal #23c2c6 is for accents and the icon only (it fails AA as text on white).
   Text and buttons use dark teal #0b6e72 or darker. Contrast on white:
-    #0b6e72 ~ 5.9:1 (AA), #084a4d ~ 9.9:1 (AAA), #12202a ~ 16:1.
+    #0b6e72 = 6.0:1 (AA), #084a4d = 10.0:1 (AAA), #12202a ~ 16:1.
 */
 :root {
   --brand: #23c2c6;
@@ -13,7 +13,7 @@
   --muted: #3d4e5a;
   --bg: #ffffff;
   --surface: #eef8f8;
-  --line: #9fb4b8;
+  --line: #6b8186;
   color-scheme: light;
 }
 

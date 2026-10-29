@@ -72,3 +72,22 @@ function safeSession(): Storage | undefined {
     return undefined;
   }
 }
+
+/** Raw sessionStorage payload for useSyncExternalStore: "" when empty or unavailable. */
+export function readRawSession(storage: Storage | undefined = safeSession()): string {
+  try {
+    return storage?.getItem(KEY) ?? "";
+  } catch {
+    return "";
+  }
+}
+
+export function parseSession(raw: string | null): Prediction[] {
+  if (!raw) return [];
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.filter(isPrediction) : [];
+  } catch {
+    return [];
+  }
+}

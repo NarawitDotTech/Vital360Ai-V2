@@ -1,18 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { doneModalities, getSessionResults } from "@/session/results";
+import { useMemo } from "react";
+import { doneModalities } from "@/session/results";
+import { useSessionResults } from "@/session/useSession";
 import type { Modality } from "@/inference/types";
 import { useI18n } from "./I18nProvider";
 import { SpeakButton } from "./SpeakButton";
 
 export function CaptureHub() {
   const { locale, t } = useI18n();
-  const [done, setDone] = useState<Set<Modality>>(new Set());
-  useEffect(() => {
-    setDone(doneModalities(getSessionResults()));
-  }, []);
+  const results = useSessionResults();
+  const done = useMemo<Set<Modality>>(() => doneModalities(results ?? []), [results]);
 
   const items = [
     { id: "skin", label: t.capture.skin, hint: t.capture.skinHint, icon: "📷" },

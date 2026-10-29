@@ -1,0 +1,13 @@
+# Frontend agent decisions
+
+- Root layout: no `src/app/layout.tsx`. `src/app/[locale]/layout.tsx` is the root layout (`<html lang={locale}>`), and `/` is a second root layout in the `(root)` route group (`src/app/(root)/{layout,page}.tsx`) because a locale-less page needs its own `<html>`. `/` redirects client-side to `/th/` with visible links. Default `/_not-found` is Next's generic one (a localized global-not-found needs `experimental.globalNotFound`, a config change).
+- i18n: typed dictionaries `src/i18n/{th,en}.ts` (`en: Dict = typeof th`), client context in `I18nProvider`; parity test in `src/i18n/i18n.test.ts`.
+- Consent: pure `consentGate()` in `src/storage/consent-gate.ts` (version 1.0); `ConsentGate` wraps capture hub, capture pages and results. History and delete pages are not gated (users must always be able to delete).
+- Storage: `src/storage/db.ts`, short-lived IndexedDB connections (so `deleteDatabase` never blocks). `deleteAllData()` also removes Cache Storage names starting `vitals360-` and `v360.*` session/local keys. Results travel between pages in sessionStorage (`src/session/`), summaries only; fusion is recomputed on the results page.
+- Capture: heuristics in `src/capture/quality.ts` (brightness 40-228, Laplacian variance >= 20, ambient > -35 dBFS = noisy). Thresholds are guesses, tune on real phones. Audio uses ScriptProcessorNode (deprecated but universal, avoids a worklet file/CSP issue). Resp: 15 fps target on a 160 px canvas, chest box `CHEST_BOX` shared by guide and ROI, signal from `frameMotion` as is.
+- PWA: `public/sw.js` precaches all page HTML for both locales at install and scans them (and one level of JS) for `/_next/static` assets, so no build step is needed. Registered in production only. Versioned caches `vitals360-shell-v1`, `vitals360-models-v1` (`/models/*` cache-first).
+- Icons: `npm run icons` (`scripts/icons.mjs`), padding color equals the icon background `#fdfdfd`. Header logo is inlined from `public/icon.svg` at build (classes prefixed, ids stripped).
+- Contrast (measured): #0b6e72 on white 6.0:1, white on #0b6e72 6.0:1, ink 16.6:1, tier text pairs >= 13:1; card borders #6b8186. Light theme only (`color-scheme: light`) for consistent high contrast.
+- Dashboard reads `eval/metrics/*.json` at build time (schema in `eval/metrics/README.md`); `sample.json` is invented and flagged `isSample`.
+- E2E: `playwright.config.ts` picks the pre-installed Chromium (build 1243 vs the 1248 Playwright 1.64.1 expects) via `PLAYWRIGHT_BROWSERS_PATH` or `CHROMIUM_PATH`. Run `npm run build` first; tests serve `out/` with `scripts/serve-out.mjs`.
+- Not done: spoken prompts are manual (button), no usability test with older users, no real-device camera/mic test, Lighthouse not run.

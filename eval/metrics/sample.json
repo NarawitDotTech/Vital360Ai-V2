@@ -1,0 +1,192 @@
+{
+  "schemaVersion": 1,
+  "isSample": true,
+  "generatedAt": "2026-01-01T00:00:00Z",
+  "description": "FAKE SAMPLE DATA used only to build and test the dashboard. Not measured. Replace with real metrics files.",
+  "models": {
+    "skin": {
+      "label": "Skin image (FAKE)",
+      "classes": [
+        "green",
+        "amber",
+        "red"
+      ],
+      "accuracy": 0.717,
+      "sensitivity": 0.717,
+      "specificity": 0.858,
+      "f1": 0.715,
+      "perClass": {
+        "green": {
+          "sensitivity": 0.78,
+          "specificity": 0.895
+        },
+        "amber": {
+          "sensitivity": 0.6,
+          "specificity": 0.845
+        },
+        "red": {
+          "sensitivity": 0.77,
+          "specificity": 0.835
+        }
+      },
+      "confusionMatrix": [
+        [
+          78,
+          14,
+          8
+        ],
+        [
+          15,
+          60,
+          25
+        ],
+        [
+          6,
+          17,
+          77
+        ]
+      ],
+      "latencyMs": 180,
+      "sizeBytes": 9400000,
+      "testSetDescription": "FAKE SAMPLE: 300 invented cases (100 per tier). Not measured on any real data."
+    },
+    "audio": {
+      "label": "Audio (FAKE)",
+      "classes": [
+        "green",
+        "amber",
+        "red"
+      ],
+      "accuracy": 0.707,
+      "sensitivity": 0.707,
+      "specificity": 0.853,
+      "f1": 0.705,
+      "perClass": {
+        "green": {
+          "sensitivity": 0.8,
+          "specificity": 0.865
+        },
+        "amber": {
+          "sensitivity": 0.62,
+          "specificity": 0.835
+        },
+        "red": {
+          "sensitivity": 0.7,
+          "specificity": 0.86
+        }
+      },
+      "confusionMatrix": [
+        [
+          80,
+          12,
+          8
+        ],
+        [
+          18,
+          62,
+          20
+        ],
+        [
+          9,
+          21,
+          70
+        ]
+      ],
+      "latencyMs": 95,
+      "sizeBytes": 4100000,
+      "testSetDescription": "FAKE SAMPLE: 300 invented cases (100 per tier). Not measured on any real data."
+    },
+    "resp": {
+      "label": "Respiration video (FAKE)",
+      "classes": [
+        "green",
+        "amber",
+        "red"
+      ],
+      "accuracy": 0.683,
+      "sensitivity": 0.683,
+      "specificity": 0.842,
+      "f1": 0.681,
+      "perClass": {
+        "green": {
+          "sensitivity": 0.82,
+          "specificity": 0.85
+        },
+        "amber": {
+          "sensitivity": 0.58,
+          "specificity": 0.815
+        },
+        "red": {
+          "sensitivity": 0.65,
+          "specificity": 0.86
+        }
+      },
+      "confusionMatrix": [
+        [
+          82,
+          12,
+          6
+        ],
+        [
+          20,
+          58,
+          22
+        ],
+        [
+          10,
+          25,
+          65
+        ]
+      ],
+      "latencyMs": 40,
+      "sizeBytes": 15000,
+      "testSetDescription": "FAKE SAMPLE: 300 invented cases (100 per tier). Not measured on any real data."
+    },
+    "fusion": {
+      "label": "Multimodal fusion (FAKE)",
+      "classes": [
+        "green",
+        "amber",
+        "red"
+      ],
+      "accuracy": 0.817,
+      "sensitivity": 0.817,
+      "specificity": 0.908,
+      "f1": 0.816,
+      "perClass": {
+        "green": {
+          "sensitivity": 0.88,
+          "specificity": 0.935
+        },
+        "amber": {
+          "sensitivity": 0.72,
+          "specificity": 0.9
+        },
+        "red": {
+          "sensitivity": 0.85,
+          "specificity": 0.89
+        }
+      },
+      "confusionMatrix": [
+        [
+          88,
+          8,
+          4
+        ],
+        [
+          10,
+          72,
+          18
+        ],
+        [
+          3,
+          12,
+          85
+        ]
+      ],
+      "latencyMs": 320,
+      "sizeBytes": 14600000,
+      "testSetDescription": "FAKE SAMPLE: 300 invented cases (100 per tier). Not measured on any real data."
+    }
+  }
+}
