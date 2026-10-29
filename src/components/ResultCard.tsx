@@ -1,28 +1,16 @@
 "use client";
 
+import { ArrowRight } from "lucide-react";
+import dynamic from "next/dynamic";
+import { Card, CardContent } from "@/components/ui/card";
 import type { Prediction } from "@/inference/types";
 import { format } from "@/i18n";
 import { useI18n } from "./I18nProvider";
-import { TierIcon } from "./TierBadge";
+import { isMockModel, MockNotice } from "./MockNotice";
+import { TierBadge } from "./TierBadge";
 
-export function isMockModel(modelVersion: string): boolean {
-  return modelVersion.startsWith("mock");
-}
-
-export function labelText(t: ReturnType<typeof useI18n>["t"], label: string): string {
-  return t.results.labels[label] ?? label;
-}
-
-/** Prominent notice for results that come from the placeholder (mock) model. */
-export function MockNotice() {
-  const { t } = useI18n();
-  return (
-    <p role="note" className="notice notice-warn text-lg font-bold" data-testid="mock-notice">
-      <span aria-hidden="true">⚠ </span>
-      {t.results.mockTitle}. <span className="font-normal">{t.results.mockText}</span>
-    </p>
-  );
-}
+// The collapsed details (accordion + bars) load after the page is interactive, which keeps the initial JS small.
+const ResultDetails = dynamic(() => import("./ResultDetails").then((m) => m.ResultDetails), { ssr: false });
 
 export function resultSpeech(p: Prediction, t: ReturnType<typeof useI18n>["t"]): string {
   const tier = t.tiers[p.tier];
@@ -35,50 +23,38 @@ export function resultSpeech(p: Prediction, t: ReturnType<typeof useI18n>["t"]):
   return parts.join(" ");
 }
 
-/** Traffic-light result: tier (icon + word + color), one sentence, one next step, details collapsed. */
+/** Summary card: tier badge (icon + word), one sentence, one next step; details collapsed. */
 export function ResultCard({ p, headingLevel = 2 }: { p: Prediction; headingLevel?: 2 | 3 }) {
   const { t } = useI18n();
   const tier = t.tiers[p.tier];
   const bpm = p.extras?.breathsPerMin;
   const H = headingLevel === 2 ? "h2" : "h3";
-  const probs = Object.entries(p.probs).sort((a, b) => b[1] - a[1]);
   return (
-    <section className={`tier tier-${p.tier}`} aria-labelledby={`tier-${p.modality}`} data-testid={`result-${p.modality}`} data-tier={p.tier}>
-      <H id={`tier-${p.modality}`} className="font-semibold">
-        {t.results.modality[p.modality]}
-      </H>
-      {isMockModel(p.modelVersion) && <div className="mt-2"><MockNotice /></div>}
-      <div className="mt-2 flex items-center gap-4">
-        <TierIcon tier={p.tier} />
-        <p className="tier-word">{tier.word}</p>
-      </div>
-      <p className="mt-3 text-xl font-semibold">{tier.sentence}</p>
-      {bpm !== undefined && (
-        <div className="mt-3">
-          <p className="text-xl font-bold">{format(t.results.breaths, { n: Math.round(bpm) })}</p>
-          <p className="text-base">{t.results.breathsNote}</p>
+    <Card aria-labelledby={`tier-${p.modality}`} data-testid={`result-${p.modality}`} data-tier={p.tier} role="region">
+      <CardContent className="gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+          <H id={`tier-${p.modality}`} className="text-lg font-semibold">
+            {t.results.modality[p.modality]}
+          </H>
+          <TierBadge tier={p.tier} size="lg" />
         </div>
-      )}
-      <p className="mt-3 rounded-lg bg-white/70 p-3 text-lg">
-        <strong>{t.results.nextStep}: </strong>
-        {tier.next}
-      </p>
-      <details className="mt-3">
-        <summary>{t.results.details}</summary>
-        <div className="mt-2 space-y-2 text-base">
-          <p>{format(t.results.confidence, { pct: Math.round(p.confidence * 100) })}</p>
-          <p className="font-semibold">{t.results.chances}</p>
-          <ul className="space-y-1">
-            {probs.map(([k, v]) => (
-              <li key={k} className="flex items-center gap-2">
-                <span className="w-1/2 break-words">{labelText(t, k)}</span>
-                <span className="font-semibold tabular-nums">{Math.round(v * 100)}%</span>
-              </li>
-            ))}
-          </ul>
-          <p className="text-sm">{format(t.results.modelVersion, { v: p.modelVersion })}</p>
+        {isMockModel(p.modelVersion) && <MockNotice />}
+        <p className="text-lg leading-relaxed font-medium">{tier.sentence}</p>
+        {bpm !== undefined && (
+          <div>
+            <p className="text-lg font-semibold">{format(t.results.breaths, { n: Math.round(bpm) })}</p>
+            <p className="text-sm text-muted-foreground">{t.results.breathsNote}</p>
+          </div>
+        )}
+        <div className="flex gap-3 rounded-lg bg-muted/70 p-3.5">
+          <ArrowRight aria-hidden="true" className="mt-1 size-5 shrink-0 text-primary" />
+          <p>
+            <strong className="font-semibold">{t.results.nextStep}: </strong>
+            {tier.next}
+          </p>
         </div>
-      </details>
-    </section>
+        <ResultDetails p={p} />
+      </CardContent>
+    </Card>
   );
 }

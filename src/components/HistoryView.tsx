@@ -1,12 +1,17 @@
 "use client";
 
+import { CircleCheck, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { bcp47, format } from "@/i18n";
 import { clearHistory, deleteHistory, listHistory, type HistoryEntry } from "@/storage/db";
 import { Disclaimer } from "./Disclaimer";
 import { useI18n } from "./I18nProvider";
-import { isMockModel, MockNotice } from "./ResultCard";
-import { TierIcon } from "./TierBadge";
+import { isMockModel, MockNotice } from "./MockNotice";
+import { PageTitle } from "./PageTitle";
+import { TierBadge } from "./TierBadge";
 import { UrgentGuide } from "./UrgentGuide";
 
 export function HistoryView() {
@@ -62,72 +67,85 @@ export function HistoryView() {
   }
 
   return (
-    <div className="stack">
-      <h1>{t.history.title}</h1>
-      <p className="text-muted">{t.history.note}</p>
+    <div className="flex flex-col gap-5">
+      <PageTitle>{t.history.title}</PageTitle>
+      <p className="text-muted-foreground">{t.history.note}</p>
       <Disclaimer />
       <UrgentGuide />
       {error && (
-        <p role="alert" className="notice notice-danger">
-          {t.history.loadFailed}
-        </p>
+        <Alert variant="destructive" role="alert">
+          <AlertDescription>{t.history.loadFailed}</AlertDescription>
+        </Alert>
       )}
       {notice && (
-        <p role="status" className="notice">
-          {notice}
-        </p>
+        <Alert variant="success" role="status">
+          <CircleCheck aria-hidden="true" />
+          <AlertDescription>{notice}</AlertDescription>
+        </Alert>
       )}
       {items === null ? (
         <p role="status">{t.common.loading}</p>
       ) : items.length === 0 ? (
-        <p className="card">{t.history.empty}</p>
+        <Card size="sm">
+          <CardContent>
+            <p>{t.history.empty}</p>
+          </CardContent>
+        </Card>
       ) : (
         <>
-          <ul className="stack-sm">
+          <ul className="flex flex-col gap-3">
             {items.map((e) => {
-              const tier = t.tiers[e.tier];
               const what = t.results.modality[e.modality];
               const date = fmtDate(e.createdAt);
               return (
-                <li key={e.id} className={`tier tier-${e.tier} !border-2`}>
-                  <div className="flex items-center gap-3">
-                    <TierIcon tier={e.tier} size={40} />
-                    <div className="flex-1">
-                      <p className="font-bold">
-                        {what}: {tier.word}
-                      </p>
-                      <p className="text-base">{date}</p>
-                      {e.breathsPerMin !== undefined && (
-                        <p className="text-base">{format(t.results.breaths, { n: Math.round(e.breathsPerMin) })}</p>
-                      )}
-                    </div>
-                  </div>
-                  {isMockModel(e.modelVersion) && <div className="mt-3"><MockNotice /></div>}
-                  <button
-                    type="button"
-                    className="btn btn-secondary mt-3 !bg-white"
-                    onClick={() => removeOne(e.id)}
-                    aria-label={format(t.history.deleteOneLabel, { what, date })}
-                  >
-                    {t.history.deleteOne}
-                  </button>
+                <li key={e.id}>
+                  <Card size="sm" data-tier={e.tier}>
+                    <CardContent className="gap-3">
+                      <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
+                        <div className="min-w-0">
+                          <p className="font-semibold">{what}</p>
+                          <p className="text-sm text-muted-foreground">{date}</p>
+                          {e.breathsPerMin !== undefined && (
+                            <p className="text-sm">{format(t.results.breaths, { n: Math.round(e.breathsPerMin) })}</p>
+                          )}
+                        </div>
+                        <TierBadge tier={e.tier} />
+                      </div>
+                      {isMockModel(e.modelVersion) && <MockNotice />}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="self-start"
+                        onClick={() => removeOne(e.id)}
+                        aria-label={format(t.history.deleteOneLabel, { what, date })}
+                      >
+                        <Trash2 aria-hidden="true" />
+                        {t.history.deleteOne}
+                      </Button>
+                    </CardContent>
+                  </Card>
                 </li>
               );
             })}
           </ul>
           {confirmAll ? (
-            <div className="stack-sm card">
-              <button type="button" className="btn btn-danger" onClick={removeAll}>
-                {t.history.confirmAll}
-              </button>
-              <button type="button" className="btn btn-secondary" onClick={() => setConfirmAll(false)}>
-                {t.history.keep}
-              </button>
-            </div>
+            <Card size="sm">
+              <CardContent className="gap-3">
+                <Button type="button" variant="destructive" size="lg" onClick={removeAll}>
+                  <Trash2 aria-hidden="true" />
+                  {t.history.confirmAll}
+                </Button>
+                <Button type="button" variant="outline" size="lg" onClick={() => setConfirmAll(false)}>
+                  {t.history.keep}
+                </Button>
+              </CardContent>
+            </Card>
           ) : (
-            <button type="button" className="btn btn-secondary" onClick={() => setConfirmAll(true)}>
+            <Button type="button" variant="outline" size="lg" className="self-start" onClick={() => setConfirmAll(true)}>
+              <Trash2 aria-hidden="true" />
               {t.history.deleteAll}
-            </button>
+            </Button>
           )}
         </>
       )}

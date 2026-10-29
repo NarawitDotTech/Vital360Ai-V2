@@ -1,6 +1,8 @@
 "use client";
 
+import { Square, Volume2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { bcp47 } from "@/i18n";
 import { useI18n } from "./I18nProvider";
 
@@ -53,9 +55,9 @@ export function SpeakButton({ text, label }: { text: string; label?: string }) {
   };
 
   return (
-    <button type="button" className="btn btn-secondary" onClick={toggle} aria-pressed={speaking}>
-      <span aria-hidden="true">{speaking ? "■" : "🔊"}</span>
+    <Button type="button" variant="outline" size="lg" className="self-start" onClick={toggle} aria-pressed={speaking}>
+      {speaking ? <Square aria-hidden="true" /> : <Volume2 aria-hidden="true" />}
       {speaking ? t.common.stopReading : (label ?? t.common.readAloud)}
-    </button>
+    </Button>
   );
 }

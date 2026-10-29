@@ -1,9 +1,15 @@
 "use client";
 
+import { Download, FlaskConical, ImageDown } from "lucide-react";
 import { useCallback, useEffect, useRef } from "react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { format } from "@/i18n";
 import { MODEL_KEYS, formatBytes, metricsToCsv, type MetricsFile, type ModelKey } from "@/eval/metrics";
 import { useI18n } from "./I18nProvider";
+import { PageTitle } from "./PageTitle";
 
 // Colour-blind-safe series colours (Okabe-Ito); every bar also has a printed value and the legend has names.
 const SERIES: Record<ModelKey, string> = { skin: "#0072B2", audio: "#E69F00", resp: "#009E73", fusion: "#7a2e6b" };
@@ -109,140 +115,179 @@ function FileSection({ file }: { file: MetricsFile }) {
   }, [file, names, t.dashboard.chartTitle]);
 
   return (
-    <section className="stack" aria-labelledby={`f-${file.file}`}>
-      <h2 id={`f-${file.file}`}>{format(t.dashboard.fileLabel, { file: file.file })}</h2>
+    <section className="flex flex-col gap-5" aria-labelledby={`f-${file.file}`}>
+      <h2 id={`f-${file.file}`} className="text-xl font-semibold">
+        {format(t.dashboard.fileLabel, { file: file.file })}
+      </h2>
       {file.isSample && (
-        <div role="note" className="notice notice-danger" data-testid="sample-banner">
-          <p className="text-2xl font-extrabold">⚠ {t.dashboard.sampleBanner}</p>
-          <p>{t.dashboard.sampleDetail}</p>
-        </div>
+        <Alert variant="destructive" role="note" data-testid="sample-banner">
+          <FlaskConical aria-hidden="true" />
+          <AlertTitle className="text-lg font-semibold">{t.dashboard.sampleBanner}</AlertTitle>
+          <AlertDescription>{t.dashboard.sampleDetail}</AlertDescription>
+        </Alert>
       )}
       {file.description && <p>{file.description}</p>}
-      {file.generatedAt && <p className="text-sm text-muted">{format(t.dashboard.generatedAt, { date: file.generatedAt })}</p>}
+      {file.generatedAt && <p className="text-sm text-muted-foreground">{format(t.dashboard.generatedAt, { date: file.generatedAt })}</p>}
 
-      <h3>{t.dashboard.compareTitle}</h3>
-      <div className="table-scroll">
-        <table className="data">
-          <caption className="sr-only">{t.dashboard.compareTitle}</caption>
-          <thead>
-            <tr>
-              <th scope="col">{t.dashboard.model}</th>
-              <th scope="col">{t.dashboard.accuracy}</th>
-              <th scope="col">{t.dashboard.sensitivity}</th>
-              <th scope="col">{t.dashboard.specificity}</th>
-              <th scope="col">{t.dashboard.f1}</th>
-              <th scope="col">{t.dashboard.latency}</th>
-              <th scope="col">{t.dashboard.size}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {keys.map((k) => {
-              const m = file.models[k]!;
-              return (
-                <tr key={k} className={k === "fusion" ? "font-bold" : undefined}>
-                  <th scope="row">{names[k]}</th>
-                  <td>{pct(m.accuracy)}</td>
-                  <td>{pct(m.sensitivity)}</td>
-                  <td>{pct(m.specificity)}</td>
-                  <td>{pct(m.f1)}</td>
-                  <td>{m.latencyMs}</td>
-                  <td>{formatBytes(m.sizeBytes)}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <Card size="sm">
+        <CardHeader>
+          <CardTitle>
+            <h3>{t.dashboard.compareTitle}</h3>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableCaption className="sr-only">{t.dashboard.compareTitle}</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead scope="col">{t.dashboard.model}</TableHead>
+                <TableHead scope="col" className="text-right">{t.dashboard.accuracy}</TableHead>
+                <TableHead scope="col" className="text-right">{t.dashboard.sensitivity}</TableHead>
+                <TableHead scope="col" className="text-right">{t.dashboard.specificity}</TableHead>
+                <TableHead scope="col" className="text-right">{t.dashboard.f1}</TableHead>
+                <TableHead scope="col" className="text-right">{t.dashboard.latency}</TableHead>
+                <TableHead scope="col" className="text-right">{t.dashboard.size}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {keys.map((k) => {
+                const m = file.models[k]!;
+                return (
+                  <TableRow key={k} className={k === "fusion" ? "font-semibold" : undefined}>
+                    <TableHead scope="row">{names[k]}</TableHead>
+                    <TableCell className="text-right">{pct(m.accuracy)}</TableCell>
+                    <TableCell className="text-right">{pct(m.sensitivity)}</TableCell>
+                    <TableCell className="text-right">{pct(m.specificity)}</TableCell>
+                    <TableCell className="text-right">{pct(m.f1)}</TableCell>
+                    <TableCell className="text-right">{m.latencyMs}</TableCell>
+                    <TableCell className="text-right">{formatBytes(m.sizeBytes)}</TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
 
-      <h3>{t.dashboard.chartTitle}</h3>
-      <canvas ref={canvasRef} role="img" aria-label={t.dashboard.chartAlt} className="w-full rounded-lg border-2 border-[var(--line)]" />
-      <div className="grid gap-3 sm:grid-cols-2">
-        <button type="button" className="btn btn-secondary" onClick={exportCsv}>
-          {t.dashboard.exportCsv}
-        </button>
-        <button type="button" className="btn btn-secondary" onClick={exportPng}>
-          {t.dashboard.exportPng}
-        </button>
-      </div>
-
-      <h3>{t.dashboard.perClassTitle}</h3>
-      {keys.map((k) => {
-        const m = file.models[k]!;
-        return (
-          <div key={k} className="table-scroll">
-            <table className="data">
-              <caption className="text-left font-bold">{names[k]}</caption>
-              <thead>
-                <tr>
-                  <th scope="col">{t.dashboard.classCol}</th>
-                  <th scope="col">{t.dashboard.sensitivity}</th>
-                  <th scope="col">{t.dashboard.specificity}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {m.classes.map((c) => (
-                  <tr key={c}>
-                    <th scope="row">{c}</th>
-                    <td>{pct(m.perClass[c].sensitivity)}</td>
-                    <td>{pct(m.perClass[c].specificity)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      <Card size="sm">
+        <CardHeader>
+          <CardTitle>
+            <h3>{t.dashboard.chartTitle}</h3>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="gap-3">
+          <canvas ref={canvasRef} role="img" aria-label={t.dashboard.chartAlt} className="w-full rounded-lg border" />
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Button type="button" variant="outline" size="lg" onClick={exportCsv}>
+              <Download aria-hidden="true" />
+              {t.dashboard.exportCsv}
+            </Button>
+            <Button type="button" variant="outline" size="lg" onClick={exportPng}>
+              <ImageDown aria-hidden="true" />
+              {t.dashboard.exportPng}
+            </Button>
           </div>
-        );
-      })}
+        </CardContent>
+      </Card>
 
-      <h3>{t.dashboard.confusionTitle}</h3>
-      <p className="text-sm text-muted">{t.dashboard.confusionHint}</p>
-      {keys.map((k) => {
-        const m = file.models[k]!;
-        const max = Math.max(1, ...m.confusionMatrix.flat());
-        return (
-          <div key={k} className="table-scroll">
-            <table className="data">
-              <caption className="text-left font-bold">{names[k]}</caption>
-              <thead>
-                <tr>
-                  <th scope="col">
-                    {t.dashboard.actual} \ {t.dashboard.predicted}
-                  </th>
+      <Card size="sm">
+        <CardHeader>
+          <CardTitle>
+            <h3>{t.dashboard.perClassTitle}</h3>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="gap-5">
+          {keys.map((k) => {
+            const m = file.models[k]!;
+            return (
+              <Table key={k}>
+                <TableCaption className="mt-0 mb-2 text-left font-semibold text-foreground caption-top">{names[k]}</TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead scope="col">{t.dashboard.classCol}</TableHead>
+                    <TableHead scope="col" className="text-right">{t.dashboard.sensitivity}</TableHead>
+                    <TableHead scope="col" className="text-right">{t.dashboard.specificity}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {m.classes.map((c) => (
-                    <th key={c} scope="col">
-                      {c}
-                    </th>
+                    <TableRow key={c}>
+                      <TableHead scope="row">{c}</TableHead>
+                      <TableCell className="text-right">{pct(m.perClass[c].sensitivity)}</TableCell>
+                      <TableCell className="text-right">{pct(m.perClass[c].specificity)}</TableCell>
+                    </TableRow>
                   ))}
-                </tr>
-              </thead>
-              <tbody>
-                {m.classes.map((rowName, r) => (
-                  <tr key={rowName}>
-                    <th scope="row">{rowName}</th>
-                    {m.confusionMatrix[r].map((v, c) => (
-                      <td
-                        key={c}
-                        style={{ background: `rgba(11,110,114,${(0.08 + (0.5 * v) / max).toFixed(2)})` }}
-                        className={r === c ? "font-bold" : undefined}
-                      >
-                        {v}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        );
-      })}
+                </TableBody>
+              </Table>
+            );
+          })}
+        </CardContent>
+      </Card>
 
-      <h3>{t.dashboard.testSet}</h3>
-      <ul className="list-disc space-y-1 pl-6">
-        {keys.map((k) => (
-          <li key={k}>
-            <strong>{names[k]}:</strong> {file.models[k]!.testSetDescription}
-          </li>
-        ))}
-      </ul>
+      <Card size="sm">
+        <CardHeader>
+          <CardTitle>
+            <h3>{t.dashboard.confusionTitle}</h3>
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">{t.dashboard.confusionHint}</p>
+        </CardHeader>
+        <CardContent className="gap-5">
+          {keys.map((k) => {
+            const m = file.models[k]!;
+            const max = Math.max(1, ...m.confusionMatrix.flat());
+            return (
+              <Table key={k}>
+                <TableCaption className="mt-0 mb-2 text-left font-semibold text-foreground caption-top">{names[k]}</TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead scope="col">
+                      {t.dashboard.actual} \ {t.dashboard.predicted}
+                    </TableHead>
+                    {m.classes.map((c) => (
+                      <TableHead key={c} scope="col" className="text-right">
+                        {c}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {m.classes.map((rowName, r) => (
+                    <TableRow key={rowName}>
+                      <TableHead scope="row">{rowName}</TableHead>
+                      {m.confusionMatrix[r].map((v, c) => (
+                        <TableCell
+                          key={c}
+                          style={{ background: `rgba(11,110,114,${(0.08 + (0.5 * v) / max).toFixed(2)})` }}
+                          className={r === c ? "text-right font-semibold" : "text-right"}
+                        >
+                          {v}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            );
+          })}
+        </CardContent>
+      </Card>
+
+      <Card size="sm">
+        <CardHeader>
+          <CardTitle>
+            <h3>{t.dashboard.testSet}</h3>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ul className="list-disc space-y-1.5 pl-5">
+            {keys.map((k) => (
+              <li key={k}>
+                <strong className="font-semibold">{names[k]}:</strong> {file.models[k]!.testSetDescription}
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
     </section>
   );
 }
@@ -250,10 +295,18 @@ function FileSection({ file }: { file: MetricsFile }) {
 export function MetricsView({ files }: { files: MetricsFile[] }) {
   const { t } = useI18n();
   return (
-    <div className="stack">
-      <h1>{t.dashboard.title}</h1>
-      <p>{t.dashboard.intro}</p>
-      {files.length === 0 && <p className="card">{t.dashboard.empty}</p>}
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <PageTitle>{t.dashboard.title}</PageTitle>
+        <p className="text-muted-foreground">{t.dashboard.intro}</p>
+      </div>
+      {files.length === 0 && (
+        <Card size="sm">
+          <CardContent>
+            <p>{t.dashboard.empty}</p>
+          </CardContent>
+        </Card>
+      )}
       {files.map((f) => (
         <FileSection key={f.file} file={f} />
       ))}

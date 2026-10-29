@@ -1,12 +1,19 @@
 "use client";
 
+import { Check, TriangleAlert } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { format } from "@/i18n";
 import { CONSENT_VERSION, makeConsentRecord } from "@/storage/consent-gate";
 import { saveConsent } from "@/storage/db";
 import { useI18n } from "./I18nProvider";
+import { PageTitle } from "./PageTitle";
 
 export function ConsentForm() {
   const { locale, t } = useI18n();
@@ -33,51 +40,65 @@ export function ConsentForm() {
   }
 
   return (
-    <div className="stack">
-      <h1>{t.consent.title}</h1>
+    <div className="flex flex-col gap-5">
+      <PageTitle>{t.consent.title}</PageTitle>
       <p>{t.consent.intro}</p>
-      <section className="card card-tinted" aria-labelledby="consent-what">
-        <h2 id="consent-what">{t.consent.whatTitle}</h2>
-        <ul className="mt-2 list-disc space-y-2 pl-6">
-          <li>{t.consent.point1}</li>
-          <li>
-            <strong>{t.consent.point2}</strong>
-          </li>
-          <li>{t.consent.point3}</li>
-          <li>{t.consent.point4}</li>
-        </ul>
-      </section>
-      <section className="notice notice-warn" aria-labelledby="consent-important">
-        <h2 id="consent-important" className="!text-lg">
-          {t.consent.notMedicalTitle}
-        </h2>
-        <p>{t.consent.notMedical}</p>
-      </section>
-      <div className="field-check">
-        <input
-          id={checkId}
-          type="checkbox"
-          checked={checked}
-          onChange={(e) => {
-            setChecked(e.target.checked);
-            if (e.target.checked) setError(null);
-          }}
-          aria-describedby={error ? `${checkId}-err` : undefined}
-        />
-        <label htmlFor={checkId}>{t.consent.checkbox}</label>
-      </div>
+      <Card aria-labelledby="consent-what" role="region">
+        <CardHeader>
+          <CardTitle>
+            <h2 id="consent-what">{t.consent.whatTitle}</h2>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ul className="list-disc space-y-2 pl-5">
+            <li>{t.consent.point1}</li>
+            <li>
+              <strong className="font-semibold">{t.consent.point2}</strong>
+            </li>
+            <li>{t.consent.point3}</li>
+            <li>{t.consent.point4}</li>
+          </ul>
+        </CardContent>
+      </Card>
+      <Alert variant="warning" role="note" aria-labelledby="consent-important">
+        <TriangleAlert aria-hidden="true" />
+        <AlertTitle>
+          <h2 id="consent-important" className="font-semibold">{t.consent.notMedicalTitle}</h2>
+        </AlertTitle>
+        <AlertDescription>{t.consent.notMedical}</AlertDescription>
+      </Alert>
+      <Card size="sm">
+        <CardContent>
+          <div className="flex items-start gap-3">
+            <Checkbox
+              id={checkId}
+              checked={checked}
+              onCheckedChange={(v) => {
+                setChecked(v === true);
+                if (v === true) setError(null);
+              }}
+              aria-describedby={error ? `${checkId}-err` : undefined}
+              className="mt-0.5"
+            />
+            <Label htmlFor={checkId} className="min-h-8 cursor-pointer items-start font-normal">
+              {t.consent.checkbox}
+            </Label>
+          </div>
+        </CardContent>
+      </Card>
       {error && (
-        <p id={`${checkId}-err`} role="alert" className="notice notice-danger">
-          {error}
-        </p>
+        <Alert variant="destructive" id={`${checkId}-err`} role="alert">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       )}
-      <button type="button" className="btn btn-primary btn-big" onClick={agree} disabled={busy}>
+      <Button type="button" size="lg" className="w-full" onClick={agree} disabled={busy}>
+        <Check aria-hidden="true" />
         {t.consent.agree}
-      </button>
-      <Link href={`/${locale}/`} className="btn btn-secondary">
-        {t.consent.decline}
-      </Link>
-      <p className="text-sm text-muted">{format(t.consent.version, { version: CONSENT_VERSION })}</p>
+      </Button>
+      <Button asChild variant="ghost" size="lg" className="self-center">
+        <Link href={`/${locale}/`}>{t.consent.decline}</Link>
+      </Button>
+      <p className="text-sm text-muted-foreground">{format(t.consent.version, { version: CONSENT_VERSION })}</p>
     </div>
   );
 }

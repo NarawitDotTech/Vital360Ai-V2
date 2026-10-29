@@ -14,10 +14,10 @@ function inlineSvg(): string {
     .replace(/class="s(\d+)"/g, 'class="v360-s$1"')
     .replace(/<svg\b([^>]*)>/, (_m, attrs: string) => {
       const cleaned = attrs.replace(/\s(width|height)="[^"]*"/g, "");
-      return `<svg${cleaned} width="48" height="48" aria-hidden="true" focusable="false">`;
+      return `<svg${cleaned} width="32" height="32" aria-hidden="true" focusable="false">`;
     });
 }
 
 export function BrandLogo() {
-  return <span className="inline-flex shrink-0 rounded-xl overflow-hidden" dangerouslySetInnerHTML={{ __html: inlineSvg() }} />;
+  return <span className="inline-flex shrink-0 overflow-hidden rounded-lg" dangerouslySetInnerHTML={{ __html: inlineSvg() }} />;
 }

@@ -1,8 +1,11 @@
 "use client";
 
+import { Camera, ImageUp, Loader2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useI18n } from "@/components/I18nProvider";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { fileToImageData, openCamera, stopStream, toImageData } from "@/capture/camera";
 import { checkImage } from "@/capture/quality";
 import { setSessionResult } from "@/session/results";
@@ -115,7 +118,7 @@ export function SkinCapture() {
   }
 
   return (
-    <div className="stack">
+    <div className="flex flex-col gap-5">
       <CaptureSteps title={t.skin.title} steps={[t.skin.step1, t.skin.step2, t.skin.step3]} spoken={t.skin.spoken} />
 
       {cameraOn && (
@@ -127,30 +130,41 @@ export function SkinCapture() {
       )}
 
       {message && (
-        <p role="alert" className="notice notice-warn text-lg font-semibold">
-          {message}
-        </p>
+        <Alert variant="warning" role="alert">
+          <AlertDescription className="font-medium">{message}</AlertDescription>
+        </Alert>
       )}
-      {busy && <p role="status">{t.skin.analyzing}</p>}
+      {busy && (
+        <Alert role="status">
+          <Loader2 aria-hidden="true" className="animate-spin" />
+          <AlertDescription>{t.skin.analyzing}</AlertDescription>
+        </Alert>
+      )}
 
-      <div className="stack-sm">
+      <div className="flex flex-col gap-3">
         {cameraOn ? (
-          <>
-            <button ref={primaryRef} type="button" className="btn btn-primary btn-big" onClick={takePhoto} disabled={busy}>
-              <span aria-hidden="true">📷</span> {t.skin.takePhoto}
-            </button>
-            <button type="button" className="btn btn-secondary" onClick={stopCamera} disabled={busy}>
-              {t.skin.stopCamera}
-            </button>
-          </>
+          <Button ref={primaryRef} type="button" size="lg" className="w-full" onClick={takePhoto} disabled={busy}>
+            <Camera aria-hidden="true" />
+            {t.skin.takePhoto}
+          </Button>
         ) : (
-          <button ref={primaryRef} type="button" className="btn btn-primary btn-big" onClick={startCamera} disabled={busy}>
-            <span aria-hidden="true">📷</span> {t.skin.openCamera}
-          </button>
+          <Button ref={primaryRef} type="button" size="lg" className="w-full" onClick={startCamera} disabled={busy}>
+            <Camera aria-hidden="true" />
+            {t.skin.openCamera}
+          </Button>
         )}
-        <button type="button" className="btn btn-secondary" onClick={() => fileRef.current?.click()} disabled={busy}>
-          {t.skin.chooseFile}
-        </button>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {cameraOn && (
+            <Button type="button" variant="outline" size="lg" onClick={stopCamera} disabled={busy}>
+              <X aria-hidden="true" />
+              {t.skin.stopCamera}
+            </Button>
+          )}
+          <Button type="button" variant="outline" size="lg" onClick={() => fileRef.current?.click()} disabled={busy}>
+            <ImageUp aria-hidden="true" />
+            {t.skin.chooseFile}
+          </Button>
+        </div>
         <input
           ref={fileRef}
           type="file"

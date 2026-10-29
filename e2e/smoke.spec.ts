@@ -18,7 +18,7 @@ test("consent -> skin photo upload -> result with disclaimer", async ({ page }) 
   await page.goto("/th/");
   await expect(page.getByRole("heading", { level: 1 })).toContainText("คัดกรองสุขภาพ");
 
-  await page.getByRole("link", { name: "เริ่มตรวจ" }).click();
+  await page.getByRole("link", { name: "เริ่มคัดกรอง" }).click();
   await expect(page).toHaveURL(/\/th\/consent\/$/);
 
   // must tick the box first

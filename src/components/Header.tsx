@@ -5,15 +5,15 @@ import type { Dict, Locale } from "@/i18n";
 
 export function Header({ locale, t }: { locale: Locale; t: Dict }) {
   return (
-    <header className="border-b-4 border-brand bg-white">
+    <header className="border-b bg-card">
       <div className="mx-auto flex max-w-2xl items-center justify-between gap-3 px-4 py-2">
         <Link
           href={`/${locale}/`}
           aria-label={t.common.brandHome}
-          className="flex min-h-12 items-center gap-3 text-ink no-underline"
+          className="flex min-h-12 items-center gap-2.5 rounded-lg text-foreground no-underline"
         >
           <BrandLogo />
-          <span className="text-xl font-extrabold leading-tight">{t.meta.appName}</span>
+          <span className="text-lg leading-tight font-semibold">{t.meta.appName}</span>
         </Link>
         <LanguageSwitch />
       </div>

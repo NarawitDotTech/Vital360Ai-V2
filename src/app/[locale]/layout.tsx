@@ -48,15 +48,18 @@ export default async function LocaleLayout({ children, params }: Props) {
   return (
     <html lang={locale}>
       <body>
-        <a className="skip-link" href="#main">
+        <a
+          className="sr-only rounded-lg bg-primary px-4 py-3 text-primary-foreground focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50"
+          href="#main"
+        >
           {t.common.skipToContent}
         </a>
         <I18nProvider locale={locale} dict={t}>
           <Header locale={locale} t={t} />
-          <main id="main" className="page flex-1">
+          <main id="main" className="mx-auto w-full max-w-2xl flex-1 px-4 pt-6 pb-10">
             {children}
           </main>
-          <footer className="mx-auto w-full max-w-2xl px-4 pb-6 text-sm text-muted">{t.common.footerNote}</footer>
+          <footer className="mx-auto w-full max-w-2xl px-4 pb-8 text-sm text-muted-foreground">{t.common.footerNote}</footer>
           <ServiceWorkerRegister />
         </I18nProvider>
       </body>

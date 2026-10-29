@@ -1,13 +1,17 @@
 "use client";
 
+import { Check, History, Loader2, RotateCcw, Save } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { Prediction } from "@/inference/types";
 import { sessionParts } from "@/session/results";
 import { useSessionResults } from "@/session/useSession";
 import { addHistory } from "@/storage/db";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { Disclaimer } from "./Disclaimer";
 import { useI18n } from "./I18nProvider";
+import { PageTitle } from "./PageTitle";
 import { ResultCard, resultSpeech } from "./ResultCard";
 import { SpeakButton } from "./SpeakButton";
 import { UrgentGuide } from "./UrgentGuide";
@@ -40,12 +44,12 @@ export function ResultsView() {
 
   if (parts.length === 0) {
     return (
-      <div className="stack">
-        <h1>{t.results.title}</h1>
+      <div className="flex flex-col gap-5">
+        <PageTitle>{t.results.title}</PageTitle>
         <p>{t.results.empty}</p>
-        <Link href={`/${locale}/capture/`} className="btn btn-primary btn-big">
-          {t.results.startCheck}
-        </Link>
+        <Button asChild size="lg" className="w-full">
+          <Link href={`/${locale}/capture/`}>{t.results.startCheck}</Link>
+        </Button>
       </div>
     );
   }
@@ -75,17 +79,24 @@ export function ResultsView() {
   }
 
   return (
-    <div className="stack">
-      <h1>{t.results.title}</h1>
+    <div className="flex flex-col gap-5">
+      <PageTitle>{t.results.title}</PageTitle>
 
-      {fusing && <p role="status" className="notice">{t.results.combinedPending}</p>}
+      {fusing && (
+        <Alert role="status">
+          <Loader2 aria-hidden="true" className="animate-spin" />
+          <AlertDescription>{t.results.combinedPending}</AlertDescription>
+        </Alert>
+      )}
       {fusion && <p className="text-lg font-semibold">{t.results.combinedTitle}</p>}
       <ResultCard p={primary} />
       <SpeakButton text={resultSpeech(primary, t)} />
 
       {fusion && (
-        <section className="stack-sm" aria-labelledby="each-title">
-          <h2 id="each-title">{t.results.eachTitle}</h2>
+        <section className="flex flex-col gap-3" aria-labelledby="each-title">
+          <h2 id="each-title" className="text-xl font-semibold">
+            {t.results.eachTitle}
+          </h2>
           {parts.map((p) => (
             <ResultCard key={p.modality} p={p} headingLevel={3} />
           ))}
@@ -95,26 +106,35 @@ export function ResultsView() {
       <UrgentGuide />
       <Disclaimer />
 
-      <div className="stack-sm">
-        <button type="button" className="btn btn-primary" onClick={save} disabled={saveState === "saving" || saveState === "saved"}>
-          {saveState === "saved" ? `✓ ${t.results.saved}` : t.results.save}
-        </button>
+      <div className="flex flex-col gap-3">
+        <Button type="button" size="lg" className="w-full" onClick={save} disabled={saveState === "saving" || saveState === "saved"}>
+          {saveState === "saved" ? <Check aria-hidden="true" /> : <Save aria-hidden="true" />}
+          {saveState === "saved" ? t.results.saved : t.results.save}
+        </Button>
         {saveState === "error" && (
-          <p role="alert" className="notice notice-danger">
-            {t.results.saveFailed}
-          </p>
+          <Alert variant="destructive" role="alert">
+            <AlertDescription>{t.results.saveFailed}</AlertDescription>
+          </Alert>
         )}
         {saveState === "saved" && (
           <p role="status" className="sr-only">
             {t.results.saved}
           </p>
         )}
-        <Link href={`/${locale}/capture/`} className="btn btn-secondary">
-          {t.results.again}
-        </Link>
-        <Link href={`/${locale}/history/`} className="btn btn-secondary">
-          {t.results.viewHistory}
-        </Link>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Button asChild variant="outline" size="lg">
+            <Link href={`/${locale}/capture/`}>
+              <RotateCcw aria-hidden="true" />
+              {t.results.again}
+            </Link>
+          </Button>
+          <Button asChild variant="outline" size="lg">
+            <Link href={`/${locale}/history/`}>
+              <History aria-hidden="true" />
+              {t.results.viewHistory}
+            </Link>
+          </Button>
+        </div>
       </div>
     </div>
   );

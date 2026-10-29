@@ -11,3 +11,13 @@
 - Dashboard reads `eval/metrics/*.json` at build time (schema in `eval/metrics/README.md`); `sample.json` is invented and flagged `isSample`.
 - E2E: `playwright.config.ts` picks the pre-installed Chromium (build 1243 vs the 1248 Playwright 1.64.1 expects) via `PLAYWRIGHT_BROWSERS_PATH` or `CHROMIUM_PATH`. Run `npm run build` first; tests serve `out/` with `scripts/serve-out.mjs`.
 - Not done: spoken prompts are manual (button), no usability test with older users, no real-device camera/mic test, Lighthouse not run.
+
+## shadcn/ui restyle (decisions)
+- CLI: `npx shadcn@4.23.0 init -t next -b radix -p vega` (the CLI requires a preset; vega = classic look, neutral base, CSS variables, lucide). Added button, card, badge, alert, separator, progress, checkbox, label, accordion, table into `src/components/ui`. Deps pinned exact: radix-ui, class-variance-authority, lucide-react, tw-animate-css, shadcn (for `shadcn/tailwind.css`), clsx, tailwind-merge.
+- The CLI wires `cn` (shadcn's own package) in `lib/utils`; it added ~2 KB gz over clsx + tailwind-merge, so `lib/utils.ts` uses those and `cn` was removed.
+- Theme in `globals.css`: primary #0b6e72, ring #0f8f94 (teal #23c2c6 darkened to >= 3:1 as a focus ring; #23c2c6 itself fails), `--input` #78898f for control outlines (>= 3:1), radius 0.75rem, base 17px (106.25%). Light only; `.dark` block removed, `@custom-variant dark` kept so inherited `dark:` classes stay inert. Tier colours are `--tier-*` tokens (soft tint + icon + word).
+- Edited the generated ui files: every button size is h-12 (>= 48px at 17px root); outline uses `border-input`; destructive is solid; Alert has `success`/`warning` variants and no default `role` (callers set `note`/`status`/`alert`); Card uses a 1px border + shadow-sm; Checkbox is size-7.
+- Alerts: demo notice = amber `MockNotice`, urgent guide = red-tinted Alert (all items kept), disclaimer = muted Alert. Details accordion lives in `ResultDetails`, loaded with `next/dynamic` (collapsed by default) to keep results initial JS under 200 KB. `MockNotice` split from `ResultCard` so history does not bundle the accordion.
+- Wording: th "เริ่มคัดกรอง", "ประวัติการคัดกรอง" and the other screening nouns/verbs (kept "ตรวจ" for verify/doctor's exam); en "Screening history", "Screen something else", etc. Key parity kept. E2E link name updated to "เริ่มคัดกรอง".
+- Removed dead CSS (.btn, .card, .notice, .tier, table.data, details, progress, .stack, .page).
+- Gzip of all scripts in each page's HTML (incl. the ~39 KB nomodule polyfill chunk, as in the earlier report): before 174.5-179.3 KB, after 187.3-194.9 KB (results is the max).

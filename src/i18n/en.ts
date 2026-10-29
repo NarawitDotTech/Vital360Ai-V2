@@ -34,8 +34,8 @@ export const en: Dict = {
     intro:
       "Use your phone's camera and microphone to screen your skin, lung sounds and breathing, one step at a time. Your data stays on your device.",
     start: "Start screening",
-    startHint: "About 2 minutes per check",
-    history: "History",
+    startHint: "About 2 minutes per screening",
+    history: "Screening history",
     dashboard: "System evaluation",
     deleteData: "Delete my data",
     moreTitle: "More",
@@ -67,8 +67,8 @@ export const en: Dict = {
     link: "Go to consent page",
   },
   capture: {
-    title: "Choose what to check",
-    intro: "Do one at a time. You do not need to do all of them. The more you check, the fuller the combined result.",
+    title: "Choose what to screen",
+    intro: "Do one at a time. You do not need to do all of them. The more you screen, the fuller the combined result.",
     skin: "Photo of skin",
     skinHint: "A spot, rash or mole you want checked",
     audio: "Record cough / breathing",
@@ -77,7 +77,7 @@ export const en: Dict = {
     respHint: "Film your chest for 20 seconds",
     done: "Done",
     viewResults: "See results",
-    noneYet: "Nothing checked yet",
+    noneYet: "Nothing screened yet",
     speak: "Hear the instructions",
   },
   skin: {
@@ -136,10 +136,10 @@ export const en: Dict = {
   results: {
     title: "Early screening result",
     empty: "No results yet.",
-    startCheck: "Choose what to check",
+    startCheck: "Choose what to screen",
     combinedTitle: "Combined result",
     combinedPending: "Combining results…",
-    eachTitle: "Each check",
+    eachTitle: "Each screening",
     nextStep: "What to do next",
     details: "Details (for the curious)",
     confidence: "System confidence {pct}%",
@@ -150,7 +150,7 @@ export const en: Dict = {
     save: "Save to history",
     saved: "Saved",
     saveFailed: "Could not save. Please try again.",
-    again: "Check something else",
+    again: "Screen something else",
     viewHistory: "See history",
     mockTitle: "Demo model, not a real screening",
     mockText: "This result is made up to demonstrate the screens. It does not come from a tested model. Do not use it for any health decision.",
@@ -179,7 +179,7 @@ export const en: Dict = {
   tiers: {
     green: {
       word: "No concern seen",
-      sentence: "From this early check, we did not see signs of concern.",
+      sentence: "From this early screening, we did not see signs of concern.",
       next: "Look after your health as usual. If you have symptoms or feel unsure, see a doctor.",
     },
     amber: {
@@ -216,7 +216,7 @@ export const en: Dict = {
     ],
   },
   history: {
-    title: "History",
+    title: "Screening history",
     empty: "No history yet. Results you save with \"Save to history\" appear here.",
     note: "Only summaries are kept on this phone. No photos or sound.",
     deleteOne: "Delete this entry",
@@ -231,7 +231,7 @@ export const en: Dict = {
     title: "Delete my data",
     intro: "This clears everything the app stored on this phone. It cannot be undone.",
     lists: [
-      "Your consent and your history",
+      "Your consent and your screening history",
       "The result you are currently viewing",
       "Data the app saved for offline use (it will be downloaded again next time)",
     ],

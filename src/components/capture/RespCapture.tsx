@@ -1,8 +1,13 @@
 "use client";
 
+import { Loader2, Video, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useI18n } from "@/components/I18nProvider";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { format } from "@/i18n";
 import { openCamera, stopStream } from "@/capture/camera";
 import { checkMotionSignal } from "@/capture/quality";
@@ -113,7 +118,7 @@ export function RespCapture() {
   const box = { left: `${CHEST_BOX.x * 100}%`, top: `${CHEST_BOX.y * 100}%`, width: `${CHEST_BOX.w * 100}%`, height: `${CHEST_BOX.h * 100}%` };
 
   return (
-    <div className="stack">
+    <div className="flex flex-col gap-5">
       <CaptureSteps title={t.resp.title} steps={[t.resp.step1, t.resp.step2, t.resp.step3]} spoken={t.resp.spoken} />
 
       {cameraOn && (
@@ -125,37 +130,52 @@ export function RespCapture() {
       )}
 
       {message && (
-        <p role="alert" className="notice notice-warn text-lg font-semibold">
-          {message}
-        </p>
+        <Alert variant="warning" role="alert">
+          <AlertDescription className="font-medium">{message}</AlertDescription>
+        </Alert>
       )}
 
       {phase === "measuring" && (
-        <div className="card card-tinted stack-sm">
-          {/* announced at milestones only (start, 10 s, 5 s), not every second */}
-          <p role="status" className="sr-only">
-            {left <= 5 ? format(t.resp.remaining, { n: 5 }) : left <= 10 ? format(t.resp.remaining, { n: 10 }) : t.resp.measuring}
-          </p>
-          <p className="text-xl font-bold">{t.resp.measuring}</p>
-          <progress max={SECONDS} value={SECONDS - left} aria-label={t.resp.measuring} />
-          <p className="text-lg" aria-hidden="true">{format(t.resp.remaining, { n: left })}</p>
-        </div>
+        <Card size="sm">
+          <CardContent className="gap-3">
+            {/* announced at milestones only (start, 10 s, 5 s), not every second */}
+            <p role="status" className="sr-only">
+              {left <= 5 ? format(t.resp.remaining, { n: 5 }) : left <= 10 ? format(t.resp.remaining, { n: 10 }) : t.resp.measuring}
+            </p>
+            <p className="flex items-center gap-2 text-lg font-semibold">
+              <Video aria-hidden="true" className="size-5 text-primary" />
+              {t.resp.measuring}
+            </p>
+            <Progress value={((SECONDS - left) / SECONDS) * 100} aria-label={t.resp.measuring} />
+            <p className="text-muted-foreground" aria-hidden="true">
+              {format(t.resp.remaining, { n: left })}
+            </p>
+          </CardContent>
+        </Card>
       )}
-      {phase === "analysing" && <p role="status">{t.common.working}</p>}
+      {phase === "analysing" && (
+        <Alert role="status">
+          <Loader2 aria-hidden="true" className="animate-spin" />
+          <AlertDescription>{t.common.working}</AlertDescription>
+        </Alert>
+      )}
 
       {cameraOn ? (
-        <>
-          <button ref={primaryRef} type="button" className="btn btn-primary btn-big" onClick={measure} disabled={phase !== "idle"}>
-            <span aria-hidden="true">🎥</span> {t.resp.start}
-          </button>
-          <button type="button" className="btn btn-secondary" onClick={stopCamera}>
+        <div className="flex flex-col gap-3">
+          <Button ref={primaryRef} type="button" size="lg" className="w-full" onClick={measure} disabled={phase !== "idle"}>
+            <Video aria-hidden="true" />
+            {t.resp.start}
+          </Button>
+          <Button type="button" variant="outline" size="lg" onClick={stopCamera}>
+            <X aria-hidden="true" />
             {t.resp.stopCamera}
-          </button>
-        </>
+          </Button>
+        </div>
       ) : (
-        <button ref={primaryRef} type="button" className="btn btn-primary btn-big" onClick={startCamera}>
-          <span aria-hidden="true">🎥</span> {t.resp.openCamera}
-        </button>
+        <Button ref={primaryRef} type="button" size="lg" className="w-full" onClick={startCamera}>
+          <Video aria-hidden="true" />
+          {t.resp.openCamera}
+        </Button>
       )}
     </div>
   );

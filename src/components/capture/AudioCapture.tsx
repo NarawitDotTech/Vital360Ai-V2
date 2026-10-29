@@ -1,8 +1,13 @@
 "use client";
 
+import { Loader2, Mic, Square } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useI18n } from "@/components/I18nProvider";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { format } from "@/i18n";
 import { checkAmbient, checkRecording } from "@/capture/quality";
 import { setSessionResult } from "@/session/results";
@@ -84,40 +89,56 @@ export function AudioCapture() {
   }, [active]);
 
   return (
-    <div className="stack">
+    <div className="flex flex-col gap-5">
       <CaptureSteps title={t.audio.title} steps={[t.audio.step1, t.audio.step2, t.audio.step3]} spoken={t.audio.spoken} />
 
       {message && (
-        <p role="alert" className="notice notice-warn text-lg font-semibold">
-          {message}
-        </p>
+        <Alert variant="warning" role="alert">
+          <AlertDescription className="font-medium">{message}</AlertDescription>
+        </Alert>
       )}
 
-      {phase === "ambient" && <p role="status" className="notice">{t.audio.checking}</p>}
-      {phase === "recording" && (
-        <div className="card card-tinted stack-sm">
-          {/* announced at milestones only (start, 5 s left), not every second */}
-          <p role="status" className="sr-only">
-            {left <= 5 ? format(t.audio.remaining, { n: 5 }) : t.audio.recording}
-          </p>
-          <p className="text-xl font-bold">
-            <span aria-hidden="true">🎤 </span>
-            {t.audio.recording}
-          </p>
-          <progress max={RECORD_SEC} value={RECORD_SEC - left} aria-label={t.audio.recording} />
-          <p className="text-lg" aria-hidden="true">{format(t.audio.remaining, { n: left })}</p>
-        </div>
+      {phase === "ambient" && (
+        <Alert role="status">
+          <Loader2 aria-hidden="true" className="animate-spin" />
+          <AlertDescription>{t.audio.checking}</AlertDescription>
+        </Alert>
       )}
-      {phase === "analysing" && <p role="status">{t.common.working}</p>}
+      {phase === "recording" && (
+        <Card size="sm">
+          <CardContent className="gap-3">
+            {/* announced at milestones only (start, 5 s left), not every second */}
+            <p role="status" className="sr-only">
+              {left <= 5 ? format(t.audio.remaining, { n: 5 }) : t.audio.recording}
+            </p>
+            <p className="flex items-center gap-2 text-lg font-semibold">
+              <Mic aria-hidden="true" className="size-5 text-primary" />
+              {t.audio.recording}
+            </p>
+            <Progress value={((RECORD_SEC - left) / RECORD_SEC) * 100} aria-label={t.audio.recording} />
+            <p className="text-muted-foreground" aria-hidden="true">
+              {format(t.audio.remaining, { n: left })}
+            </p>
+          </CardContent>
+        </Card>
+      )}
+      {phase === "analysing" && (
+        <Alert role="status">
+          <Loader2 aria-hidden="true" className="animate-spin" />
+          <AlertDescription>{t.common.working}</AlertDescription>
+        </Alert>
+      )}
 
       {active ? (
-        <button ref={primaryRef} type="button" className="btn btn-secondary" onClick={stop}>
+        <Button ref={primaryRef} type="button" variant="outline" size="lg" className="w-full" onClick={stop}>
+          <Square aria-hidden="true" />
           {t.audio.stop}
-        </button>
+        </Button>
       ) : (
-        <button ref={primaryRef} type="button" className="btn btn-primary btn-big" onClick={start} disabled={phase === "analysing"}>
-          <span aria-hidden="true">🎤</span> {t.audio.start}
-        </button>
+        <Button ref={primaryRef} type="button" size="lg" className="w-full" onClick={start} disabled={phase === "analysing"}>
+          <Mic aria-hidden="true" />
+          {t.audio.start}
+        </Button>
       )}
     </div>
   );
