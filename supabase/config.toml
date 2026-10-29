@@ -1,0 +1,8 @@
+# Minimal config for `supabase start` / `supabase test db`. Link with: supabase link --project-ref <ref>
+project_id = "vitals360ai"
+
+[db]
+major_version = 17
+
+[functions.delete-account]
+verify_jwt = true
