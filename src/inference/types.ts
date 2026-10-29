@@ -39,6 +39,16 @@ export interface ModelEntry {
   /** max prob below this => "uncertain" */
   threshold: number;
   temperature: number;
+  /** Optional free-text rationale (thresholds, tier choices). Ignored at runtime. */
+  notes?: string;
+  /** Optional ONNX I/O hints; defaults are used when absent. */
+  onnx?: { input?: string; output?: string; imageSize?: number; frames?: number };
+}
+
+/** Shape of public/models/manifest.json. */
+export interface Manifest {
+  schemaVersion: 1;
+  models: ModelEntry[];
 }
 
 export interface InferenceApi {

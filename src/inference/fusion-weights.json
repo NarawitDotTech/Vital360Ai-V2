@@ -1,0 +1,16 @@
+{
+  "untrained": true,
+  "note": "PLACEHOLDER weights, NOT trained on any data. Hand-set so that more severe single-modality results push the fused risk up. Replace with weights fitted by the training notebook.",
+  "classes": ["low", "moderate", "high"],
+  "features": ["skin", "audio", "resp"],
+  "featureDoc": "Per modality: expected severity = P(amber) + 2*P(red) from the modality tiers, range 0..2.",
+  "missingPrior": { "skin": 0.3, "audio": 0.3, "resp": 0.2 },
+  "missingPriorDoc": "Value substituted for a modality that is absent or uncertain: a mildly-low prior (the population is mostly well), so a missing input neither raises nor erases risk.",
+  "bias": [1.5, 0.5, -2.0],
+  "weights": [
+    [-1.6, -1.6, -1.6],
+    [0.2, 0.2, 0.2],
+    [1.6, 1.6, 1.6]
+  ],
+  "weightsDoc": "weights[class][feature]"
+}

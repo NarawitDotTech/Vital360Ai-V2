@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "models": [
+    {
+      "id": "skin",
+      "version": "mock-0.1.0",
+      "url": null,
+      "sha256": null,
+      "bytes": 0,
+      "labels": [
+        "benign",
+        "needs-review",
+        "urgent-referral"
+      ],
+      "tiers": {
+        "benign": "green",
+        "needs-review": "amber",
+        "urgent-referral": "red"
+      },
+      "threshold": 0.55,
+      "temperature": 1.5,
+      "notes": "MOCK. Threshold 0.55 and temperature 1.5 are placeholders until calibrated on a held-out set (fit T by minimising NLL, pick threshold from the coverage/accuracy curve). Not a diagnosis."
+    },
+    {
+      "id": "audio",
+      "version": "mock-0.1.0",
+      "url": null,
+      "sha256": null,
+      "bytes": 0,
+      "labels": [
+        "normal",
+        "wheeze",
+        "crackle",
+        "cough-abnormal"
+      ],
+      "tiers": {
+        "normal": "green",
+        "wheeze": "amber",
+        "crackle": "amber",
+        "cough-abnormal": "amber"
+      },
+      "threshold": 0.5,
+      "temperature": 1.5,
+      "notes": "MOCK. No audio class is red on purpose: a short phone recording of lung sounds cannot establish urgency, so abnormal sounds only ever advise a clinician visit (amber). Threshold 0.5 (4 classes) and temperature 1.5 are placeholders."
+    },
+    {
+      "id": "resp",
+      "version": "mock-0.1.0",
+      "url": null,
+      "sha256": null,
+      "bytes": 0,
+      "labels": [
+        "normal",
+        "slow",
+        "fast"
+      ],
+      "tiers": {
+        "normal": "green",
+        "slow": "amber",
+        "fast": "amber"
+      },
+      "threshold": 0.5,
+      "temperature": 1.0,
+      "notes": "Real signal processing, no model. Label from breaths/min: <12 slow, 12-20 normal, >20 fast. Tier is escalated by rate in code (src/inference/resp.ts respTier): 12-20 green; 10-11 or 21-24 amber; <10 or >24 red (adult resting). The manifest tier here is the label default. Low signal quality => uncertain."
+    },
+    {
+      "id": "fusion",
+      "version": "mock-0.1.0",
+      "url": null,
+      "sha256": null,
+      "bytes": 0,
+      "labels": [
+        "low",
+        "moderate",
+        "high"
+      ],
+      "tiers": {
+        "low": "green",
+        "moderate": "amber",
+        "high": "red"
+      },
+      "threshold": 0.45,
+      "temperature": 1.0,
+      "notes": "Logistic regression over modality severities, weights in src/inference/fusion-weights.json (UNTRAINED placeholder). Threshold 0.45 for 3 classes."
+    }
+  ]
+}
