@@ -1,26 +1,173 @@
 @import "tailwindcss";
 
+/*
+  Brand: teal #23c2c6 is for accents and the icon only (it fails AA as text on white).
+  Text and buttons use dark teal #0b6e72 or darker. Contrast on white:
+    #0b6e72 ~ 5.9:1 (AA), #084a4d ~ 9.9:1 (AAA), #12202a ~ 16:1.
+*/
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --brand: #23c2c6;
+  --brand-dark: #0b6e72;
+  --brand-darker: #084a4d;
+  --ink: #12202a;
+  --muted: #3d4e5a;
+  --bg: #ffffff;
+  --surface: #eef8f8;
+  --line: #9fb4b8;
+  color-scheme: light;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-brand: var(--brand);
+  --color-brand-dark: var(--brand-dark);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-surface: var(--surface);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  /* 18px base; everything is rem so browser text scaling works */
+  font-size: 112.5%;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Noto Sans Thai", "Sarabun", "Leelawadee UI", Tahoma, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.65;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1 { font-size: 1.75rem; line-height: 1.35; font-weight: 700; }
+h2 { font-size: 1.35rem; line-height: 1.4; font-weight: 700; }
+h3 { font-size: 1.15rem; line-height: 1.4; font-weight: 700; }
+
+a { color: var(--brand-dark); text-underline-offset: 3px; }
+
+:focus-visible {
+  outline: 4px solid var(--brand-darker);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  background: var(--brand-darker);
+  color: #fff;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  z-index: 50;
+}
+.skip-link:focus { top: 1rem; }
+
+.page { width: 100%; max-width: 40rem; margin-inline: auto; padding: 1.25rem 1rem 3rem; }
+.stack > * + * { margin-top: 1.25rem; }
+.stack-sm > * + * { margin-top: 0.75rem; }
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  min-height: 3.5rem; /* >= 48px */
+  padding: 0.75rem 1.25rem;
+  border: 3px solid var(--brand-dark);
+  border-radius: 1rem;
+  font: inherit;
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  background: #fff;
+  color: var(--brand-dark);
+}
+.btn-primary { background: var(--brand-dark); color: #fff; }
+.btn-primary:hover { background: var(--brand-darker); border-color: var(--brand-darker); }
+.btn-secondary:hover { background: var(--surface); }
+.btn-danger { background: #991b1b; border-color: #991b1b; color: #fff; }
+.btn-danger:hover { background: #7f1d1d; border-color: #7f1d1d; }
+.btn-big { min-height: 5rem; font-size: 1.5rem; border-radius: 1.25rem; }
+.btn[disabled], .btn[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.btn-inline { display: inline-flex; width: auto; }
+
+.card {
+  border: 2px solid var(--line);
+  border-radius: 1rem;
+  padding: 1rem 1.1rem;
+  background: #fff;
+}
+.card-tinted { background: var(--surface); border-color: var(--brand-dark); }
+
+.notice {
+  border-left: 8px solid var(--brand-dark);
+  background: var(--surface);
+  padding: 0.9rem 1rem;
+  border-radius: 0.5rem;
+}
+.notice-warn { border-left-color: #92400e; background: #fef3c7; color: #3b1d05; }
+.notice-danger { border-left-color: #991b1b; background: #fee2e2; color: #450a0a; }
+
+.tier { border-radius: 1.25rem; border: 4px solid; padding: 1.1rem 1.1rem; }
+.tier-green { background: #dcfce7; border-color: #166534; color: #052e16; }
+.tier-amber { background: #fef3c7; border-color: #92400e; color: #3b1d05; }
+.tier-red { background: #fee2e2; border-color: #991b1b; color: #450a0a; }
+.tier-uncertain { background: #e5e7eb; border-color: #374151; color: #111827; }
+.tier-word { font-size: 2rem; font-weight: 800; line-height: 1.2; }
+
+.field-check { display: flex; gap: 0.9rem; align-items: flex-start; min-height: 3rem; }
+.field-check input { width: 1.9rem; height: 1.9rem; flex: none; margin-top: 0.15rem; accent-color: var(--brand-dark); }
+
+details > summary {
+  cursor: pointer;
+  min-height: 3rem;
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  color: var(--brand-dark);
+}
+
+.video-frame { position: relative; background: #000; border-radius: 1rem; overflow: hidden; aspect-ratio: 3 / 4; }
+.video-frame video { width: 100%; height: 100%; object-fit: cover; }
+.guide-box {
+  position: absolute;
+  border: 4px dashed #fff;
+  box-shadow: 0 0 0 2px #000, inset 0 0 0 2px #000;
+  border-radius: 0.75rem;
+  pointer-events: none;
+}
+.guide-label {
+  position: absolute;
+  left: 0; right: 0; bottom: 0.75rem;
+  text-align: center;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.7);
+  margin-inline: 1rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+}
+
+table.data { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+table.data th, table.data td { border: 1px solid var(--line); padding: 0.5rem 0.6rem; text-align: right; }
+table.data th:first-child, table.data td:first-child { text-align: left; }
+table.data thead th { background: var(--surface); }
+.table-scroll { overflow-x: auto; }
+
+progress { width: 100%; height: 1.25rem; accent-color: var(--brand-dark); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
