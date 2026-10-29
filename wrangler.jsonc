@@ -1,0 +1,10 @@
+// Cloudflare Workers: serve the static export in out/ (no server code, no OpenNext).
+// "name" must match the Worker name in the Cloudflare dashboard.
+{
+  "name": "vital360ai-v2",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./out",
+    "not_found_handling": "404-page"
+  }
+}
