@@ -9,7 +9,11 @@ export async function openCamera(facing: "environment" | "user" = "environment")
 }
 
 export function stopStream(stream: MediaStream | null | undefined): void {
-  stream?.getTracks().forEach((t) => t.stop());
+  if (!stream) return;
+  const stop = () => stream.getTracks().forEach((t) => t.stop());
+  // Some Android phones keep the flash lit after track.stop(): switch it off explicitly first.
+  if (getTorchSupport(stream)) void setTorch(stream, false).finally(stop);
+  else stop();
 }
 
 export type Facing = "environment" | "user";

@@ -145,7 +145,9 @@ export function SkinCapture() {
     }
     setBusy(true);
     setMessage(null);
-    await analyse(toImageData(v, v.videoWidth, v.videoHeight));
+    const img = toImageData(v, v.videoWidth, v.videoHeight);
+    stopCamera(); // photo taken: release the camera (and flash) before analysing
+    await analyse(img);
   }
 
   async function onFile(file: File | undefined) {

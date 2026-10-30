@@ -143,6 +143,7 @@ export function RespCapture() {
         import("@/inference"),
       ]);
       const { signal, fps } = await collectMotion({ video: v, seconds: SECONDS, frameMotion, onTick: setLeft, signal: ac.signal });
+      stopCamera(); // recording done: release the camera (and flash) before analysing
       const issue = checkMotionSignal(signal, fps);
       if (issue) {
         setMessage(t.quality[issue]);
