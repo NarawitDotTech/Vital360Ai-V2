@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "../globals.css";
+import { fontVars } from "../fonts";
 
 export const metadata: Metadata = {
   title: "Vitals 360 AI",
@@ -12,7 +13,7 @@ export const viewport: Viewport = { themeColor: "#0b6e72", width: "device-width"
 // "/" has no locale, so it is its own root layout (the locale layout is the root for everything else).
 export default function RootRedirectLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="th">
+    <html lang="th" className={fontVars}>
       <body>{children}</body>
     </html>
   );

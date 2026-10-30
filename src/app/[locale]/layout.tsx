@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import "../globals.css";
+import { fontVars } from "../fonts";
 import { Header } from "@/components/Header";
 import { I18nProvider } from "@/components/I18nProvider";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
@@ -46,7 +47,7 @@ export default async function LocaleLayout({ children, params }: Props) {
   if (!isLocale(locale)) notFound();
   const t = getDict(locale);
   return (
-    <html lang={locale}>
+    <html lang={locale} className={fontVars}>
       <body>
         <a
           className="sr-only rounded-lg bg-primary px-4 py-3 text-primary-foreground focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50"
