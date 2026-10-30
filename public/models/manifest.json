@@ -3,10 +3,10 @@
   "models": [
     {
       "id": "skin",
-      "version": "skin-v1.0.0",
-      "url": "/models/skin-v1.int8.onnx",
-      "sha256": "d36d823fdb1eff74ac149bd09b6247949f5d78c3499da2334753a4a86d4cabb6",
-      "bytes": 3813095,
+      "version": "skin-v1.1.0",
+      "url": "/models/skin-v1.1.int8.onnx",
+      "sha256": "5d0a17ae440cbdf6a72cfa33efd6a555f611542ae96d34e05acc2395373ba936",
+      "bytes": 3816939,
       "labels": [
         "melanoma",
         "basal-cell-carcinoma",
@@ -26,7 +26,8 @@
         "insect-bite",
         "herpes-zoster",
         "herpes-simplex",
-        "purpura"
+        "purpura",
+        "healthy-skin"
       ],
       "tiers": {
         "melanoma": "red",
@@ -47,18 +48,36 @@
         "insect-bite": "green",
         "herpes-zoster": "amber",
         "herpes-simplex": "green",
-        "purpura": "amber"
+        "purpura": "amber",
+        "healthy-skin": "green"
       },
       "threshold": 0.66,
-      "temperature": 0.8767,
-      "tierRule": "sum",
+      "temperature": 0.8682,
+      "tierRule": "thresholds",
+      "tierThresholds": {
+        "red": 0.185,
+        "amber": 0.335
+      },
+      "guard": {
+        "topIn": [
+          "nevus",
+          "seborrheic-keratosis"
+        ],
+        "watch": "melanoma",
+        "minWatchProb": 0.05
+      },
+      "darkSpot": {
+        "minArea": 0.03,
+        "relLuma": 0.45,
+        "maxLuma": 70
+      },
       "onnx": {
         "input": "input",
         "output": "logits",
         "imageSize": 224,
-        "normalization": "RGB, area-resize squash to 224x224, /255, ImageNet mean/std, NCHW float32"
+        "normalization": "RGB, centre-square crop (camera: the guide box), shrink to <= 448 px, area-resize to 224x224, /255, ImageNet mean/std, NCHW float32"
       },
-      "notes": "REAL baseline model (MobileNetV3-Large, fine-tuned, int8 static QDQ). 19 classes, tier = argmax of summed class probabilities (tierRule sum), uncertain when that tier probability < threshold. Temperature and threshold fitted on the validation split only. Screening aid, not a diagnosis. Tier assignments of the SCIN-derived classes are provisional and need clinician review. See docs/model-cards/skin-v1.md."
+      "notes": "REAL baseline model (MobileNetV3-Large, fine-tuned, int8 per-channel weights). 20 classes: 19 skin conditions + healthy-skin (green). tierRule 'thresholds' (sensitivity-first): red if P(red) >= tierThresholds.red, else amber if P(amber)+P(red) >= tierThresholds.amber, else amber if the top class is nevus/seborrheic keratosis, melanoma is the runner-up and P(melanoma) >= guard.minWatchProb (guard), or an enclosed very dark spot covers >= darkSpot.minArea of the box (darkSpot), else uncertain if P(green) < threshold, else green. T, thresholds fitted on the validation split only. Input is the centre square (guide box) of the photo. Screening aid, not a diagnosis. Tiers of SCIN-derived classes are provisional (clinician review needed). See docs/model-cards/skin-v1.md."
     },
     {
       "id": "audio",

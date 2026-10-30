@@ -1,0 +1,643 @@
+{
+ "generatedAt": "2026-10-30T09:35:17+00:00",
+ "model": "skin-v1.1.0",
+ "T": 0.8682308027319905,
+ "thresholds": {
+  "red": 0.185,
+  "amber": 0.335,
+  "uncertain_green": 0.66,
+  "guard_min_melanoma": 0.05,
+  "dark_spot_min_area": 0.03
+ },
+ "tuning_val": {
+  "n": 2723,
+  "n_red": 391,
+  "sens_red_shown": 0.9028132992327366,
+  "spec_red": 0.8267581475128645,
+  "flag_nongreen": 0.9066213921901528,
+  "flag_nongreen_amber_or_red": 0.9066213921901528,
+  "green_truth_flagged": 0.3303655107778819,
+  "healthy_n": 551,
+  "healthy_false_alarm": 0.012704174228675136,
+  "healthy_not_green": 0.012704174228675136,
+  "tier_acc_strict": 0.6885787734116783,
+  "coverage": 1.0,
+  "tier_acc_answered": 0.6885787734116783
+ },
+ "n_test": 2746,
+ "n_test_groups": 1676,
+ "source_counts": {
+  "ham10000": 1423,
+  "scin": 806,
+  "pad-ufes-20": 517
+ },
+ "n_healthy_test": 574,
+ "results": {
+  "after_without_dark_spot_rule": {
+   "overall": {
+    "n": 2746,
+    "n_red": 392,
+    "n_healthy": 574,
+    "tier_accuracy": 0.7571012381646031,
+    "tier_accuracy_answered": 0.7571012381646031,
+    "coverage": 1.0,
+    "urgent_sensitivity": 0.923469387755102,
+    "urgent_specificity": 0.8377230246389125,
+    "red_or_amber_of_red": 0.9795918367346939,
+    "flagged_amber_or_red_of_nongreen": 0.9255499153976311,
+    "healthy_false_alarm": 0.010452961672473868,
+    "healthy_not_green": 0.010452961672473868,
+    "healthy_top1": 0.9703832752613241,
+    "top1": 0.7516387472687546,
+    "top3": 0.9235251274581209,
+    "top1_lesion19": 0.6938305709023941,
+    "top3_lesion19": 0.9069981583793738
+   },
+   "pad-ufes-20": {
+    "n": 517,
+    "n_red": 172,
+    "n_healthy": 181,
+    "tier_accuracy": 0.8781431334622823,
+    "tier_accuracy_answered": 0.8781431334622823,
+    "coverage": 1.0,
+    "urgent_sensitivity": 0.9186046511627907,
+    "urgent_specificity": 0.8898550724637682,
+    "red_or_amber_of_red": 0.9767441860465116,
+    "flagged_amber_or_red_of_nongreen": 0.9776119402985075,
+    "healthy_false_alarm": 0.016574585635359115,
+    "healthy_not_green": 0.016574585635359115,
+    "healthy_top1": 0.9834254143646409,
+    "top1": 0.7794970986460348,
+    "top3": 0.965183752417795,
+    "top1_lesion19": 0.6696428571428571,
+    "top3_lesion19": 0.9523809523809523
+   },
+   "scin": {
+    "n": 806,
+    "n_red": 3,
+    "n_healthy": 393,
+    "tier_accuracy": 0.9193548387096774,
+    "tier_accuracy_answered": 0.9193548387096774,
+    "coverage": 1.0,
+    "urgent_sensitivity": 0.0,
+    "urgent_specificity": 0.9975093399750934,
+    "red_or_amber_of_red": 0.6666666666666666,
+    "flagged_amber_or_red_of_nongreen": 0.49019607843137253,
+    "healthy_false_alarm": 0.007633587786259542,
+    "healthy_not_green": 0.007633587786259542,
+    "healthy_top1": 0.9643765903307888,
+    "top1": 0.6538461538461539,
+    "top3": 0.8163771712158809,
+    "top1_lesion19": 0.3583535108958838,
+    "top3_lesion19": 0.6561743341404358
+   }
+  },
+  "before": {
+   "overall": {
+    "n": 2746,
+    "n_red": 392,
+    "n_healthy": 574,
+    "tier_accuracy": 0.718135469774217,
+    "tier_accuracy_answered": 0.8463519313304722,
+    "coverage": 0.8485069191551348,
+    "urgent_sensitivity": 0.6020408163265306,
+    "urgent_specificity": 0.9783347493627867,
+    "red_or_amber_of_red": 0.6479591836734694,
+    "flagged_amber_or_red_of_nongreen": 0.6192893401015228,
+    "healthy_false_alarm": 0.30313588850174217,
+    "healthy_not_green": 0.5278745644599303,
+    "healthy_top1": 0.0,
+    "top1": 0.557538237436271,
+    "top3": 0.7188638018936635,
+    "top1_lesion19": 0.7048802946593001,
+    "top3_lesion19": 0.9088397790055248
+   },
+   "pad-ufes-20": {
+    "n": 517,
+    "n_red": 172,
+    "n_healthy": 181,
+    "tier_accuracy": 0.504835589941973,
+    "tier_accuracy_answered": 0.6041666666666666,
+    "coverage": 0.8355899419729207,
+    "urgent_sensitivity": 0.7325581395348837,
+    "urgent_specificity": 0.9478260869565217,
+    "red_or_amber_of_red": 0.8197674418604651,
+    "flagged_amber_or_red_of_nongreen": 0.8246268656716418,
+    "healthy_false_alarm": 0.6850828729281768,
+    "healthy_not_green": 0.8895027624309392,
+    "healthy_top1": 0.0,
+    "top1": 0.42940038684719534,
+    "top3": 0.6112185686653772,
+    "top1_lesion19": 0.6607142857142857,
+    "top3_lesion19": 0.9404761904761905
+   },
+   "scin": {
+    "n": 806,
+    "n_red": 3,
+    "n_healthy": 393,
+    "tier_accuracy": 0.7295285359801489,
+    "tier_accuracy_answered": 0.8672566371681416,
+    "coverage": 0.8411910669975186,
+    "urgent_sensitivity": 0.0,
+    "urgent_specificity": 1.0,
+    "red_or_amber_of_red": 0.0,
+    "flagged_amber_or_red_of_nongreen": 0.11764705882352941,
+    "healthy_false_alarm": 0.1272264631043257,
+    "healthy_not_green": 0.361323155216285,
+    "healthy_top1": 0.0,
+    "top1": 0.17369727047146402,
+    "top3": 0.337468982630273,
+    "top1_lesion19": 0.3389830508474576,
+    "top3_lesion19": 0.6585956416464891
+   },
+   "ham10000": {
+    "n": 1423,
+    "n_red": 217,
+    "n_healthy": 0,
+    "tier_accuracy": 0.7891777933942375,
+    "tier_accuracy_answered": 0.9204918032786885,
+    "coverage": 0.8573436401967673,
+    "urgent_sensitivity": 0.5069124423963134,
+    "urgent_specificity": 0.972636815920398,
+    "red_or_amber_of_red": 0.5207373271889401,
+    "flagged_amber_or_red_of_nongreen": 0.5110294117647058,
+    "healthy_false_alarm": null,
+    "healthy_not_green": null,
+    "healthy_top1": null,
+    "top1": 0.8215038650737878,
+    "top3": 0.9739985945186226,
+    "top1_lesion19": 0.8215038650737878,
+    "top3_lesion19": 0.9739985945186226
+   }
+  },
+  "after": {
+   "overall": {
+    "n": 2746,
+    "n_red": 392,
+    "n_healthy": 574,
+    "tier_accuracy": 0.7021121631463948,
+    "tier_accuracy_answered": 0.7021121631463948,
+    "coverage": 1.0,
+    "urgent_sensitivity": 0.923469387755102,
+    "urgent_specificity": 0.8377230246389125,
+    "red_or_amber_of_red": 0.9795918367346939,
+    "flagged_amber_or_red_of_nongreen": 0.9272419627749577,
+    "healthy_false_alarm": 0.010452961672473868,
+    "healthy_not_green": 0.010452961672473868,
+    "healthy_top1": 0.9703832752613241,
+    "top1": 0.7516387472687546,
+    "top3": 0.9235251274581209,
+    "top1_lesion19": 0.6938305709023941,
+    "top3_lesion19": 0.9069981583793738
+   },
+   "pad-ufes-20": {
+    "n": 517,
+    "n_red": 172,
+    "n_healthy": 181,
+    "tier_accuracy": 0.8704061895551257,
+    "tier_accuracy_answered": 0.8704061895551257,
+    "coverage": 1.0,
+    "urgent_sensitivity": 0.9186046511627907,
+    "urgent_specificity": 0.8898550724637682,
+    "red_or_amber_of_red": 0.9767441860465116,
+    "flagged_amber_or_red_of_nongreen": 0.9776119402985075,
+    "healthy_false_alarm": 0.016574585635359115,
+    "healthy_not_green": 0.016574585635359115,
+    "healthy_top1": 0.9834254143646409,
+    "top1": 0.7794970986460348,
+    "top3": 0.965183752417795,
+    "top1_lesion19": 0.6696428571428571,
+    "top3_lesion19": 0.9523809523809523
+   },
+   "scin": {
+    "n": 806,
+    "n_red": 3,
+    "n_healthy": 393,
+    "tier_accuracy": 0.9106699751861043,
+    "tier_accuracy_answered": 0.9106699751861043,
+    "coverage": 1.0,
+    "urgent_sensitivity": 0.0,
+    "urgent_specificity": 0.9975093399750934,
+    "red_or_amber_of_red": 0.6666666666666666,
+    "flagged_amber_or_red_of_nongreen": 0.5098039215686274,
+    "healthy_false_alarm": 0.007633587786259542,
+    "healthy_not_green": 0.007633587786259542,
+    "healthy_top1": 0.9643765903307888,
+    "top1": 0.6538461538461539,
+    "top3": 0.8163771712158809,
+    "top1_lesion19": 0.3583535108958838,
+    "top3_lesion19": 0.6561743341404358
+   },
+   "ham10000": {
+    "n": 1423,
+    "n_red": 217,
+    "n_healthy": 0,
+    "tier_accuracy": 0.5228390723822909,
+    "tier_accuracy_answered": 0.5228390723822909,
+    "coverage": 1.0,
+    "urgent_sensitivity": 0.9400921658986175,
+    "urgent_specificity": 0.7164179104477612,
+    "red_or_amber_of_red": 0.9861751152073732,
+    "flagged_amber_or_red_of_nongreen": 0.9558823529411765,
+    "healthy_false_alarm": null,
+    "healthy_not_green": null,
+    "healthy_top1": null,
+    "top1": 0.7969079409697821,
+    "top3": 0.9690794096978215,
+    "top1_lesion19": 0.7969079409697821,
+    "top3_lesion19": 0.9690794096978215
+   }
+  },
+  "ci95": {
+   "before": {
+    "overall": {
+     "tier_accuracy": [
+      0.6974869463634565,
+      0.7387311067377051
+     ],
+     "urgent_sensitivity": [
+      0.5397636307657859,
+      0.6589247036023711
+     ],
+     "urgent_specificity": [
+      0.9709161228819437,
+      0.9853653221599765
+     ],
+     "healthy_false_alarm": [
+      0.2522251965869165,
+      0.3492950697780828
+     ],
+     "top1": [
+      0.5338978301027749,
+      0.5837077213479176
+     ],
+     "top3": [
+      0.6965857667786464,
+      0.7421225994033218
+     ]
+    },
+    "pad-ufes-20": {
+     "tier_accuracy": [
+      0.4601074697613599,
+      0.5537417191627717
+     ],
+     "urgent_sensitivity": [
+      0.6587371219674311,
+      0.8044145690312738
+     ],
+     "urgent_specificity": [
+      0.9212081339712919,
+      0.9719911060871049
+     ],
+     "healthy_false_alarm": [
+      0.5933365292425695,
+      0.7700271084337349
+     ],
+     "top1": [
+      0.39038577796406604,
+      0.47212020561820517
+     ],
+     "top3": [
+      0.5711462550607287,
+      0.6538181946276916
+     ]
+    },
+    "scin": {
+     "tier_accuracy": [
+      0.6898916277765719,
+      0.771581280606797
+     ],
+     "urgent_sensitivity": [
+      0.0,
+      0.0
+     ],
+     "urgent_specificity": [
+      1.0,
+      1.0
+     ],
+     "healthy_false_alarm": [
+      0.09090320301460197,
+      0.16299242424242422
+     ],
+     "top1": [
+      0.14474802140488288,
+      0.20509786532237986
+     ],
+     "top3": [
+      0.2952505540507264,
+      0.3770205242613378
+     ]
+    }
+   },
+   "after": {
+    "overall": {
+     "tier_accuracy": [
+      0.679846222259359,
+      0.7251985042218184
+     ],
+     "urgent_sensitivity": [
+      0.8906510596753854,
+      0.9528466432645897
+     ],
+     "urgent_specificity": [
+      0.8180477091091541,
+      0.8557255094448162
+     ],
+     "healthy_false_alarm": [
+      0.0035199041471048517,
+      0.019263400350365455
+     ],
+     "top1": [
+      0.7324853412382752,
+      0.7697063015372085
+     ],
+     "top3": [
+      0.9114601883044973,
+      0.9349779086457876
+     ]
+    },
+    "pad-ufes-20": {
+     "tier_accuracy": [
+      0.8380955835706669,
+      0.90382905770974
+     ],
+     "urgent_sensitivity": [
+      0.8670124113475177,
+      0.9625066489361702
+     ],
+     "urgent_specificity": [
+      0.85158080060835,
+      0.9257405693126591
+     ],
+     "healthy_false_alarm": [
+      0.0,
+      0.03704196217494089
+     ],
+     "top1": [
+      0.7430828990542366,
+      0.820729916258811
+     ],
+     "top3": [
+      0.9499072356215214,
+      0.978969198824713
+     ]
+    },
+    "scin": {
+     "tier_accuracy": [
+      0.8866733539936937,
+      0.9318181818181818
+     ],
+     "urgent_sensitivity": [
+      0.0,
+      0.0
+     ],
+     "urgent_specificity": [
+      0.9938848696614726,
+      1.0
+     ],
+     "healthy_false_alarm": [
+      0.0,
+      0.015874068460275354
+     ],
+     "top1": [
+      0.6178117622271084,
+      0.6894942685168297
+     ],
+     "top3": [
+      0.7890022644427261,
+      0.8439026102538044
+     ]
+    }
+   }
+  }
+ },
+ "per_class": {
+  "melanoma": {
+   "tier": "red",
+   "support": 166,
+   "sensitivity": 0.6867469879518072,
+   "specificity": 0.9585271317829457,
+   "f1": 0.5891472868217055
+  },
+  "basal-cell-carcinoma": {
+   "tier": "red",
+   "support": 196,
+   "sensitivity": 0.7704081632653061,
+   "specificity": 0.976078431372549,
+   "f1": 0.7401960784313726
+  },
+  "squamous-cell-carcinoma": {
+   "tier": "red",
+   "support": 30,
+   "sensitivity": 0.16666666666666666,
+   "specificity": 0.990058910162003,
+   "f1": 0.16129032258064516
+  },
+  "actinic-keratosis": {
+   "tier": "amber",
+   "support": 153,
+   "sensitivity": 0.5555555555555556,
+   "specificity": 0.9865021210952565,
+   "f1": 0.6227106227106228
+  },
+  "nevus": {
+   "tier": "green",
+   "support": 993,
+   "sensitivity": 0.8590130916414904,
+   "specificity": 0.9617798060467769,
+   "f1": 0.8917929952953476
+  },
+  "seborrheic-keratosis": {
+   "tier": "green",
+   "support": 192,
+   "sensitivity": 0.6354166666666666,
+   "specificity": 0.9678935003915426,
+   "f1": 0.6161616161616161
+  },
+  "dermatofibroma": {
+   "tier": "green",
+   "support": 17,
+   "sensitivity": 0.4117647058823529,
+   "specificity": 0.9952363503114694,
+   "f1": 0.37837837837837834
+  },
+  "vascular-lesion": {
+   "tier": "green",
+   "support": 22,
+   "sensitivity": 1.0,
+   "specificity": 0.9952276064610867,
+   "f1": 0.7719298245614035
+  },
+  "eczema": {
+   "tier": "green",
+   "support": 119,
+   "sensitivity": 0.5462184873949579,
+   "specificity": 0.9676437000380662,
+   "f1": 0.483271375464684
+  },
+  "contact-dermatitis": {
+   "tier": "green",
+   "support": 72,
+   "sensitivity": 0.2638888888888889,
+   "specificity": 0.9842931937172775,
+   "f1": 0.2857142857142857
+  },
+  "urticaria": {
+   "tier": "green",
+   "support": 49,
+   "sensitivity": 0.4489795918367347,
+   "specificity": 0.9888765294771968,
+   "f1": 0.43564356435643564
+  },
+  "psoriasis": {
+   "tier": "amber",
+   "support": 15,
+   "sensitivity": 0.3333333333333333,
+   "specificity": 0.9963383376052728,
+   "f1": 0.3333333333333333
+  },
+  "tinea": {
+   "tier": "green",
+   "support": 25,
+   "sensitivity": 0.12,
+   "specificity": 0.9952223447262036,
+   "f1": 0.14634146341463414
+  },
+  "acne": {
+   "tier": "green",
+   "support": 12,
+   "sensitivity": 0.5,
+   "specificity": 0.9937820043891734,
+   "f1": 0.3428571428571428
+  },
+  "folliculitis": {
+   "tier": "green",
+   "support": 27,
+   "sensitivity": 0.18518518518518517,
+   "specificity": 0.9933799190878999,
+   "f1": 0.19999999999999998
+  },
+  "insect-bite": {
+   "tier": "green",
+   "support": 39,
+   "sensitivity": 0.2564102564102564,
+   "specificity": 0.9900258588843739,
+   "f1": 0.2631578947368421
+  },
+  "herpes-zoster": {
+   "tier": "amber",
+   "support": 13,
+   "sensitivity": 0.3076923076923077,
+   "specificity": 0.9937797292352726,
+   "f1": 0.23529411764705882
+  },
+  "herpes-simplex": {
+   "tier": "green",
+   "support": 14,
+   "sensitivity": 0.07142857142857142,
+   "specificity": 0.9970717423133236,
+   "f1": 0.08695652173913043
+  },
+  "purpura": {
+   "tier": "amber",
+   "support": 18,
+   "sensitivity": 0.4444444444444444,
+   "specificity": 0.9967008797653959,
+   "f1": 0.45714285714285713
+  },
+  "healthy-skin": {
+   "tier": "green",
+   "support": 574,
+   "sensitivity": 0.9703832752613241,
+   "specificity": 0.9995395948434622,
+   "f1": 0.9840989399293286
+  }
+ },
+ "tier_confusion_answered": [
+  [
+   1461,
+   371,
+   323
+  ],
+  [
+   35,
+   105,
+   59
+  ],
+  [
+   8,
+   22,
+   362
+  ]
+ ],
+ "by_fitzpatrick_scin_derm_estimated": {
+  "FST1": {
+   "n": 52,
+   "tier_accuracy": 0.8846153846153846,
+   "urgent_sensitivity": null,
+   "n_red": 0,
+   "healthy_false_alarm": 0.0625,
+   "n_healthy": 16
+  },
+  "FST2": {
+   "n": 256,
+   "tier_accuracy": 0.8984375,
+   "urgent_sensitivity": 0.0,
+   "n_red": 3,
+   "healthy_false_alarm": 0.009615384615384616,
+   "n_healthy": 104
+  },
+  "FST3": {
+   "n": 226,
+   "tier_accuracy": 0.8893805309734514,
+   "urgent_sensitivity": null,
+   "n_red": 0,
+   "healthy_false_alarm": 0.008620689655172414,
+   "n_healthy": 116
+  },
+  "FST4": {
+   "n": 131,
+   "tier_accuracy": 0.9465648854961832,
+   "urgent_sensitivity": null,
+   "n_red": 0,
+   "healthy_false_alarm": 0.0,
+   "n_healthy": 72
+  },
+  "FST5": {
+   "n": 64,
+   "tier_accuracy": 0.921875,
+   "urgent_sensitivity": null,
+   "n_red": 0,
+   "healthy_false_alarm": 0.0,
+   "n_healthy": 29
+  },
+  "FST6": {
+   "n": 2,
+   "tier_accuracy": 1.0,
+   "urgent_sensitivity": null,
+   "n_red": 0,
+   "healthy_false_alarm": 0.0,
+   "n_healthy": 1
+  }
+ },
+ "parity": {
+  "size_fp32": 11954218,
+  "size_int8": 3816939,
+  "val": {
+   "n": 2723,
+   "fp32_vs_torch_max_abs": 2.384185791015625e-05,
+   "int8_vs_fp32_max_abs": 0.2950019836425781,
+   "int8_vs_fp32_mean_abs": 0.0252078827470541,
+   "int8_vs_fp32_top1": 0.9933896437752479
+  },
+  "int8_ms_per_img_desktop_cpu": 6.0928437454545925,
+  "fp32_ms_per_img_desktop_cpu": 3.25653106733907,
+  "test": {
+   "n": 2746,
+   "fp32_vs_torch_max_abs": 2.4199485778808594e-05,
+   "int8_vs_fp32_max_abs": 0.22666406631469727,
+   "int8_vs_fp32_mean_abs": 0.02523261122405529,
+   "int8_vs_fp32_top1": 0.9941733430444283
+  }
+ }
+}

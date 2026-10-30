@@ -1,9 +1,10 @@
 // Engine: the whole predict/explain logic, no worker plumbing. Runs inside the worker or on the main thread.
-import { calibrateLogits, finalize, type Calibrated } from "./calibrate";
+import { calibrateLogits, finalize, type Calibrated, type Extra } from "./calibrate";
 import { fuse, severity } from "./fusion";
 import { mockLogits } from "./mock";
 import { estimateBreathingRate, respLabel, respTier, RESP_MIN_QUALITY } from "./resp";
 import type { LogitsRunner } from "./ort";
+import { darkSpotArea, skinU8 } from "./skin-preprocess";
 import type { Manifest, Modality, ModalityInput, ModelEntry, Prediction } from "./types";
 import bundledManifest from "../../public/models/manifest.json";
 
@@ -100,7 +101,9 @@ export class Engine {
         const pixels = input.modality === "skin" ? toImageData(input.image) : null;
         const runner = await this.runner(e);
         const logits = runner ? await runner.run(input, pixels) : mockLogits(input, e.labels.length, pixels);
-        return { cal: calibrateLogits(e, logits) };
+        const extra: Extra = {};
+        if (pixels && e.darkSpot) extra.darkSpot = darkSpotArea(skinU8(pixels, e.onnx?.imageSize ?? 224), e.darkSpot);
+        return { cal: calibrateLogits(e, logits, extra) };
       }
       case "resp": {
         const { breathsPerMin, quality } = estimateBreathingRate(input.signal, input.fps);

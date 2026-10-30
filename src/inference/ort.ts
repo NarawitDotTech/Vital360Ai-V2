@@ -1,6 +1,6 @@
 // onnxruntime-web backend. Imported dynamically, only when a manifest entry has a non-null url.
-// Skin verified against skin-v1 (see docs/model-cards/skin-v1.md). Contract, overridable via entry.onnx:
-//   skin : input [1,3,S,S] float32, area-resized (skin-preprocess.ts), RGB 0..1 then ImageNet mean/std, S = onnx.imageSize ?? 224
+// Skin verified against skin-v1.1 (see docs/model-cards/skin-v1.md). Contract, overridable via entry.onnx:
+//   skin : input [1,3,S,S] float32: centre/guide SQUARE crop (camera.ts), area-resized (skin-preprocess.ts), RGB 0..1 then ImageNet mean/std, S = onnx.imageSize ?? 224
 //   audio: input [1,1,T,64] float32 log-mel (see mel.ts), T = onnx.frames ?? 501 (pad/crop), 16 kHz
 //   output: [1,nLabels] raw logits.
 import { logMel } from "./mel";

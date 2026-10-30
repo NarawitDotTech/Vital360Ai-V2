@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useI18n } from "@/components/I18nProvider";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { fileToImageData, openCamera, stopStream, type Facing, toImageData } from "@/capture/camera";
+import { fileToImageData, openCamera, stopStream, type Facing, videoToGuideImage } from "@/capture/camera";
 import { checkImage } from "@/capture/quality";
 import { setSessionResult } from "@/session/results";
 import { CameraControls } from "./CameraControls";
@@ -145,7 +145,7 @@ export function SkinCapture() {
     }
     setBusy(true);
     setMessage(null);
-    const img = toImageData(v, v.videoWidth, v.videoHeight);
+    const img = videoToGuideImage(v); // only the square under the guide box, so the model sees the spot, not the whole arm
     stopCamera(); // photo taken: release the camera (and flash) before analysing
     await analyse(img);
   }
@@ -172,7 +172,7 @@ export function SkinCapture() {
       {cameraOn && (
         <div className="video-frame" style={{ aspectRatio: "4 / 3" }}>
           <video ref={videoRef} playsInline muted aria-label={t.skin.guide} style={facing === "user" ? { transform: "scaleX(-1)" } : undefined} />
-          <div className="guide-box" style={{ left: "20%", top: "15%", width: "60%", height: "70%" }} aria-hidden="true" />
+          <div className="guide-box" aria-hidden="true" />
           <p className="guide-label">{t.skin.guide}</p>
           <CameraControls stream={stream} facing={facing} onFlip={switchCamera} flipDisabled={busy} />
         </div>

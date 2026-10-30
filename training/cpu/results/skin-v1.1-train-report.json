@@ -1,0 +1,32 @@
+{
+ "method": "finetune blocks 7-16 from skin-v1, online phone-like augmentation, +healthy-skin",
+ "classes": [
+  "melanoma",
+  "basal-cell-carcinoma",
+  "squamous-cell-carcinoma",
+  "actinic-keratosis",
+  "nevus",
+  "seborrheic-keratosis",
+  "dermatofibroma",
+  "vascular-lesion",
+  "eczema",
+  "contact-dermatitis",
+  "urticaria",
+  "psoriasis",
+  "tinea",
+  "acne",
+  "folliculitis",
+  "insect-bite",
+  "herpes-zoster",
+  "herpes-simplex",
+  "purpura",
+  "healthy-skin"
+ ],
+ "epochs": 8,
+ "best_epoch": 7,
+ "T": 0.8707293990750633,
+ "seed": 42,
+ "sampling": "{'pad-ufes-20': 3.0, 'scin': 2.0, 'ham10000': 0.8, 'pad-ufes-20-healthy': 1.5, 'scin-healthy': 1.0}",
+ "epoch_draws": 14000,
+ "train_seconds": 2383.6473882198334
+}

@@ -1,4 +1,4 @@
-"""Class set, label mappings and tiers for skin-v1 (fine-grained head; tiers are derived by summing class probabilities).
+"""Class set, label mappings and tiers for skin-v1 (19 classes) and skin-v1.1 (+ healthy-skin).
 
 TIERS marked REVIEW were chosen by the student team/AI, not by a clinician: they need clinician/teacher review before any
 real-world use.
@@ -15,6 +15,10 @@ CLASSES = [
     ("tinea", "green"), ("acne", "green"), ("folliculitis", "green"), ("insect-bite", "green"),
     ("herpes-zoster", "amber"), ("herpes-simplex", "green"), ("purpura", "amber"),
 ]
+# skin-v1.1 adds one class: lesion-free skin patches (PAD-UFES-20 photo borders, SCIN), see skin2_prep.py / skin_pipe.py healthy_patches.
+# The skin-v1 scripts (skin_finetune.py, skin_eval.py, ...) keep the 19-class CLASSES/NAMES; the skin2_* scripts use CLASSES20/NAMES20.
+CLASSES20 = CLASSES + [("healthy-skin", "green")]
+NAMES20 = [c for c, _ in CLASSES20]
 NAMES = [c for c, _ in CLASSES]
 TIER_OF = dict(CLASSES)
 TIER_NAMES = ["green", "amber", "red"]

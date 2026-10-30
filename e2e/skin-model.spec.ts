@@ -1,6 +1,7 @@
 // Real-model check in a browser: onnxruntime-web (from jsDelivr, so this needs network) runs public/models/skin-v1.int8.onnx.
 // 1) raw ORT-web logits on the Python-preprocessed tensor must match the Python int8 logits;
-// 2) the full app flow (upload on /capture/skin) must report the real modelVersion and the same probabilities as Python.
+// 2) the full app flow (upload on /capture/skin) must report the real modelVersion and the same probabilities / tier as Python;
+// 3) every fixture (melanoma, BCC, eczema, healthy skin) gets the tier Python computes; 4) the camera guide box is square.
 import { expect, test } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -39,23 +40,59 @@ test("ORT-web reproduces Python int8 logits on the fixture tensors", async ({ pa
   for (let i = 0; i < want.length; i++) expect(Math.abs(result[i] - want[i])).toBeLessThan(0.05);
 });
 
-test("app flow: real modelVersion and probabilities equal Python", async ({ page }) => {
+async function consent(page: import("@playwright/test").Page) {
   await page.goto("/th/consent/");
   await page.getByRole("checkbox").check();
   await page.getByRole("button", { name: "ยินยอมและเริ่มใช้งาน" }).click();
+}
+
+test("app flow: real modelVersion, centre-square crop, probabilities / tier / label equal Python", async ({ page }) => {
+  await consent(page);
   await page.goto("/th/capture/skin/");
-  await page.getByTestId("skin-file").setInputFiles(join(dir, "a.png"));
+  await page.getByTestId("skin-file").setInputFiles(join(dir, "a.png")); // 4:3 PNG: the app must crop the centre square
   await expect(page).toHaveURL(/\/th\/results\/$/, { timeout: 55_000 });
   await expect(page.getByTestId("result-skin")).toBeVisible();
   await expect(page.getByTestId("mock-notice")).toHaveCount(0);
   await page.getByRole("button", { name: /รายละเอียด/ }).click();
   await expect(page.getByText(skin.version)).toBeVisible();
-  // probabilities shown (top classes, rounded to 1%) vs Python: same fixture, same temperature
-  const p = softmax(expected.images[0].logits_int8, skin.temperature);
-  const top = p.map((v, i) => [skin.labels[i], v] as const).sort((a, b) => b[1] - a[1])[0];
-  const tierMax = Math.max(...["green", "amber", "red"].map((t) => p.reduce((a, v, i) => a + (skin.tiers[skin.labels[i]] === t ? v : 0), 0)));
-  if (tierMax >= skin.threshold) await expect(page.getByTestId("similar-match")).toContainText(`${Math.round(top[1] * 100)}%`);
-  else await expect(page.getByTestId("similar-match")).toHaveCount(0);
-  const shown = await page.getByTestId("result-skin").innerText();
-  expect(shown).toContain(`${Math.round(top[1] * 100)}%`);
+  const im = expected.images[0];
+  await expect(page.getByTestId("result-skin")).toHaveAttribute("data-tier", im.tier);
+  const p = softmax(im.logits_int8, skin.temperature);
+  const pct = Math.round(p[skin.labels.indexOf(im.label)] * 100);
+  if (im.tier === "uncertain") await expect(page.getByTestId("similar-match")).toHaveCount(0);
+  else await expect(page.getByTestId("similar-match")).toContainText(`${pct}%`);
+});
+
+test("all fixtures (incl. a healthy-skin patch) give the Python tier through the real app", async ({ page }) => {
+  test.setTimeout(240_000);
+  await consent(page);
+  for (const im of expected.images as { name: string; tier: string; label: string }[]) {
+    await page.goto("/th/capture/skin/");
+    await page.getByTestId("skin-file").setInputFiles(join(dir, `${im.name}.png`));
+    await expect(page).toHaveURL(/\/th\/results\/$/, { timeout: 55_000 });
+    await expect(page.getByTestId("result-skin"), im.name).toHaveAttribute("data-tier", im.tier);
+  }
+});
+
+test("camera: the guide box is square and the photo is analysed", async ({ page }) => {
+  await consent(page);
+  await page.goto("/th/capture/skin/");
+  await page.getByRole("button", { name: "เปิดกล้อง" }).click();
+  const box = page.locator(".guide-box");
+  await expect(box).toBeVisible();
+  const b = (await box.boundingBox())!;
+  expect(Math.abs(b.width - b.height)).toBeLessThan(2);
+  await page.getByRole("button", { name: "ถ่ายรูป" }).click();
+  await expect(page).toHaveURL(/\/th\/results\/$/, { timeout: 55_000 });
+  await expect(page.getByTestId("result-skin")).toBeVisible();
+});
+
+test("a skin photo with a big black spot is not shown green", async ({ page }) => {
+  // synthetic stress test: a PAD-UFES-20 skin patch (CC BY 4.0) with a black ellipse painted on (e2e/fixtures/skin-blackspot.jpg)
+  await consent(page);
+  await page.goto("/th/capture/skin/");
+  await page.getByTestId("skin-file").setInputFiles(join(process.cwd(), "e2e", "fixtures", "skin-blackspot.jpg"));
+  await expect(page).toHaveURL(/\/th\/results\/$/, { timeout: 55_000 });
+  const tier = await page.getByTestId("result-skin").getAttribute("data-tier");
+  expect(["amber", "red"]).toContain(tier);
 });

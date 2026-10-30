@@ -8,7 +8,10 @@ export interface PixelData {
 
 export type ImageIssue = "tooDark" | "tooBright" | "blurry";
 
-export const IMAGE_LIMITS = { dark: 40, bright: 228, blurVariance: 20 } as const;
+// blurVariance: was 20 for skin-v1. Healthy skin is naturally smooth: on 224 px healthy-skin test patches the median Laplacian variance is 12
+// (25th percentile 5.5), so 20 would tell most people photographing normal skin to retake. Lowered to 6; real defocus (Gaussian sigma >= 2 px at 224 px)
+// stays far below it (<= 1.5) and the model is trained with blur augmentation. To be re-tuned on real phones.
+export const IMAGE_LIMITS = { dark: 40, bright: 228, blurVariance: 6 } as const;
 
 function luma(d: PixelData["data"], i: number): number {
   return 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];

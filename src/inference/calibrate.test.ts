@@ -53,4 +53,66 @@ describe("calibrate", () => {
     expect(u.label).toBe("uncertain");
     expect(u.tierProbs?.red).toBeCloseTo(0.5, 10);
   });
+
+  describe('tierRule "thresholds" (sensitivity-first)', () => {
+    const e: ModelEntry = {
+      ...entry,
+      labels: ["mel", "bcc", "ak", "nev", "sk", "healthy"],
+      tiers: { mel: "red", bcc: "red", ak: "amber", nev: "green", sk: "green", healthy: "green" },
+      tierRule: "thresholds",
+      tierThresholds: { red: 0.2, amber: 0.4 },
+      guard: { topIn: ["nev", "sk"], watch: "mel" },
+      threshold: 0.6,
+    };
+    it("red as soon as P(red) reaches the red threshold, even if green is the top tier", () => {
+      const r = finalize(e, [0.12, 0.1, 0.03, 0.5, 0.05, 0.2]); // P(red) = 0.22
+      expect(r.tier).toBe("red");
+      expect(r.label).toBe("mel"); // best class of the shown tier
+      expect(r.tierProbs?.red).toBeCloseTo(0.22, 10);
+    });
+    it("amber when P(amber)+P(red) reaches the amber threshold but red does not", () => {
+      const r = finalize(e, [0.05, 0.05, 0.3, 0.3, 0.1, 0.2]); // red 0.10, amber 0.30 -> 0.40
+      expect(r.tier).toBe("amber");
+      expect(r.label).toBe("ak");
+    });
+    it("green only when both thresholds are missed and P(green) >= uncertain threshold", () => {
+      const r = finalize(e, [0.02, 0.02, 0.06, 0.2, 0.1, 0.6]);
+      expect(r.tier).toBe("green");
+      expect(r.label).toBe("healthy");
+    });
+    it("uncertain when would-be green has P(green) below the threshold", () => {
+      const e2 = { ...e, tierThresholds: { red: 0.5, amber: 0.6 }, threshold: 0.75 };
+      const r = finalize(e2, [0.1, 0.1, 0.1, 0.3, 0.2, 0.2]);
+      expect(r.tier).toBe("uncertain");
+      expect(r.label).toBe("uncertain");
+    });
+    it("guard: top class nevus/SK with melanoma runner-up is shown amber, label stays the top class", () => {
+      const r = finalize({ ...e, tierThresholds: { red: 0.5, amber: 0.6 } }, [0.3, 0.02, 0.02, 0.4, 0.05, 0.21]);
+      expect(r.tier).toBe("amber");
+      expect(r.label).toBe("nev");
+    });
+    it("guard does not fire when melanoma is only third, or the top class is not a look-alike", () => {
+      const hi = { ...e, tierThresholds: { red: 0.5, amber: 0.6 } };
+      expect(finalize(hi, [0.1, 0.02, 0.02, 0.4, 0.08, 0.38]).tier).toBe("green"); // melanoma is only third
+      expect(finalize(hi, [0.3, 0.02, 0.02, 0.1, 0.06, 0.5]).tier).toBe("green"); // top is healthy
+    });
+    it("guard minWatchProb: a runner-up melanoma below the floor does not raise amber", () => {
+      const hi = { ...e, tierThresholds: { red: 0.5, amber: 0.6 }, guard: { topIn: ["nev", "sk"], watch: "mel", minWatchProb: 0.1 } };
+      expect(finalize(hi, [0.2, 0.0, 0.0, 0.7, 0.0, 0.1]).tier).toBe("amber"); // melanoma 0.20 >= 0.10 and runner-up
+      expect(finalize(hi, [0.09, 0.0, 0.0, 0.86, 0.0, 0.05]).tier).toBe("green"); // melanoma is runner-up but 0.09 < 0.10
+    });
+    it("darkSpot: a big enclosed dark spot is never green (raised to amber), red stays red", () => {
+      const d = { ...e, tierThresholds: { red: 0.5, amber: 0.6 }, darkSpot: { minArea: 0.03, relLuma: 0.45, maxLuma: 70 } };
+      const green = [0.02, 0.02, 0.06, 0.2, 0.1, 0.6];
+      expect(finalize(d, green, { darkSpot: 0.02 }).tier).toBe("green");
+      expect(finalize(d, green, {}).tier).toBe("green"); // no pixels (mock / worker without canvas)
+      const r = finalize(d, green, { darkSpot: 0.1 });
+      expect(r.tier).toBe("amber");
+      expect(r.label).toBe("healthy"); // label stays the top class
+      expect(finalize(d, [0.6, 0.1, 0.0, 0.1, 0.1, 0.1], { darkSpot: 0.1 }).tier).toBe("red");
+    });
+    it("throws without tierThresholds", () => {
+      expect(() => finalize({ ...e, tierThresholds: undefined }, [1, 0, 0, 0, 0, 0])).toThrow();
+    });
+  });
 });

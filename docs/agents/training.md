@@ -5,7 +5,7 @@ Scope: real on-device models trained on this machine (4 CPU cores, 15 GB RAM, no
 ## What shipped / what did not
 | Model | State | Notes |
 |---|---|---|
-| skin | **real**: `skin-v1.0.0`, 19 classes, 3.8 MB | `docs/model-cards/skin-v1.md` |
+| skin | **real**: `skin-v1.1.0`, 20 classes (19 + healthy-skin), 3.8 MB, centre-square crop, sensitivity-first tiers | `docs/model-cards/skin-v1.md` (v1.0.0 kept below the v1.1.0 section as the "before") |
 | audio | **mock** (negative result) | CNN did not beat majority baseline: `docs/model-cards/audio-v0-not-shipped.md`. `mel.ts` <-> Python parity IS verified (vitest) |
 | resp | signal processing, no model | unchanged |
 | fusion | untrained placeholder weights | no paired multimodal data exists; not faked |
@@ -19,7 +19,31 @@ Scope: real on-device models trained on this machine (4 CPU cores, 15 GB RAM, no
 - **Quantisation:** static int8 QDQ of activations was tried and rejected (top-1 agreement with fp32 75.7 %; Percentile 85 %, Entropy 79 %). Shipped: per-channel int8 weights + DequantizeLinear (layers >= 20 000 weights; smaller layers fp32), activations fp32. 99.2 % top-1 agreement with fp32 on test, 3.8 MB. Speed is not improved over fp32 on desktop CPU (it is a size optimisation); a phone benchmark is still to do.
 - **Not done / caveats:** Grad-CAM (`explain` still undefined), phone latency, a clinician review of tiers, fairness on dark skin (almost no data).
 
-## Reproduce (about 2 h wall-clock on 4 cores, most of it downloads and CPU training)
+## skin-v1.1.0 (what changed, why, how)
+- **Why:** live-app diagnosis (browser + real ONNX + full-resolution PAD photos): preprocessing matched Python; the failures were the missing crop (camera sent the whole 4:3 frame), no "healthy" class and an argmax tier rule that needs a lot of evidence for amber/red. See the model card.
+- **Pipeline (`skin_pipe.py` = `src/capture/camera.ts` + `skin-preprocess.ts`):** EXIF -> centre square (camera: the guide box = 0.70 x frame height, `guideRect`; upload: `centerSquare`) -> shrink to <= 448 (canvas in <= 2x steps / PIL BOX) -> area resize 224. Caches (outside the repo, `/home/user/ml/cache2/`): `eval224.npy` (exact app input, only val/test rows filled), `train256.npy` (only train rows filled), `index2.csv` (split, old_row). Both files are sparse to fit the disk.
+- **Healthy-skin class:** `skin2_prep.py` cuts <= 2 patches/PAD photo and <= 1/SCIN photo away from the image centre and keeps those passing `skin_pipe.patch_ok`; contact sheet `docs/model-cards/skin-v1.1-healthy-patches.jpg` (`skin2_sheet.py`). Group-level split inherited from v1 (`skin2_build_index.py` asserts no group in two splits).
+- **Training (`skin2_train.py`):** from the v1 weights, online phone-like augmentation, PAD x3 / SCIN x2 / HAM x0.8 (nevus x0.3) sampling, 8 x 14k draws, ~5 min/epoch on 4 cores (~40 min total).
+- **Decision rule:** `skin_decide.py` = `calibrate.ts` `finalizeByThresholds` (+ `darkSpotArea`); `skin2_tune.py` picks T, t_red (val urgent sensitivity >= 0.90), guard floor, t_amber, uncertain threshold on VALIDATION only; `skin2_dark.py` precomputes the dark-spot area for val/test.
+- **Manifest:** `tierRule: "thresholds"` with `tierThresholds`, `guard`, `darkSpot` (all optional fields, `"sum"` / `"label"` entries still work).
+
+## Reproduce skin-v1.1.0 (after the v1.0.0 steps below have produced `runs/ft19` and `cache/images_all.npy`)
+```bash
+cd training/cpu; P=/home/user/ml/venv/bin/python
+# raw data again (PAD zips 2.9 GB, HAM zips 2.9 GB, SCIN shards are downloaded and deleted one by one); needs ~14 GB free disk
+$P skin2_prep.py pad /home/user/ml/data /home/user/ml/cache2 3; $P skin2_prep.py ham /home/user/ml/data /home/user/ml/cache2 2; $P skin2_prep.py scin /home/user/ml/data /home/user/ml/cache2 4
+$P skin2_build_index.py /home/user/ml/cache2 /home/user/ml/runs/ft19          # deletes the per-source npz it consumed
+$P skin2_sheet.py /home/user/ml/cache2 ../../docs/model-cards/skin-v1.1-healthy-patches.jpg
+$P skin2_train.py /home/user/ml/cache2 /home/user/ml/runs/ft19 /home/user/ml/runs/ft_v11 8      # ~40 min
+$P skin2_export.py /home/user/ml/cache2 /home/user/ml/runs/ft_v11 /home/user/ml/export2
+$P skin2_dark.py /home/user/ml/cache2 /home/user/ml/runs/ft_v11; $P skin2_tune.py /home/user/ml/runs/ft_v11 /home/user/ml/export2
+$P skin2_manifest.py /home/user/ml/runs/ft_v11 /home/user/ml/export2 ../..
+$P skin2_fixture.py /home/user/ml/cache2 /home/user/ml/runs/ft_v11 /home/user/ml/export2 ../..
+$P skin2_eval.py /home/user/ml/cache2 /home/user/ml/runs/ft_v11 /home/user/ml/export2 /home/user/ml/cache /home/user/ml/export ../../eval/metrics/skin.json results/skin-v1.1-eval-full.json
+```
+Run Python files from `training/cpu` without `-I` (they import each other). `skin_classes.py`: v1 scripts use the 19-class `CLASSES`, skin2 scripts `CLASSES20`.
+
+## Reproduce skin-v1.0.0 (about 2 h wall-clock on 4 cores, most of it downloads and CPU training)
 ```bash
 python3 -m venv /home/user/ml/venv
 /home/user/ml/venv/bin/pip install torch==2.9.1 torchvision==0.24.1 --index-url https://download.pytorch.org/whl/cpu
@@ -42,6 +66,10 @@ Then from the repo root: `npm run build && npx playwright test e2e/skin-model.sp
 HAM+PAD cache build ~20 min (one core); SCIN download+cache ~12 min; MobileNetV3 forward ~65 img/s (4 threads); fine-tune stage-1 cache ~12 min, 8 epochs ~21 min (~150 s per epoch on 10.9 k images); export+parity ~3 min; audio CNN 30 epochs ~2.5 min. Peak RAM ~6 GB.
 
 ## Gotchas
+- Disk: the volume has ~25 GB; PAD/HAM raw zips plus caches nearly filled it once (build failed with "No space left"). `skin2_build_index.py` therefore writes sparse arrays and deletes consumed part files.
+- Blur check: smooth healthy skin has a low Laplacian variance (median 12 at 224 px); `quality.ts` blurVariance was lowered from 20 to 6.
+- Parity test tolerance: TS vs Python squash may differ by one uint8 level on exact .5 sums (test allows < 0.2 % of pixels).
+- `eval/metrics/skin.json` must be strict JSON (NaN -> null) or `next build` fails on the dashboard.
 - `pip install` of torch from the PyTorch index hung once (killed and re-run, then fine).
 - ORT static quantisation with Percentile/Entropy calibration holds all activations: use <= 64 calibration images or it is OOM-killed on 15 GB.
 - The SPRSound mirror's WAV headers are invalid for scipy; `audio_prep.read_wav` parses them.
