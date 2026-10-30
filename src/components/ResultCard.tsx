@@ -8,6 +8,7 @@ import { format } from "@/i18n";
 import { useI18n } from "./I18nProvider";
 import { isMockModel, MockNotice } from "./MockNotice";
 import { TierBadge } from "./TierBadge";
+import { canNameMatch, className } from "./names";
 
 // The collapsed details (accordion + bars) load after the page is interactive, which keeps the initial JS small.
 const ResultDetails = dynamic(() => import("./ResultDetails").then((m) => m.ResultDetails), { ssr: false });
@@ -28,6 +29,7 @@ export function ResultCard({ p, headingLevel = 2 }: { p: Prediction; headingLeve
   const { t } = useI18n();
   const tier = t.tiers[p.tier];
   const bpm = p.extras?.breathsPerMin;
+  const matchName = canNameMatch(p, t.results) ? className(t.results, p.modality, p.label) : undefined;
   const H = headingLevel === 2 ? "h2" : "h3";
   return (
     <Card aria-labelledby={`tier-${p.modality}`} data-testid={`result-${p.modality}`} data-tier={p.tier} role="region">
@@ -40,6 +42,12 @@ export function ResultCard({ p, headingLevel = 2 }: { p: Prediction; headingLeve
         </div>
         {isMockModel(p.modelVersion) && <MockNotice />}
         <p className="text-lg leading-relaxed font-medium">{tier.sentence}</p>
+        {matchName && (
+          <div data-testid="similar-match">
+            <p className="text-lg font-semibold">{format(t.results.similarTo, { name: matchName, pct: Math.round((p.probs[p.label] ?? 0) * 100) })}</p>
+            <p className="text-sm text-muted-foreground">{t.results.similarNote}</p>
+          </div>
+        )}
         {bpm !== undefined && (
           <div>
             <p className="text-lg font-semibold">{format(t.results.breaths, { n: Math.round(bpm) })}</p>

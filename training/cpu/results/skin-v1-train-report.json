@@ -1,0 +1,31 @@
+{
+ "method": "finetune blocks 7-16",
+ "classes": [
+  "melanoma",
+  "basal-cell-carcinoma",
+  "squamous-cell-carcinoma",
+  "actinic-keratosis",
+  "nevus",
+  "seborrheic-keratosis",
+  "dermatofibroma",
+  "vascular-lesion",
+  "eczema",
+  "contact-dermatitis",
+  "urticaria",
+  "psoriasis",
+  "tinea",
+  "acne",
+  "folliculitis",
+  "insect-bite",
+  "herpes-zoster",
+  "herpes-simplex",
+  "purpura"
+ ],
+ "epochs": 8,
+ "best_epoch": 7,
+ "T": 0.8767040928965463,
+ "threshold": 0.66,
+ "val_acc": 0.8535911602209945,
+ "seed": 42,
+ "train_seconds": 1273.8533704280853
+}

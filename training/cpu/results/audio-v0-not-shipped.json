@@ -1,0 +1,85 @@
+{
+ "schemaVersion": 1,
+ "isSample": false,
+ "generatedAt": "2026-10-30T07:22:22+00:00",
+ "source": "measured",
+ "dataset": "SPRSound (CC BY 4.0), paediatric stethoscope recordings",
+ "date": "2026-10-30",
+ "description": "MEASURED on a held-out patient-level test split of SPRSound (record-level labels). audio-v1 fp32 ONNX baseline for a school project; paediatric stethoscope audio, NOT validated on phone-microphone recordings.",
+ "splits": {
+  "train": 1196,
+  "val": 241,
+  "test": 240
+ },
+ "models": {
+  "audio": {
+   "label": "Breath sound (audio-v1, measured)",
+   "classes": [
+    "normal",
+    "wheeze",
+    "crackle"
+   ],
+   "accuracy": 0.775,
+   "sensitivity": 0.44034034034034036,
+   "specificity": 0.7134781445126274,
+   "f1": 0.4495798319327731,
+   "perClass": {
+    "normal": {
+     "sensitivity": 0.9621621621621622,
+     "specificity": 0.18181818181818182
+    },
+    "wheeze": {
+     "sensitivity": 0.2777777777777778,
+     "specificity": 0.9684684684684685
+    },
+    "crackle": {
+     "sensitivity": 0.08108108108108109,
+     "specificity": 0.9901477832512315
+    }
+   },
+   "confusionMatrix": [
+    [
+     178,
+     6,
+     1
+    ],
+    [
+     12,
+     5,
+     1
+    ],
+    [
+     33,
+     1,
+     3
+    ]
+   ],
+   "latencyMs": 0.4,
+   "sizeBytes": 319426,
+   "testSetDescription": "Held-out TEST: 240 recordings from 35 patients (SPRSound, 10 s canvases). Latency = desktop CPU onnxruntime, not a phone."
+  }
+ },
+ "uncertain": {
+  "threshold": 0.5,
+  "coverage": 0.8958333333333334,
+  "accuracy_answered": 0.8046511627906977
+ },
+ "ci95": {
+  "accuracy": [
+   0.6873439528612804,
+   0.8917306731609842
+  ],
+  "macro_f1": [
+   0.3166975343497082,
+   0.5876792464463656
+  ]
+ },
+ "parity": {
+  "max_abs_diff": 1.4901161193847656e-06,
+  "top1_agreement": 1.0,
+  "n": 240
+ },
+ "temperature": 0.6994897420959093,
+ "bestEpoch": 24,
+ "valMacroF1": 0.35629508089434886
+}

@@ -13,8 +13,7 @@ CLASSES = [
     # SCIN-only inflammatory / infectious / other (REVIEW)
     ("eczema", "green"), ("contact-dermatitis", "green"), ("urticaria", "green"), ("psoriasis", "amber"),
     ("tinea", "green"), ("acne", "green"), ("folliculitis", "green"), ("insect-bite", "green"),
-    ("herpes-zoster", "amber"), ("herpes-simplex", "green"), ("impetigo", "amber"), ("purpura", "amber"),
-    ("keratosis-pilaris", "green"),
+    ("herpes-zoster", "amber"), ("herpes-simplex", "green"), ("purpura", "amber"),
 ]
 NAMES = [c for c, _ in CLASSES]
 TIER_OF = dict(CLASSES)
@@ -24,6 +23,7 @@ HAM = {"mel": "melanoma", "bcc": "basal-cell-carcinoma", "akiec": "actinic-kerat
        "bkl": "seborrheic-keratosis", "df": "dermatofibroma", "vasc": "vascular-lesion"}
 PAD = {"MEL": "melanoma", "BCC": "basal-cell-carcinoma", "SCC": "squamous-cell-carcinoma", "ACK": "actinic-keratosis",
        "NEV": "nevus", "SEK": "seborrheic-keratosis"}
+# Dropped for too few cases after filtering (<40): impetigo (23), keratosis-pilaris (21).
 # SCIN dermatologist condition names (top-weighted label) -> class. Near-duplicates are merged.
 SCIN = {
     "Melanoma": "melanoma", "Melanoma in situ": "melanoma", "Basal Cell Carcinoma": "basal-cell-carcinoma",
@@ -35,9 +35,8 @@ SCIN = {
     "CD - Contact dermatitis": "contact-dermatitis",
     "Urticaria": "urticaria", "Psoriasis": "psoriasis", "Tinea": "tinea", "Tinea Versicolor": "tinea", "Acne": "acne",
     "Folliculitis": "folliculitis", "Insect Bite": "insect-bite", "Herpes Zoster": "herpes-zoster",
-    "Herpes Simplex": "herpes-simplex", "Impetigo": "impetigo",
+    "Herpes Simplex": "herpes-simplex",
     "O/E - ecchymoses present": "purpura", "Purpura": "purpura", "Pigmented purpuric eruption": "purpura",
-    "Keratosis pilaris": "keratosis-pilaris",
 }
 DOMINANCE = 0.5  # SCIN: keep a case only if its top condition weight >= 0.5 and strictly greater than the runner-up
 

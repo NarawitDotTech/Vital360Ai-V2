@@ -1,0 +1,12 @@
+{
+ "n_test": 2172,
+ "size_fp32": 11950374,
+ "size_int8": 3813095,
+ "fp32_vs_torch_max_abs": 2.1457672119140625e-05,
+ "fp32_vs_torch_top1": 1.0,
+ "int8_vs_fp32_max_abs": 0.24610042572021484,
+ "int8_vs_fp32_mean_abs": 0.021947626024484634,
+ "int8_vs_fp32_top1": 0.9921731123388582,
+ "int8_ms_per_img_desktop_cpu": 5.815083260474723,
+ "fp32_ms_per_img_desktop_cpu": 3.279120223956872
+}

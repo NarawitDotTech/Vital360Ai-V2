@@ -10,6 +10,7 @@ import { clearHistory, deleteHistory, listHistory, type HistoryEntry } from "@/s
 import { Disclaimer } from "./Disclaimer";
 import { useI18n } from "./I18nProvider";
 import { isMockModel, MockNotice } from "./MockNotice";
+import { canNameMatch, className } from "./names";
 import { PageTitle } from "./PageTitle";
 import { TierBadge } from "./TierBadge";
 import { UrgentGuide } from "./UrgentGuide";
@@ -105,6 +106,11 @@ export function HistoryView() {
                         <div className="min-w-0">
                           <p className="font-semibold">{what}</p>
                           <p className="text-sm text-muted-foreground">{date}</p>
+                          {canNameMatch(e, t.results) && (
+                            <p className="text-sm">
+                              {format(t.results.similarTo, { name: className(t.results, e.modality, e.label) ?? e.label, pct: Math.round((e.probs[e.label] ?? 0) * 100) })}
+                            </p>
+                          )}
                           {e.breathsPerMin !== undefined && (
                             <p className="text-sm">{format(t.results.breaths, { n: Math.round(e.breathsPerMin) })}</p>
                           )}

@@ -1,0 +1,727 @@
+{
+ "schemaVersion": 1,
+ "isSample": false,
+ "generatedAt": "2026-10-30T07:18:59+00:00",
+ "source": "measured",
+ "description": "MEASURED on a held-out, group-level (lesion/patient/case) test split of HAM10000 + PAD-UFES-20 + SCIN. skin-v1 int8 ONNX, tiers derived from 19 fine classes. Baseline for a school project: not a diagnostic device. Fine-grained 19-class results, confidence intervals and per-source / per-skin-tone breakdowns are in the extra keys below and in docs/model-cards/skin-v1.md.",
+ "dataset": "HAM10000 (CC BY-NC 4.0) + PAD-UFES-20 (CC BY 4.0) + Google SCIN (SCIN Data Use License)",
+ "date": "2026-10-30",
+ "splits": {
+  "train": 10857,
+  "val": 2172,
+  "test": 2172
+ },
+ "models": {
+  "skin": {
+   "label": "Skin image (skin-v1, measured)",
+   "classes": [
+    "green",
+    "amber",
+    "red"
+   ],
+   "accuracy": 0.8614180478821363,
+   "sensitivity": 0.7337747737556146,
+   "specificity": 0.8924554261158953,
+   "f1": 0.7465521215224098,
+   "perClass": {
+    "green": {
+     "sensitivity": 0.9367488931056294,
+     "specificity": 0.7648054145516074
+    },
+    "amber": {
+     "sensitivity": 0.5477386934673367,
+     "specificity": 0.9670552458185504
+    },
+    "red": {
+     "sensitivity": 0.7168367346938775,
+     "specificity": 0.9455056179775281
+    }
+   },
+   "confusionMatrix": [
+    [
+     1481,
+     36,
+     64
+    ],
+    [
+     57,
+     109,
+     33
+    ],
+    [
+     82,
+     29,
+     281
+    ]
+   ],
+   "latencyMs": 5.8,
+   "sizeBytes": 3813095,
+   "testSetDescription": "Held-out TEST split: 2172 images from 1462 lesions/patients/cases (HAM10000 1423, PAD-UFES-20 336, SCIN 413). Tiers green/amber/red derived from the 19-class output by summing probabilities. Latency = desktop CPU onnxruntime, not a phone."
+  }
+ },
+ "fineGrained": {
+  "accuracy": 0.7048802946593001,
+  "macro_sens": 0.42699390145719124,
+  "macro_f1": 0.42387594578657045,
+  "top3_accuracy": 0.9088397790055248,
+  "perClass": {
+   "melanoma": {
+    "support": 166,
+    "sensitivity": 0.6144578313253012,
+    "specificity": 0.9646061814556331,
+    "f1": 0.6017699115044247
+   },
+   "basal-cell-carcinoma": {
+    "support": 196,
+    "sensitivity": 0.75,
+    "specificity": 0.9711538461538461,
+    "f1": 0.7349999999999999
+   },
+   "squamous-cell-carcinoma": {
+    "support": 30,
+    "sensitivity": 0.2,
+    "specificity": 0.9873949579831933,
+    "f1": 0.1904761904761905
+   },
+   "actinic-keratosis": {
+    "support": 153,
+    "sensitivity": 0.6601307189542484,
+    "specificity": 0.9742446755819713,
+    "f1": 0.6601307189542484
+   },
+   "nevus": {
+    "support": 993,
+    "sensitivity": 0.8821752265861027,
+    "specificity": 0.9414758269720102,
+    "f1": 0.9040247678018576
+   },
+   "seborrheic-keratosis": {
+    "support": 192,
+    "sensitivity": 0.6927083333333334,
+    "specificity": 0.9580808080808081,
+    "f1": 0.6519607843137255
+   },
+   "dermatofibroma": {
+    "support": 17,
+    "sensitivity": 0.4117647058823529,
+    "specificity": 0.9967517401392111,
+    "f1": 0.45161290322580644
+   },
+   "vascular-lesion": {
+    "support": 22,
+    "sensitivity": 0.8636363636363636,
+    "specificity": 0.9976744186046511,
+    "f1": 0.8260869565217391
+   },
+   "eczema": {
+    "support": 119,
+    "sensitivity": 0.4957983193277311,
+    "specificity": 0.962493911349245,
+    "f1": 0.4627450980392157
+   },
+   "contact-dermatitis": {
+    "support": 72,
+    "sensitivity": 0.3472222222222222,
+    "specificity": 0.9752380952380952,
+    "f1": 0.33557046979865773
+   },
+   "urticaria": {
+    "support": 49,
+    "sensitivity": 0.3673469387755102,
+    "specificity": 0.9915214319359397,
+    "f1": 0.42352941176470593
+   },
+   "psoriasis": {
+    "support": 15,
+    "sensitivity": 0.2,
+    "specificity": 0.9962911451089476,
+    "f1": 0.23076923076923075
+   },
+   "tinea": {
+    "support": 25,
+    "sensitivity": 0.16,
+    "specificity": 0.9892873777363763,
+    "f1": 0.15384615384615383
+   },
+   "acne": {
+    "support": 12,
+    "sensitivity": 0.3333333333333333,
+    "specificity": 0.9949074074074075,
+    "f1": 0.2962962962962963
+   },
+   "folliculitis": {
+    "support": 27,
+    "sensitivity": 0.1111111111111111,
+    "specificity": 0.992074592074592,
+    "f1": 0.12765957446808512
+   },
+   "insect-bite": {
+    "support": 39,
+    "sensitivity": 0.38461538461538464,
+    "specificity": 0.9831223628691983,
+    "f1": 0.33333333333333337
+   },
+   "herpes-zoster": {
+    "support": 13,
+    "sensitivity": 0.38461538461538464,
+    "specificity": 0.9953682260305697,
+    "f1": 0.3571428571428571
+   },
+   "herpes-simplex": {
+    "support": 14,
+    "sensitivity": 0.14285714285714285,
+    "specificity": 0.9976830398517146,
+    "f1": 0.19047619047619047
+   },
+   "purpura": {
+    "support": 18,
+    "sensitivity": 0.1111111111111111,
+    "specificity": 0.9939647168059424,
+    "f1": 0.1212121212121212
+   }
+  },
+  "confusionMatrix": [
+   [
+    102,
+    5,
+    0,
+    1,
+    40,
+    17,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    147,
+    19,
+    17,
+    3,
+    5,
+    0,
+    1,
+    2,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1
+   ],
+   [
+    0,
+    13,
+    6,
+    11,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    7,
+    20,
+    5,
+    101,
+    2,
+    15,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    52,
+    7,
+    1,
+    5,
+    876,
+    44,
+    5,
+    0,
+    0,
+    0,
+    0,
+    0,
+    3,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    11,
+    8,
+    1,
+    13,
+    21,
+    133,
+    0,
+    3,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0
+   ],
+   [
+    1,
+    3,
+    1,
+    2,
+    1,
+    0,
+    7,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    1,
+    0,
+    0,
+    2,
+    0,
+    0,
+    19,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    3,
+    0,
+    0,
+    0,
+    0,
+    59,
+    19,
+    7,
+    1,
+    3,
+    4,
+    9,
+    7,
+    2,
+    1,
+    4
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    22,
+    25,
+    2,
+    1,
+    2,
+    3,
+    1,
+    9,
+    2,
+    1,
+    4
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    11,
+    7,
+    18,
+    0,
+    4,
+    0,
+    5,
+    4,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    4,
+    1,
+    2,
+    3,
+    0,
+    0,
+    0,
+    3,
+    0,
+    0,
+    2
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    7,
+    6,
+    1,
+    1,
+    4,
+    2,
+    1,
+    1,
+    0,
+    1,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    2,
+    0,
+    1,
+    3,
+    4,
+    0,
+    1,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    7,
+    4,
+    0,
+    0,
+    4,
+    0,
+    3,
+    9,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    9,
+    2,
+    3,
+    2,
+    2,
+    1,
+    0,
+    15,
+    5,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    2,
+    2,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0,
+    5,
+    2,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    3,
+    4,
+    1,
+    0,
+    1,
+    0,
+    0,
+    1,
+    0,
+    2,
+    2
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    7,
+    4,
+    1,
+    1,
+    1,
+    0,
+    0,
+    0,
+    1,
+    0,
+    2
+   ]
+  ],
+  "classes": [
+   "melanoma",
+   "basal-cell-carcinoma",
+   "squamous-cell-carcinoma",
+   "actinic-keratosis",
+   "nevus",
+   "seborrheic-keratosis",
+   "dermatofibroma",
+   "vascular-lesion",
+   "eczema",
+   "contact-dermatitis",
+   "urticaria",
+   "psoriasis",
+   "tinea",
+   "acne",
+   "folliculitis",
+   "insect-bite",
+   "herpes-zoster",
+   "herpes-simplex",
+   "purpura"
+  ]
+ },
+ "urgent": {
+  "sensitivity_all": 0.7168367346938775,
+  "sensitivity_answered": 0.7637540453074434,
+  "flagged_red_or_uncertain": 0.8137755102040817,
+  "n_red": 392
+ },
+ "uncertain": {
+  "coverage": 0.8678637200736649,
+  "tier_accuracy_answered": 0.9023872679045093
+ },
+ "bySource": {
+  "ham10000": {
+   "n": 1423,
+   "accuracy": 0.8784258608573436,
+   "sens_red": 0.6497695852534562,
+   "n_red": 217,
+   "fine_accuracy": 0.8215038650737878
+  },
+  "pad-ufes-20": {
+   "n": 336,
+   "accuracy": 0.7916666666666666,
+   "sens_red": 0.813953488372093,
+   "n_red": 172,
+   "fine_accuracy": 0.6607142857142857
+  },
+  "scin": {
+   "n": 413,
+   "accuracy": 0.8595641646489104,
+   "sens_red": 0.0,
+   "n_red": 3,
+   "fine_accuracy": 0.3389830508474576
+  }
+ },
+ "byFitzpatrickScinEstimated": {
+  "FST1": {
+   "n": 36,
+   "accuracy": 0.9444444444444444,
+   "sens_red": null,
+   "n_red": 0
+  },
+  "FST2": {
+   "n": 152,
+   "accuracy": 0.8289473684210527,
+   "sens_red": 0.0,
+   "n_red": 3
+  },
+  "FST3": {
+   "n": 124,
+   "accuracy": 0.8467741935483871,
+   "sens_red": null,
+   "n_red": 0
+  },
+  "FST4": {
+   "n": 47,
+   "accuracy": 0.9574468085106383,
+   "sens_red": null,
+   "n_red": 0
+  },
+  "FST5": {
+   "n": 33,
+   "accuracy": 0.9393939393939394,
+   "sens_red": null,
+   "n_red": 0
+  },
+  "FST6": {
+   "n": 1,
+   "accuracy": 1.0,
+   "sens_red": null,
+   "n_red": 0
+  }
+ },
+ "byFitzpatrickPad": {
+  "FST1": {
+   "n": 25,
+   "accuracy": 0.72,
+   "sens_red": 0.8947368421052632,
+   "n_red": 19
+  },
+  "FST2": {
+   "n": 121,
+   "accuracy": 0.743801652892562,
+   "sens_red": 0.7872340425531915,
+   "n_red": 94
+  },
+  "FST3": {
+   "n": 59,
+   "accuracy": 0.7796610169491526,
+   "sens_red": 0.8541666666666666,
+   "n_red": 48
+  },
+  "FST4": {
+   "n": 20,
+   "accuracy": 0.85,
+   "sens_red": 0.7272727272727273,
+   "n_red": 11
+  },
+  "FST5": {
+   "n": 2,
+   "accuracy": 0.5,
+   "sens_red": null,
+   "n_red": 0
+  }
+ },
+ "ci95": {
+  "fine_accuracy": [
+   0.6820012044272445,
+   0.7279106590519364
+  ],
+  "tier_accuracy": [
+   0.8442420335602905,
+   0.8786907227808337
+  ],
+  "urgent_sensitivity": [
+   0.6595556946182728,
+   0.7703473883572568
+  ],
+  "tier_macro_f1": [
+   0.715742976504695,
+   0.7768522909377733
+  ]
+ }
+}

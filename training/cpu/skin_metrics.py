@@ -40,3 +40,16 @@ def bootstrap(y, p, groups, n_boot=1000, seed=0):
         for k, v in vals.items():
             keys.setdefault(k, []).append(v)
     return {k: (float(np.percentile(v, 2.5)), float(np.percentile(v, 97.5))) for k, v in keys.items()}
+
+
+def bootstrap_generic(groups, fn, n_boot=1000, seed=0):
+    """Cluster bootstrap: fn(row_indices) -> {name: value}. Returns {name: [lo, hi]} (95% percentile, NaNs ignored)."""
+    rng = np.random.default_rng(seed)
+    ug, inv = np.unique(groups, return_inverse=True)
+    idx_by_g = [np.where(inv == i)[0] for i in range(len(ug))]
+    vals = {}
+    for _ in range(n_boot):
+        idx = np.concatenate([idx_by_g[i] for i in rng.integers(0, len(ug), len(ug))])
+        for k, v in fn(idx).items():
+            vals.setdefault(k, []).append(v)
+    return {k: [float(np.nanpercentile(v, 2.5)), float(np.nanpercentile(v, 97.5))] for k, v in vals.items()}

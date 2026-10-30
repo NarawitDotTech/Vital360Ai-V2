@@ -55,3 +55,22 @@ describe("logMel", () => {
     expect(resample(new Float32Array(8000), 8000, 16000).length).toBe(16000);
   });
 });
+
+// Parity with the Python training front end (training/cpu/audio_mel.py): fixtures written by training/cpu/audio_fixture.py.
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
+describe("logMel parity with Python", () => {
+  const fx = JSON.parse(readFileSync(join(__dirname, "__fixtures__", "mel_fixture.json"), "utf8")) as {
+    cases: { name: string; sampleRate: number; nFrames: number; nMels: number; samples: number[]; expected: number[] }[];
+  };
+  for (const c of fx.cases) {
+    it(`${c.name}: TS log-mel equals Python within 5e-3`, () => {
+      const m = logMel(Float32Array.from(c.samples), c.sampleRate);
+      expect([m.nFrames, m.nMels]).toEqual([c.nFrames, c.nMels]);
+      let max = 0;
+      for (let i = 0; i < c.expected.length; i++) max = Math.max(max, Math.abs(m.data[i] - c.expected[i]));
+      expect(max).toBeLessThan(5e-3);
+    });
+  }
+});
