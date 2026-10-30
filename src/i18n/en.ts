@@ -124,6 +124,10 @@ export const en: Dict = {
     cameraOff: "Could not open the camera. Please allow camera access in your browser settings.",
     stopCamera: "Close camera",
   },
+  camera: {
+    switch: "Switch camera",
+    torch: "Flash",
+  },
   quality: {
     tooDark: "The picture is too dark. Move near a window or turn on a light, then try again.",
     tooBright: "The picture is too bright. Move out of direct sunlight, then try again.",

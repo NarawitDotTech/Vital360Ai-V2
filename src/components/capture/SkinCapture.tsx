@@ -6,9 +6,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useI18n } from "@/components/I18nProvider";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { fileToImageData, openCamera, stopStream, toImageData } from "@/capture/camera";
+import { fileToImageData, openCamera, stopStream, type Facing, toImageData } from "@/capture/camera";
 import { checkImage } from "@/capture/quality";
 import { setSessionResult } from "@/session/results";
+import { CameraControls } from "./CameraControls";
 import { CaptureSteps } from "./CaptureSteps";
 
 export function SkinCapture() {
@@ -22,12 +23,16 @@ export function SkinCapture() {
   const primaryRef = useRef<HTMLButtonElement>(null);
   const prevCameraOn = useRef(false);
   const [cameraOn, setCameraOn] = useState(false);
+  const [stream, setStream] = useState<MediaStream | null>(null);
+  const [facing, setFacing] = useState<Facing>("environment");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
   const stopCamera = useCallback(() => {
     stopStream(streamRef.current);
     streamRef.current = null;
+    setStream(null);
+    setFacing("environment");
     setCameraOn(false);
   }, []);
 
@@ -56,6 +61,7 @@ export function SkinCapture() {
         return;
       }
       streamRef.current = stream;
+      setStream(stream);
       setCameraOn(true);
       // the <video> element is mounted by the state change above
       requestAnimationFrame(() => {
@@ -67,6 +73,46 @@ export function SkinCapture() {
       });
     } catch {
       if (mountedRef.current) setMessage(t.skin.cameraOff);
+    } finally {
+      openingRef.current = false;
+    }
+  }
+
+  async function switchCamera() {
+    if (!streamRef.current || openingRef.current) return;
+    openingRef.current = true;
+    const prev = facing;
+    const next: Facing = prev === "environment" ? "user" : "environment";
+    stopStream(streamRef.current); // also turns the torch off
+    streamRef.current = null;
+    setStream(null);
+    try {
+      let s: MediaStream;
+      let used = next;
+      try {
+        s = await openCamera(next);
+      } catch {
+        used = prev; // new camera refused: go back to the old one
+        s = await openCamera(prev);
+      }
+      if (!mountedRef.current || streamRef.current) {
+        stopStream(s);
+        return;
+      }
+      streamRef.current = s;
+      setStream(s);
+      setFacing(used);
+      const v = videoRef.current;
+      if (v) {
+        v.srcObject = s;
+        void v.play().catch(() => {});
+      }
+    } catch {
+      if (mountedRef.current) {
+        setCameraOn(false);
+        setStream(null);
+        setMessage(t.skin.cameraOff);
+      }
     } finally {
       openingRef.current = false;
     }
@@ -123,9 +169,10 @@ export function SkinCapture() {
 
       {cameraOn && (
         <div className="video-frame" style={{ aspectRatio: "4 / 3" }}>
-          <video ref={videoRef} playsInline muted aria-label={t.skin.guide} />
+          <video ref={videoRef} playsInline muted aria-label={t.skin.guide} style={facing === "user" ? { transform: "scaleX(-1)" } : undefined} />
           <div className="guide-box" style={{ left: "20%", top: "15%", width: "60%", height: "70%" }} aria-hidden="true" />
           <p className="guide-label">{t.skin.guide}</p>
+          <CameraControls stream={stream} facing={facing} onFlip={switchCamera} flipDisabled={busy} />
         </div>
       )}
 

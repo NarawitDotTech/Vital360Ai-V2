@@ -12,6 +12,39 @@ export function stopStream(stream: MediaStream | null | undefined): void {
   stream?.getTracks().forEach((t) => t.stop());
 }
 
+export type Facing = "environment" | "user";
+
+type TorchCaps = MediaTrackCapabilities & { torch?: boolean };
+
+/** True when the stream's video track reports torch (flash) support. */
+export function getTorchSupport(stream: MediaStream | null | undefined): boolean {
+  const track = stream?.getVideoTracks()[0];
+  if (!track || typeof track.getCapabilities !== "function") return false;
+  return (track.getCapabilities() as TorchCaps).torch === true;
+}
+
+/** Turn the torch on/off. Resolves false (never throws) when the device refuses. */
+export async function setTorch(stream: MediaStream | null | undefined, on: boolean): Promise<boolean> {
+  const track = stream?.getVideoTracks()[0];
+  if (!track) return false;
+  try {
+    await track.applyConstraints({ advanced: [{ torch: on } as MediaTrackConstraintSet] });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Number of cameras; only meaningful after camera permission is granted. */
+export async function countVideoInputs(): Promise<number> {
+  try {
+    const list = await navigator.mediaDevices.enumerateDevices();
+    return list.filter((d) => d.kind === "videoinput").length;
+  } catch {
+    return 0;
+  }
+}
+
 /** Draw a source to a canvas no larger than maxSide and return its pixels. Photos never leave memory. */
 export function toImageData(
   src: CanvasImageSource,

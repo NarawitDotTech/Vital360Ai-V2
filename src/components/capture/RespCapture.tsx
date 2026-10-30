@@ -9,10 +9,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { format } from "@/i18n";
-import { openCamera, stopStream } from "@/capture/camera";
+import { openCamera, stopStream, type Facing } from "@/capture/camera";
 import { checkMotionSignal } from "@/capture/quality";
 import { CHEST_BOX } from "@/capture/video";
 import { setSessionResult } from "@/session/results";
+import { CameraControls } from "./CameraControls";
 import { CaptureSteps } from "./CaptureSteps";
 
 const SECONDS = 20;
@@ -28,6 +29,8 @@ export function RespCapture() {
   const primaryRef = useRef<HTMLButtonElement>(null);
   const prevCameraOn = useRef(false);
   const [cameraOn, setCameraOn] = useState(false);
+  const [stream, setStream] = useState<MediaStream | null>(null);
+  const [facing, setFacing] = useState<Facing>("environment");
   const [aspect, setAspect] = useState(4 / 3);
   const [phase, setPhase] = useState<"idle" | "measuring" | "analysing">("idle");
   const [left, setLeft] = useState(SECONDS);
@@ -37,6 +40,8 @@ export function RespCapture() {
     abortRef.current?.abort();
     stopStream(streamRef.current);
     streamRef.current = null;
+    setStream(null);
+    setFacing("environment");
     setCameraOn(false);
     setPhase("idle");
   }, []);
@@ -65,6 +70,7 @@ export function RespCapture() {
         return;
       }
       streamRef.current = stream;
+      setStream(stream);
       setCameraOn(true);
       requestAnimationFrame(() => {
         const v = videoRef.current;
@@ -75,6 +81,46 @@ export function RespCapture() {
       });
     } catch {
       if (mountedRef.current) setMessage(t.resp.cameraOff);
+    } finally {
+      openingRef.current = false;
+    }
+  }
+
+  async function switchCamera() {
+    if (!streamRef.current || openingRef.current) return;
+    openingRef.current = true;
+    const prev = facing;
+    const next: Facing = prev === "environment" ? "user" : "environment";
+    stopStream(streamRef.current); // also turns the torch off
+    streamRef.current = null;
+    setStream(null);
+    try {
+      let s: MediaStream;
+      let used = next;
+      try {
+        s = await openCamera(next);
+      } catch {
+        used = prev; // new camera refused: go back to the old one
+        s = await openCamera(prev);
+      }
+      if (!mountedRef.current || streamRef.current) {
+        stopStream(s);
+        return;
+      }
+      streamRef.current = s;
+      setStream(s);
+      setFacing(used);
+      const v = videoRef.current;
+      if (v) {
+        v.srcObject = s;
+        void v.play().catch(() => {});
+      }
+    } catch {
+      if (mountedRef.current) {
+        setCameraOn(false);
+        setStream(null);
+        setMessage(t.resp.cameraOff);
+      }
     } finally {
       openingRef.current = false;
     }
@@ -123,9 +169,10 @@ export function RespCapture() {
 
       {cameraOn && (
         <div className="video-frame" style={{ aspectRatio: String(aspect), maxHeight: "65dvh" }}>
-          <video ref={videoRef} playsInline muted aria-label={t.resp.guide} />
+          <video ref={videoRef} playsInline muted aria-label={t.resp.guide} style={facing === "user" ? { transform: "scaleX(-1)" } : undefined} />
           <div className="guide-box" style={box} aria-hidden="true" />
           <p className="guide-label">{t.resp.guide}</p>
+          <CameraControls stream={stream} facing={facing} onFlip={switchCamera} flipDisabled={phase !== "idle"} />
         </div>
       )}
 
