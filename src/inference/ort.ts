@@ -1,9 +1,10 @@
 // onnxruntime-web backend. Imported dynamically, only when a manifest entry has a non-null url.
-// UNVERIFIED against a real model (none exists yet). Assumed contract, overridable via entry.onnx:
-//   skin : input [1,3,S,S] float32, RGB scaled 0..1 then ImageNet mean/std, S = onnx.imageSize ?? 224
+// Skin verified against skin-v1 (see docs/model-cards/skin-v1.md). Contract, overridable via entry.onnx:
+//   skin : input [1,3,S,S] float32, area-resized (skin-preprocess.ts), RGB 0..1 then ImageNet mean/std, S = onnx.imageSize ?? 224
 //   audio: input [1,1,T,64] float32 log-mel (see mel.ts), T = onnx.frames ?? 501 (pad/crop), 16 kHz
 //   output: [1,nLabels] raw logits.
 import { logMel } from "./mel";
+import { skinTensor } from "./skin-preprocess";
 import type * as OrtApi from "onnxruntime-web";
 import type { ModelEntry, ModalityInput } from "./types";
 
@@ -68,19 +69,4 @@ export async function createOrtRunner(entry: ModelEntry): Promise<LogitsRunner> 
       return Array.from(out[outName].data as Float32Array);
     },
   };
-}
-
-function skinTensor(img: ImageData, S: number): Float32Array {
-  const mean = [0.485, 0.456, 0.406];
-  const std = [0.229, 0.224, 0.225];
-  const out = new Float32Array(3 * S * S);
-  for (let y = 0; y < S; y++) {
-    const sy = Math.min(img.height - 1, Math.floor((y * img.height) / S));
-    for (let x = 0; x < S; x++) {
-      const sx = Math.min(img.width - 1, Math.floor((x * img.width) / S));
-      const i = (sy * img.width + sx) * 4;
-      for (let c = 0; c < 3; c++) out[c * S * S + y * S + x] = (img.data[i + c] / 255 - mean[c]) / std[c];
-    }
-  }
-  return out;
 }

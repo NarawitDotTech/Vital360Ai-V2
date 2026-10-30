@@ -3,6 +3,7 @@
 Pipeline (same as the app): decode -> (browser) downscale so max side <= 640 -> RGB uint8 ->
 area-weighted squash resize to SxS (no crop) -> /255 -> ImageNet mean/std -> NCHW float32.
 """
+import functools
 import numpy as np
 from PIL import Image
 
@@ -13,6 +14,7 @@ MAX_SIDE = 640  # src/capture/camera.ts maxSide
 LABELS = ["benign", "needs-review", "urgent-referral"]
 
 
+@functools.lru_cache(maxsize=64)
 def area_matrix(n: int, s: int) -> np.ndarray:
     """(s, n) matrix: row i holds the fractional overlap of each source pixel with output cell i, / cell width."""
     w = np.zeros((s, n), dtype=np.float64)
@@ -42,8 +44,8 @@ def squash_f(rgb: np.ndarray, s: int = S) -> np.ndarray:
     h, w, _ = rgb.shape
     wy, wx = area_matrix(h, s), area_matrix(w, s)
     x = rgb.astype(np.float64)
-    out = np.einsum("ih,hwc->iwc", wy, x)
-    return np.einsum("jw,iwc->ijc", wx, out)
+    out = (wy @ x.reshape(h, w * 3)).reshape(s, w, 3)  # vertical pass
+    return (wx @ out.transpose(1, 0, 2).reshape(w, s * 3)).reshape(s, s, 3).transpose(1, 0, 2)  # horizontal pass
 
 
 def to_tensor(rgb_squashed: np.ndarray) -> np.ndarray:
