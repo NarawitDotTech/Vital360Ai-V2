@@ -38,4 +38,19 @@ describe("calibrate", () => {
     expect(() => finalize(entry, [1])).toThrow();
     expect(() => tierOf(entry, "zzz")).toThrow();
   });
+  it("tierRule sum: tier from summed probs, label stays the top class", () => {
+    const e: ModelEntry = { ...entry, labels: ["g1", "g2", "r1", "r2"], tiers: { g1: "green", g2: "green", r1: "red", r2: "red" }, tierRule: "sum", threshold: 0.5 };
+    // top class is g1 (0.34) but red classes sum to 0.46 < green 0.54: green wins
+    const r = finalize(e, [0.34, 0.2, 0.23, 0.23]);
+    expect(r.tier).toBe("green");
+    expect(r.label).toBe("g1");
+    expect(r.tierProbs?.green).toBeCloseTo(0.54, 10);
+    // top class is red but red total beats green: red
+    expect(finalize(e, [0.1, 0.1, 0.5, 0.3]).tier).toBe("red");
+    // no tier reaches threshold
+    const u = finalize({ ...e, threshold: 0.6 }, [0.3, 0.2, 0.25, 0.25]);
+    expect(u.tier).toBe("uncertain");
+    expect(u.label).toBe("uncertain");
+    expect(u.tierProbs?.red).toBeCloseTo(0.5, 10);
+  });
 });

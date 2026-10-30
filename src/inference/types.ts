@@ -13,6 +13,8 @@ export interface Prediction {
   label: string | "uncertain";
   tier: Tier;
   confidence: number;
+  /** Only for models with tierRule "sum": class probabilities summed per tier (green+amber+red ~ 1). */
+  tierProbs?: Partial<Record<"green" | "amber" | "red", number>>;
   extras?: { breathsPerMin?: number; heatmap?: ImageData };
   modelVersion: string;
   latencyMs: number;
@@ -39,10 +41,16 @@ export interface ModelEntry {
   /** max prob below this => "uncertain" */
   threshold: number;
   temperature: number;
+  /**
+   * How the shown tier is chosen. "label" (default): tier of the top label, uncertain if max class prob < threshold.
+   * "sum": tier = argmax over tiers of the summed class probabilities, uncertain if that tier prob < threshold;
+   * label stays the top class (or "uncertain"). Used by the fine-grained skin model.
+   */
+  tierRule?: "label" | "sum";
   /** Optional free-text rationale (thresholds, tier choices). Ignored at runtime. */
   notes?: string;
   /** Optional ONNX I/O hints; defaults are used when absent. */
-  onnx?: { input?: string; output?: string; imageSize?: number; frames?: number };
+  onnx?: { input?: string; output?: string; imageSize?: number; frames?: number; normalization?: string };
 }
 
 /** Shape of public/models/manifest.json. */

@@ -26,6 +26,7 @@ export interface Calibrated {
   label: string;
   tier: Tier;
   confidence: number;
+  tierProbs?: Prediction["tierProbs"];
 }
 
 /** Turn class probabilities (already calibrated) into label/tier, applying the uncertainty threshold. */
@@ -39,12 +40,26 @@ export function finalize(entry: ModelEntry, probs: ArrayLike<number>): Calibrate
     rec[entry.labels[i]] = probs[i];
     if (probs[i] > probs[best]) best = i;
   }
+  if (entry.tierRule === "sum") return finalizeBySum(entry, probs, rec, best);
   const confidence = probs[best];
   if (confidence < entry.threshold) {
     return { probs: rec, label: "uncertain", tier: "uncertain", confidence };
   }
   const label = entry.labels[best];
   return { probs: rec, label, tier: tierOf(entry, label), confidence };
+}
+
+const TIER_ORDER = ["green", "amber", "red"] as const;
+
+/** tierRule "sum": tier probabilities are the sums of class probabilities; shown tier = argmax, uncertain below threshold. */
+function finalizeBySum(entry: ModelEntry, probs: ArrayLike<number>, rec: Record<string, number>, best: number): Calibrated {
+  const tp = { green: 0, amber: 0, red: 0 };
+  for (let i = 0; i < probs.length; i++) tp[tierOf(entry, entry.labels[i])] += probs[i];
+  let tier: (typeof TIER_ORDER)[number] = "green";
+  for (const t of TIER_ORDER) if (tp[t] > tp[tier]) tier = t;
+  const confidence = tp[tier];
+  if (confidence < entry.threshold) return { probs: rec, label: "uncertain", tier: "uncertain", confidence, tierProbs: tp };
+  return { probs: rec, label: entry.labels[best], tier, confidence, tierProbs: tp };
 }
 
 /** Raw logits -> temperature softmax -> finalize. */
