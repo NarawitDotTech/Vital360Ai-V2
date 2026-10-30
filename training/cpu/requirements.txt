@@ -1,0 +1,11 @@
+# CPU-only. Install torch/torchvision with: pip install torch==2.9.1 torchvision==0.24.1 --index-url https://download.pytorch.org/whl/cpu
+# then: pip install -r requirements.txt   (venv lives outside the repo: /home/user/ml/venv, Python 3.13)
+torch==2.9.1
+torchvision==0.24.1
+numpy==2.5.4
+pillow==13.0.0
+pandas==3.1.0
+scikit-learn==1.9.1
+scipy==1.18.1
+onnx==1.23.2
+onnxruntime==1.31.1
