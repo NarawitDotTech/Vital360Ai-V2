@@ -30,7 +30,7 @@ export function TierIcon({ tier, className }: { tier: Tier; className?: string }
 export function TierBadge({ tier, size = "md" }: { tier: Tier; size?: "md" | "lg" }) {
   const { t } = useI18n();
   return (
-    <Badge variant="outline" className={cn(TINTS[tier], size === "lg" && "h-9 gap-2 px-4 text-lg [&>svg]:size-5!")} data-tier-badge={tier}>
+    <Badge variant="outline" className={cn(TINTS[tier], size === "lg" && "v-pop h-9 gap-2 px-4 text-lg [&>svg]:size-5!")} data-tier-badge={tier}>
       <TierIcon tier={tier} />
       {t.tiers[tier].word}
     </Badge>

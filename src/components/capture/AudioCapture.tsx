@@ -12,6 +12,7 @@ import { format } from "@/i18n";
 import { checkAmbient, checkRecording } from "@/capture/quality";
 import { setSessionResult } from "@/session/results";
 import { CaptureSteps } from "./CaptureSteps";
+import { ScanBar, Waveform } from "./Motion";
 
 const AMBIENT_SEC = 1.5;
 const RECORD_SEC = 10;
@@ -115,6 +116,7 @@ export function AudioCapture() {
               <Mic aria-hidden="true" className="size-5 text-primary" />
               {t.audio.recording}
             </p>
+            <Waveform />
             <Progress value={((RECORD_SEC - left) / RECORD_SEC) * 100} aria-label={t.audio.recording} />
             <p className="text-muted-foreground" aria-hidden="true">
               {format(t.audio.remaining, { n: left })}
@@ -125,7 +127,10 @@ export function AudioCapture() {
       {phase === "analysing" && (
         <Alert role="status">
           <Loader2 aria-hidden="true" className="animate-spin" />
-          <AlertDescription>{t.common.working}</AlertDescription>
+          <AlertDescription>
+            {t.common.working}
+            <span className="mt-2 block"><ScanBar /></span>
+          </AlertDescription>
         </Alert>
       )}
 

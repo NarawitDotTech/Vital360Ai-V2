@@ -11,6 +11,7 @@ import { checkImage } from "@/capture/quality";
 import { setSessionResult } from "@/session/results";
 import { CameraControls } from "./CameraControls";
 import { CaptureSteps } from "./CaptureSteps";
+import { ScanBar } from "./Motion";
 
 export function SkinCapture() {
   const { locale, t } = useI18n();
@@ -186,7 +187,10 @@ export function SkinCapture() {
       {busy && (
         <Alert role="status">
           <Loader2 aria-hidden="true" className="animate-spin" />
-          <AlertDescription>{t.skin.analyzing}</AlertDescription>
+          <AlertDescription>
+            {t.skin.analyzing}
+            <span className="mt-2 block"><ScanBar /></span>
+          </AlertDescription>
         </Alert>
       )}
 

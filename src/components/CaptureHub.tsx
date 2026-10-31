@@ -28,11 +28,11 @@ export function CaptureHub() {
       <PageTitle>{t.capture.title}</PageTitle>
       <p>{t.capture.intro}</p>
       <ul className="flex flex-col gap-3">
-        {items.map(({ id, label, hint, Icon }) => (
-          <li key={id}>
+        {items.map(({ id, label, hint, Icon }, i) => (
+          <li key={id} className="v-enter" style={{ "--i": i + 1 } as React.CSSProperties}>
             <Link
               href={`/${locale}/capture/${id}/`}
-              className="flex min-h-20 items-center gap-4 rounded-xl border bg-card p-4 text-foreground no-underline shadow-sm transition-colors hover:bg-accent"
+              className="flex min-h-20 items-center gap-4 rounded-xl border bg-card p-4 text-foreground no-underline shadow-sm v-press hover:bg-accent"
             >
               <span aria-hidden="true" className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-accent text-primary">
                 <Icon className="size-6" />

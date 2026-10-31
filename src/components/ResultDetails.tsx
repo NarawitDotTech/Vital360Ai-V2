@@ -40,7 +40,7 @@ export function ResultDetails({ p }: { p: Prediction }) {
                   <span className="font-semibold tabular-nums">{Math.round(v * 100)}%</span>
                 </div>
                 <div aria-hidden="true" className="mt-1 h-2 overflow-hidden rounded-full bg-muted">
-                  <div className="h-full rounded-full bg-primary" style={{ width: `${Math.round(v * 100)}%` }} />
+                  <div className="v-bar h-full rounded-full bg-primary" style={{ width: `${Math.round(v * 100)}%` }} />
                 </div>
               </li>
             ))}

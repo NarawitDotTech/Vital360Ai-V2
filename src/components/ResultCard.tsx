@@ -32,7 +32,7 @@ export function ResultCard({ p, headingLevel = 2 }: { p: Prediction; headingLeve
   const matchName = canNameMatch(p, t.results) ? className(t.results, p.modality, p.label) : undefined;
   const H = headingLevel === 2 ? "h2" : "h3";
   return (
-    <Card aria-labelledby={`tier-${p.modality}`} data-testid={`result-${p.modality}`} data-tier={p.tier} role="region">
+    <Card className="v-enter" aria-labelledby={`tier-${p.modality}`} data-testid={`result-${p.modality}`} data-tier={p.tier} role="region">
       <CardContent className="gap-4">
         <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
           <H id={`tier-${p.modality}`} className="text-lg font-semibold">

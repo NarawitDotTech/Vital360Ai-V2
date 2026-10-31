@@ -15,6 +15,7 @@ import { CHEST_BOX } from "@/capture/video";
 import { setSessionResult } from "@/session/results";
 import { CameraControls } from "./CameraControls";
 import { CaptureSteps } from "./CaptureSteps";
+import { CountdownRing, ScanBar } from "./Motion";
 
 const SECONDS = 20;
 
@@ -194,17 +195,25 @@ export function RespCapture() {
               <Video aria-hidden="true" className="size-5 text-primary" />
               {t.resp.measuring}
             </p>
-            <Progress value={((SECONDS - left) / SECONDS) * 100} aria-label={t.resp.measuring} />
-            <p className="text-muted-foreground" aria-hidden="true">
-              {format(t.resp.remaining, { n: left })}
-            </p>
+            <div className="flex items-center gap-4">
+              <CountdownRing fraction={(SECONDS - left) / SECONDS} label={String(left)} />
+              <div className="flex-1">
+                <Progress value={((SECONDS - left) / SECONDS) * 100} aria-label={t.resp.measuring} />
+                <p className="mt-2 text-muted-foreground" aria-hidden="true">
+                  {format(t.resp.remaining, { n: left })}
+                </p>
+              </div>
+            </div>
           </CardContent>
         </Card>
       )}
       {phase === "analysing" && (
         <Alert role="status">
           <Loader2 aria-hidden="true" className="animate-spin" />
-          <AlertDescription>{t.common.working}</AlertDescription>
+          <AlertDescription>
+            {t.common.working}
+            <span className="mt-2 block"><ScanBar /></span>
+          </AlertDescription>
         </Alert>
       )}
 

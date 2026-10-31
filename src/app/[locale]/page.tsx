@@ -21,22 +21,22 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <PageTitle>{t.home.title}</PageTitle>
         <p className="text-muted-foreground">{t.home.intro}</p>
       </div>
-      <Card>
+      <Card className="v-enter" style={{ "--i": 1 } as React.CSSProperties}>
         <CardContent className="gap-3">
           <Button asChild size="lg" className="w-full">
             <Link href={`/${locale}/capture/`}>
-              <HeartPulse aria-hidden="true" />
+              <span className="hero-glow flex"><HeartPulse aria-hidden="true" /></span>
               {t.home.start}
             </Link>
           </Button>
           <p className="text-center text-sm text-muted-foreground">{t.home.startHint}</p>
         </CardContent>
       </Card>
-      <Alert role="note">
+      <Alert role="note" className="v-enter" style={{ "--i": 2 } as React.CSSProperties}>
         <Lock aria-hidden="true" />
         <AlertDescription>{t.home.privacy}</AlertDescription>
       </Alert>
-      <nav aria-label={t.home.moreTitle}>
+      <nav aria-label={t.home.moreTitle} className="v-enter" style={{ "--i": 3 } as React.CSSProperties}>
         <Card className="gap-0 py-1">
           <ul>
             {more.map(({ href, label, Icon }, i) => (
