@@ -206,3 +206,6 @@
   .scan-bar::after { animation: none !important; width: 100%; opacity: 0.5; }
   [data-slot="button"]:active:not(:disabled), .v-press:active { transform: none; }
 }
+
+/* Free-size guide (breathing chest box): position/size come from inline style, not the centred square */
+.guide-box.guide-free { transform: none; aspect-ratio: auto; }

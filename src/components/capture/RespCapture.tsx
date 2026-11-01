@@ -172,7 +172,7 @@ export function RespCapture() {
       {cameraOn && (
         <div className="video-frame" style={{ aspectRatio: String(aspect), maxHeight: "65dvh" }}>
           <video ref={videoRef} playsInline muted aria-label={t.resp.guide} style={facing === "user" ? { transform: "scaleX(-1)" } : undefined} />
-          <div className="guide-box" style={box} aria-hidden="true" />
+          <div className="guide-box guide-free" style={box} aria-hidden="true" />
           <p className="guide-label">{t.resp.guide}</p>
           <CameraControls stream={stream} facing={facing} onFlip={switchCamera} flipDisabled={phase !== "idle"} />
         </div>
