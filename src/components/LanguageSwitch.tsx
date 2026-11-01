@@ -14,7 +14,12 @@ export function LanguageSwitch() {
   const href = `/${other}${rest || "/"}`;
   return (
     <Button asChild variant="outline" size="sm">
-      <Link href={href} hrefLang={other} lang={other} aria-label={t.header.switchLabel}>
+      <Link
+        href={href}
+        hrefLang={other}
+        lang={other}
+        aria-label={t.header.switchLabel}
+      >
         <Languages aria-hidden="true" />
         {t.header.switchText}
       </Link>

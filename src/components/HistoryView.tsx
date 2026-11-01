@@ -6,7 +6,12 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { bcp47, format } from "@/i18n";
-import { clearHistory, deleteHistory, listHistory, type HistoryEntry } from "@/storage/db";
+import {
+  clearHistory,
+  deleteHistory,
+  listHistory,
+  type HistoryEntry,
+} from "@/storage/db";
 import { Disclaimer } from "./Disclaimer";
 import { useI18n } from "./I18nProvider";
 import { isMockModel, MockNotice } from "./MockNotice";
@@ -45,7 +50,10 @@ export function HistoryView() {
   }, [version]);
 
   const fmtDate = (iso: string) =>
-    new Intl.DateTimeFormat(bcp47[locale], { dateStyle: "medium", timeStyle: "short" }).format(new Date(iso));
+    new Intl.DateTimeFormat(bcp47[locale], {
+      dateStyle: "medium",
+      timeStyle: "short",
+    }).format(new Date(iso));
 
   async function removeOne(id: string) {
     try {
@@ -105,14 +113,25 @@ export function HistoryView() {
                       <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
                         <div className="min-w-0">
                           <p className="font-semibold">{what}</p>
-                          <p className="text-sm text-muted-foreground">{date}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {date}
+                          </p>
                           {canNameMatch(e, t.results) && (
                             <p className="text-sm">
-                              {format(t.results.similarTo, { name: className(t.results, e.modality, e.label) ?? e.label, pct: Math.round((e.probs[e.label] ?? 0) * 100) })}
+                              {format(t.results.similarTo, {
+                                name:
+                                  className(t.results, e.modality, e.label) ??
+                                  e.label,
+                                pct: Math.round((e.probs[e.label] ?? 0) * 100),
+                              })}
                             </p>
                           )}
                           {e.breathsPerMin !== undefined && (
-                            <p className="text-sm">{format(t.results.breaths, { n: Math.round(e.breathsPerMin) })}</p>
+                            <p className="text-sm">
+                              {format(t.results.breaths, {
+                                n: Math.round(e.breathsPerMin),
+                              })}
+                            </p>
                           )}
                         </div>
                         <TierBadge tier={e.tier} />
@@ -124,7 +143,10 @@ export function HistoryView() {
                         size="sm"
                         className="self-start"
                         onClick={() => removeOne(e.id)}
-                        aria-label={format(t.history.deleteOneLabel, { what, date })}
+                        aria-label={format(t.history.deleteOneLabel, {
+                          what,
+                          date,
+                        })}
                       >
                         <Trash2 aria-hidden="true" />
                         {t.history.deleteOne}
@@ -138,17 +160,33 @@ export function HistoryView() {
           {confirmAll ? (
             <Card size="sm">
               <CardContent className="gap-3">
-                <Button type="button" variant="destructive" size="lg" onClick={removeAll}>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="lg"
+                  onClick={removeAll}
+                >
                   <Trash2 aria-hidden="true" />
                   {t.history.confirmAll}
                 </Button>
-                <Button type="button" variant="outline" size="lg" onClick={() => setConfirmAll(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="lg"
+                  onClick={() => setConfirmAll(false)}
+                >
                   {t.history.keep}
                 </Button>
               </CardContent>
             </Card>
           ) : (
-            <Button type="button" variant="outline" size="lg" className="self-start" onClick={() => setConfirmAll(true)}>
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              className="self-start"
+              onClick={() => setConfirmAll(true)}
+            >
               <Trash2 aria-hidden="true" />
               {t.history.deleteAll}
             </Button>

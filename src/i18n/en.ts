@@ -23,7 +23,8 @@ export const en: Dict = {
     brandHome: "Vitals 360 AI home",
     footerNote: "Early screening tool only. Not a diagnosis.",
     working: "Processing, please wait…",
-    problem: "Something went wrong. Please try again. If it keeps happening, close and reopen the app.",
+    problem:
+      "Something went wrong. Please try again. If it keeps happening, close and reopen the app.",
   },
   header: {
     switchLabel: "เปลี่ยนเป็นภาษาไทย",
@@ -43,13 +44,16 @@ export const en: Dict = {
   },
   consent: {
     title: "Before you start",
-    intro: "Please read and agree first, in line with Thailand's Personal Data Protection Act (PDPA).",
+    intro:
+      "Please read and agree first, in line with Thailand's Personal Data Protection Act (PDPA).",
     whatTitle: "What this app does with your data",
-    point1: "It uses the camera to photograph skin and film your chest, and the microphone to record a cough or breathing.",
-    point2: "Everything is processed on your own phone only. Photos, sounds and videos are never uploaded or sent anywhere.",
+    point1:
+      "It uses the camera to photograph skin and film your chest, and the microphone to record a cough or breathing.",
+    point2:
+      "Everything is processed on your own phone only. Photos, sounds and videos are never uploaded or sent anywhere.",
     point3:
       "The app keeps only a summary (risk level and rough numbers) on your phone so you can see your history. It does not keep photos or sound.",
-    point4: "You can delete all of it at any time from \"Delete my data\".",
+    point4: 'You can delete all of it at any time from "Delete my data".',
     notMedicalTitle: "Important",
     notMedical:
       "This app is an early screening tool. It is not a diagnosis and not a medical device. It cannot replace seeing a doctor.",
@@ -58,7 +62,8 @@ export const en: Dict = {
     agree: "Agree and continue",
     needCheck: "Please tick the box to agree first.",
     version: "Consent text version {version}",
-    saveFailed: "Could not save your consent. Please try again (check that private mode is off).",
+    saveFailed:
+      "Could not save your consent. Please try again (check that private mode is off).",
     decline: "I do not agree, go back",
   },
   gate: {
@@ -68,7 +73,8 @@ export const en: Dict = {
   },
   capture: {
     title: "Choose what to screen",
-    intro: "Do one at a time. You do not need to do all of them. The more you screen, the fuller the combined result.",
+    intro:
+      "Do one at a time. You do not need to do all of them. The more you screen, the fuller the combined result.",
     skin: "Photo of skin",
     skinHint: "A spot, rash or mole you want checked",
     audio: "Record cough / breathing",
@@ -76,6 +82,7 @@ export const en: Dict = {
     resp: "Breathing from video",
     respHint: "Film your chest for 20 seconds",
     done: "Done",
+    seeSummary: "See AI summary",
     viewResults: "See results",
     noneYet: "Nothing screened yet",
     speak: "Hear the instructions",
@@ -85,13 +92,15 @@ export const en: Dict = {
     step1: "Find good light, for example near a window.",
     step2: "Fill the box with the spot you want checked, about 15-20 cm away.",
     step3: "Hold the phone steady, then press the photo button.",
-    spoken: "Find good light. Fill the box with the spot. Hold steady, then press the photo button.",
+    spoken:
+      "Find good light. Fill the box with the spot. Hold steady, then press the photo button.",
     openCamera: "Open camera",
     takePhoto: "Take photo",
     chooseFile: "Use phone camera app or pick a photo",
     fileLabel: "Pick a skin photo from your phone, or take a new one",
     guide: "Fill the box with the spot",
-    cameraOff: "Could not open the camera. Use the \"Use phone camera app or pick a photo\" button instead.",
+    cameraOff:
+      'Could not open the camera. Use the "Use phone camera app or pick a photo" button instead.',
     stopCamera: "Close camera",
     analyzing: "Checking the photo…",
     badFile: "Could not open this picture. Please pick another one.",
@@ -100,28 +109,36 @@ export const en: Dict = {
     title: "Record a cough or breathing",
     step1: "Go somewhere quiet. Turn off the TV or radio.",
     step2: "Hold the phone about 20 cm from your mouth.",
-    step3: "Press start, then cough or breathe in and out deeply as usual until 10 seconds are done.",
-    spoken: "Go somewhere quiet. Hold the phone about 20 centimetres from your mouth. Press start, then cough or breathe deeply for 10 seconds.",
+    step3:
+      "Press start, then cough or breathe in and out deeply as usual until 10 seconds are done.",
+    spoken:
+      "Go somewhere quiet. Hold the phone about 20 centimetres from your mouth. Press start, then cough or breathe deeply for 10 seconds.",
     start: "Start (check background noise)",
     checking: "Listening to the room. Please stay still…",
     recording: "Recording. Cough or breathe deeply now",
     remaining: "{n} seconds left",
-    micOff: "Could not open the microphone. Please allow microphone access in your browser settings.",
+    micOff:
+      "Could not open the microphone. Please allow microphone access in your browser settings.",
     noiseOk: "The room is quiet enough. Starting to record",
     stop: "Stop",
   },
   resp: {
     title: "Breathing from video",
-    step1: "Sit or stand so your chest and shoulders are in view. Avoid very thick clothes.",
-    step2: "Keep the phone steady (lean it on something) and line up the frame with your chest.",
-    step3: "Press start, then breathe normally and stay still for about 20 seconds.",
-    spoken: "Keep the phone steady with your chest inside the frame. Press start, then breathe normally and stay still for about 20 seconds.",
+    step1:
+      "Sit or stand so your chest and shoulders are in view. Avoid very thick clothes.",
+    step2:
+      "Keep the phone steady (lean it on something) and line up the frame with your chest.",
+    step3:
+      "Press start, then breathe normally and stay still for about 20 seconds.",
+    spoken:
+      "Keep the phone steady with your chest inside the frame. Press start, then breathe normally and stay still for about 20 seconds.",
     openCamera: "Open camera",
     start: "Start 20-second check",
     guide: "Put your chest inside the frame",
     measuring: "Measuring. Breathe normally and stay still",
     remaining: "{n} seconds left",
-    cameraOff: "Could not open the camera. Please allow camera access in your browser settings.",
+    cameraOff:
+      "Could not open the camera. Please allow camera access in your browser settings.",
     stopCamera: "Close camera",
   },
   camera: {
@@ -129,13 +146,37 @@ export const en: Dict = {
     torch: "Flash",
   },
   quality: {
-    tooDark: "The picture is too dark. Move near a window or turn on a light, then try again.",
-    tooBright: "The picture is too bright. Move out of direct sunlight, then try again.",
+    tooDark:
+      "The picture is too dark. Move near a window or turn on a light, then try again.",
+    tooBright:
+      "The picture is too bright. Move out of direct sunlight, then try again.",
     blurry: "The picture is not sharp. Hold the phone steady and try again.",
-    tooNoisy: "It is too noisy around you. Move somewhere quieter, then try again.",
-    tooQuiet: "We could not hear anything. Check the microphone is not covered or muted, or bring the phone closer to your mouth, then try again.",
-    noMotion: "We could not see your chest moving. Keep the phone steady, show your chest clearly, use good light, then try again.",
-    notAvailable: "This part does not work on this device. Try another browser such as Chrome.",
+    tooNoisy:
+      "It is too noisy around you. Move somewhere quieter, then try again.",
+    tooQuiet:
+      "We could not hear anything. Check the microphone is not covered or muted, or bring the phone closer to your mouth, then try again.",
+    noMotion:
+      "We could not see your chest moving. Keep the phone steady, show your chest clearly, use good light, then try again.",
+    notAvailable:
+      "This part does not work on this device. Try another browser such as Chrome.",
+  },
+  summary: {
+    title: "AI summary",
+    note: "Made on your device. Nothing is sent anywhere. Not a diagnosis.",
+    headline: {
+      red: "See a clinician soon",
+      amber: "Worth having a clinician look",
+      green: "Nothing of concern found",
+      uncertain: "Cannot tell yet",
+    },
+    line: "{name}: {word}.",
+    demoLine: "{name}: demo only, not a real result.",
+    demoOnly:
+      "So far there are only demo results, so nothing can be concluded about your health. Please do a real screening.",
+    missing: "Not screened yet: {list}",
+    allDone: "All 3 screenings are done.",
+    doCheck: "Do: {name}",
+    speak: "Read the summary",
   },
   results: {
     title: "Early screening result",
@@ -150,14 +191,16 @@ export const en: Dict = {
     modelVersion: "Model version {v}",
     chances: "Rough shares",
     breaths: "About {n} breaths per minute",
-    breathsNote: "Most resting adults breathe about 12-20 times a minute. This is an estimate from video.",
+    breathsNote:
+      "Most resting adults breathe about 12-20 times a minute. This is an estimate from video.",
     save: "Save to history",
     saved: "Saved",
     saveFailed: "Could not save. Please try again.",
     again: "Screen something else",
     viewHistory: "See history",
     mockTitle: "Demo model, not a real screening",
-    mockText: "This result is made up to demonstrate the screens. It does not come from a tested model. Do not use it for any health decision.",
+    mockText:
+      "This result is made up to demonstrate the screens. It does not come from a tested model. Do not use it for any health decision.",
     labels: {
       benign: "Looks ordinary",
       "needs-review": "Worth having a clinician look",
@@ -174,29 +217,32 @@ export const en: Dict = {
       uncertain: "Cannot tell yet",
     },
     similarTo: "Closest match: {name} ({pct}%)",
-    similarNote: "This is the closest match the system found, not a diagnosis. Only a clinician can say what it really is.",
+    similarNote:
+      "This is the closest match the system found, not a diagnosis. Only a clinician can say what it really is.",
     alternatives: "Other close matches",
     names: {
-      "melanoma": "Melanoma (a serious skin cancer)",
+      melanoma: "Melanoma (a serious skin cancer)",
       "basal-cell-carcinoma": "Basal cell carcinoma (a skin cancer)",
       "squamous-cell-carcinoma": "Squamous cell carcinoma (a skin cancer)",
-      "actinic-keratosis": "Actinic keratosis (sun-damage patch, can precede cancer)",
-      "nevus": "Mole (nevus)",
+      "actinic-keratosis":
+        "Actinic keratosis (sun-damage patch, can precede cancer)",
+      nevus: "Mole (nevus)",
       "seborrheic-keratosis": "Seborrheic keratosis (harmless age wart)",
-      "dermatofibroma": "Dermatofibroma (firm harmless lump)",
+      dermatofibroma: "Dermatofibroma (firm harmless lump)",
       "vascular-lesion": "Blood-vessel mark (e.g. cherry angioma)",
-      "eczema": "Eczema (dermatitis)",
-      "contact-dermatitis": "Contact dermatitis (reaction to something touched)",
-      "urticaria": "Hives (urticaria)",
-      "psoriasis": "Psoriasis",
-      "tinea": "Fungal skin infection (tinea / ringworm)",
-      "acne": "Acne",
-      "folliculitis": "Folliculitis (inflamed hair follicles)",
+      eczema: "Eczema (dermatitis)",
+      "contact-dermatitis":
+        "Contact dermatitis (reaction to something touched)",
+      urticaria: "Hives (urticaria)",
+      psoriasis: "Psoriasis",
+      tinea: "Fungal skin infection (tinea / ringworm)",
+      acne: "Acne",
+      folliculitis: "Folliculitis (inflamed hair follicles)",
       "insect-bite": "Insect bite or sting",
       "herpes-zoster": "Shingles (herpes zoster)",
       "herpes-simplex": "Cold sore / herpes simplex",
       "healthy-skin": "No visible skin condition",
-      "purpura": "Bruise-like spots (purpura)",
+      purpura: "Bruise-like spots (purpura)",
       "audio-normal": "Normal breath sound",
       "audio-wheeze": "Wheeze (whistling breath sound)",
       "audio-crackle": "Crackle (crackling breath sound)",
@@ -237,7 +283,8 @@ export const en: Dict = {
   },
   urgent: {
     title: "Go to hospital right away if you have",
-    intro: "If you have any of these, do not wait for the app. Call 1669 or go to a hospital now.",
+    intro:
+      "If you have any of these, do not wait for the app. Call 1669 or go to a hospital now.",
     items: [
       "Chest pain or tightness",
       "Severe breathlessness, cannot finish a sentence",
@@ -250,7 +297,8 @@ export const en: Dict = {
   },
   history: {
     title: "Screening history",
-    empty: "No history yet. Results you save with \"Save to history\" appear here.",
+    empty:
+      'No history yet. Results you save with "Save to history" appear here.',
     note: "Only summaries are kept on this phone. No photos or sound.",
     deleteOne: "Delete this entry",
     deleteOneLabel: "Delete the {what} entry from {date}",
@@ -262,7 +310,8 @@ export const en: Dict = {
   },
   deleteData: {
     title: "Delete my data",
-    intro: "This clears everything the app stored on this phone. It cannot be undone.",
+    intro:
+      "This clears everything the app stored on this phone. It cannot be undone.",
     lists: [
       "Your consent and your screening history",
       "The result you are currently viewing",
@@ -280,9 +329,11 @@ export const en: Dict = {
   },
   dashboard: {
     title: "System evaluation",
-    intro: "Compares single models (image, sound, video) with the combined multimodal model.",
+    intro:
+      "Compares single models (image, sound, video) with the combined multimodal model.",
     sampleBanner: "SAMPLE DATA, not measured",
-    sampleDetail: "The numbers on this page are made up to test the screen. Do not cite them as research results.",
+    sampleDetail:
+      "The numbers on this page are made up to test the screen. Do not cite them as research results.",
     empty: "No metrics files found in eval/metrics.",
     compareTitle: "Single models vs combined",
     model: "Model",
@@ -302,7 +353,8 @@ export const en: Dict = {
     exportCsv: "Download CSV",
     exportPng: "Download chart PNG",
     chartTitle: "Comparison chart",
-    chartAlt: "Bar chart comparing accuracy, sensitivity, specificity and F1 for each model. The same numbers are in the table above.",
+    chartAlt:
+      "Bar chart comparing accuracy, sensitivity, specificity and F1 for each model. The same numbers are in the table above.",
     fileLabel: "File {file}",
     generatedAt: "Generated {date}",
     models: {

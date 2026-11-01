@@ -9,7 +9,10 @@ import { useI18n } from "./I18nProvider";
 function pickVoice(lang: string): SpeechSynthesisVoice | undefined {
   const voices = window.speechSynthesis.getVoices();
   const base = lang.split("-")[0].toLowerCase();
-  return voices.find((v) => v.lang.toLowerCase() === lang.toLowerCase()) ?? voices.find((v) => v.lang.toLowerCase().startsWith(base));
+  return (
+    voices.find((v) => v.lang.toLowerCase() === lang.toLowerCase()) ??
+    voices.find((v) => v.lang.toLowerCase().startsWith(base))
+  );
 }
 
 /**
@@ -55,8 +58,19 @@ export function SpeakButton({ text, label }: { text: string; label?: string }) {
   };
 
   return (
-    <Button type="button" variant="outline" size="lg" className="self-start" onClick={toggle} aria-pressed={speaking}>
-      {speaking ? <Square aria-hidden="true" /> : <Volume2 aria-hidden="true" />}
+    <Button
+      type="button"
+      variant="outline"
+      size="lg"
+      className="self-start"
+      onClick={toggle}
+      aria-pressed={speaking}
+    >
+      {speaking ? (
+        <Square aria-hidden="true" />
+      ) : (
+        <Volume2 aria-hidden="true" />
+      )}
       {speaking ? t.common.stopReading : (label ?? t.common.readAloud)}
     </Button>
   );

@@ -5,14 +5,33 @@ import { useCallback, useEffect, useRef } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { format } from "@/i18n";
-import { MODEL_KEYS, formatBytes, metricsToCsv, type MetricsFile, type ModelKey } from "@/eval/metrics";
+import {
+  MODEL_KEYS,
+  formatBytes,
+  metricsToCsv,
+  type MetricsFile,
+  type ModelKey,
+} from "@/eval/metrics";
 import { useI18n } from "./I18nProvider";
 import { PageTitle } from "./PageTitle";
 
 // Colour-blind-safe series colours (Okabe-Ito); every bar also has a printed value and the legend has names.
-const SERIES: Record<ModelKey, string> = { skin: "#0072B2", audio: "#E69F00", resp: "#009E73", fusion: "#7a2e6b" };
+const SERIES: Record<ModelKey, string> = {
+  skin: "#0072B2",
+  audio: "#E69F00",
+  resp: "#009E73",
+  fusion: "#7a2e6b",
+};
 const METRICS = ["accuracy", "sensitivity", "specificity", "f1"] as const;
 
 const pct = (v: number) => `${(v * 100).toFixed(1)}%`;
@@ -28,7 +47,12 @@ function download(name: string, blob: Blob) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-function drawChart(canvas: HTMLCanvasElement, file: MetricsFile, names: Record<ModelKey, string>, title: string) {
+function drawChart(
+  canvas: HTMLCanvasElement,
+  file: MetricsFile,
+  names: Record<ModelKey, string>,
+  title: string,
+) {
   const W = 960;
   const H = 540;
   canvas.width = W;
@@ -102,16 +126,23 @@ function FileSection({ file }: { file: MetricsFile }) {
   const names = t.dashboard.models as Record<ModelKey, string>;
 
   useEffect(() => {
-    if (canvasRef.current) drawChart(canvasRef.current, file, names, t.dashboard.chartTitle);
+    if (canvasRef.current)
+      drawChart(canvasRef.current, file, names, t.dashboard.chartTitle);
   }, [file, names, t.dashboard.chartTitle]);
 
   const exportCsv = useCallback(() => {
-    download(file.file.replace(/\.json$/, "") + ".csv", new Blob([metricsToCsv(file)], { type: "text/csv;charset=utf-8" }));
+    download(
+      file.file.replace(/\.json$/, "") + ".csv",
+      new Blob([metricsToCsv(file)], { type: "text/csv;charset=utf-8" }),
+    );
   }, [file]);
   const exportPng = useCallback(() => {
     const c = document.createElement("canvas");
     drawChart(c, file, names, t.dashboard.chartTitle);
-    c.toBlob((b) => b && download(file.file.replace(/\.json$/, "") + ".png", b), "image/png");
+    c.toBlob(
+      (b) => b && download(file.file.replace(/\.json$/, "") + ".png", b),
+      "image/png",
+    );
   }, [file, names, t.dashboard.chartTitle]);
 
   return (
@@ -122,12 +153,18 @@ function FileSection({ file }: { file: MetricsFile }) {
       {file.isSample && (
         <Alert variant="destructive" role="note" data-testid="sample-banner">
           <FlaskConical aria-hidden="true" />
-          <AlertTitle className="text-lg font-semibold">{t.dashboard.sampleBanner}</AlertTitle>
+          <AlertTitle className="text-lg font-semibold">
+            {t.dashboard.sampleBanner}
+          </AlertTitle>
           <AlertDescription>{t.dashboard.sampleDetail}</AlertDescription>
         </Alert>
       )}
       {file.description && <p>{file.description}</p>}
-      {file.generatedAt && <p className="text-sm text-muted-foreground">{format(t.dashboard.generatedAt, { date: file.generatedAt })}</p>}
+      {file.generatedAt && (
+        <p className="text-sm text-muted-foreground">
+          {format(t.dashboard.generatedAt, { date: file.generatedAt })}
+        </p>
+      )}
 
       <Card size="sm">
         <CardHeader>
@@ -137,30 +174,55 @@ function FileSection({ file }: { file: MetricsFile }) {
         </CardHeader>
         <CardContent>
           <Table>
-            <TableCaption className="sr-only">{t.dashboard.compareTitle}</TableCaption>
+            <TableCaption className="sr-only">
+              {t.dashboard.compareTitle}
+            </TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead scope="col">{t.dashboard.model}</TableHead>
-                <TableHead scope="col" className="text-right">{t.dashboard.accuracy}</TableHead>
-                <TableHead scope="col" className="text-right">{t.dashboard.sensitivity}</TableHead>
-                <TableHead scope="col" className="text-right">{t.dashboard.specificity}</TableHead>
-                <TableHead scope="col" className="text-right">{t.dashboard.f1}</TableHead>
-                <TableHead scope="col" className="text-right">{t.dashboard.latency}</TableHead>
-                <TableHead scope="col" className="text-right">{t.dashboard.size}</TableHead>
+                <TableHead scope="col" className="text-right">
+                  {t.dashboard.accuracy}
+                </TableHead>
+                <TableHead scope="col" className="text-right">
+                  {t.dashboard.sensitivity}
+                </TableHead>
+                <TableHead scope="col" className="text-right">
+                  {t.dashboard.specificity}
+                </TableHead>
+                <TableHead scope="col" className="text-right">
+                  {t.dashboard.f1}
+                </TableHead>
+                <TableHead scope="col" className="text-right">
+                  {t.dashboard.latency}
+                </TableHead>
+                <TableHead scope="col" className="text-right">
+                  {t.dashboard.size}
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {keys.map((k) => {
                 const m = file.models[k]!;
                 return (
-                  <TableRow key={k} className={k === "fusion" ? "font-semibold" : undefined}>
+                  <TableRow
+                    key={k}
+                    className={k === "fusion" ? "font-semibold" : undefined}
+                  >
                     <TableHead scope="row">{names[k]}</TableHead>
-                    <TableCell className="text-right">{pct(m.accuracy)}</TableCell>
-                    <TableCell className="text-right">{pct(m.sensitivity)}</TableCell>
-                    <TableCell className="text-right">{pct(m.specificity)}</TableCell>
+                    <TableCell className="text-right">
+                      {pct(m.accuracy)}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {pct(m.sensitivity)}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {pct(m.specificity)}
+                    </TableCell>
                     <TableCell className="text-right">{pct(m.f1)}</TableCell>
                     <TableCell className="text-right">{m.latencyMs}</TableCell>
-                    <TableCell className="text-right">{formatBytes(m.sizeBytes)}</TableCell>
+                    <TableCell className="text-right">
+                      {formatBytes(m.sizeBytes)}
+                    </TableCell>
                   </TableRow>
                 );
               })}
@@ -176,13 +238,28 @@ function FileSection({ file }: { file: MetricsFile }) {
           </CardTitle>
         </CardHeader>
         <CardContent className="gap-3">
-          <canvas ref={canvasRef} role="img" aria-label={t.dashboard.chartAlt} className="w-full rounded-lg border" />
+          <canvas
+            ref={canvasRef}
+            role="img"
+            aria-label={t.dashboard.chartAlt}
+            className="w-full rounded-lg border"
+          />
           <div className="grid gap-3 sm:grid-cols-2">
-            <Button type="button" variant="outline" size="lg" onClick={exportCsv}>
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              onClick={exportCsv}
+            >
               <Download aria-hidden="true" />
               {t.dashboard.exportCsv}
             </Button>
-            <Button type="button" variant="outline" size="lg" onClick={exportPng}>
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              onClick={exportPng}
+            >
               <ImageDown aria-hidden="true" />
               {t.dashboard.exportPng}
             </Button>
@@ -201,20 +278,30 @@ function FileSection({ file }: { file: MetricsFile }) {
             const m = file.models[k]!;
             return (
               <Table key={k}>
-                <TableCaption className="mt-0 mb-2 text-left font-semibold text-foreground caption-top">{names[k]}</TableCaption>
+                <TableCaption className="mt-0 mb-2 text-left font-semibold text-foreground caption-top">
+                  {names[k]}
+                </TableCaption>
                 <TableHeader>
                   <TableRow>
                     <TableHead scope="col">{t.dashboard.classCol}</TableHead>
-                    <TableHead scope="col" className="text-right">{t.dashboard.sensitivity}</TableHead>
-                    <TableHead scope="col" className="text-right">{t.dashboard.specificity}</TableHead>
+                    <TableHead scope="col" className="text-right">
+                      {t.dashboard.sensitivity}
+                    </TableHead>
+                    <TableHead scope="col" className="text-right">
+                      {t.dashboard.specificity}
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {m.classes.map((c) => (
                     <TableRow key={c}>
                       <TableHead scope="row">{c}</TableHead>
-                      <TableCell className="text-right">{pct(m.perClass[c].sensitivity)}</TableCell>
-                      <TableCell className="text-right">{pct(m.perClass[c].specificity)}</TableCell>
+                      <TableCell className="text-right">
+                        {pct(m.perClass[c].sensitivity)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {pct(m.perClass[c].specificity)}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -229,7 +316,9 @@ function FileSection({ file }: { file: MetricsFile }) {
           <CardTitle>
             <h3>{t.dashboard.confusionTitle}</h3>
           </CardTitle>
-          <p className="text-sm text-muted-foreground">{t.dashboard.confusionHint}</p>
+          <p className="text-sm text-muted-foreground">
+            {t.dashboard.confusionHint}
+          </p>
         </CardHeader>
         <CardContent className="gap-5">
           {keys.map((k) => {
@@ -237,7 +326,9 @@ function FileSection({ file }: { file: MetricsFile }) {
             const max = Math.max(1, ...m.confusionMatrix.flat());
             return (
               <Table key={k}>
-                <TableCaption className="mt-0 mb-2 text-left font-semibold text-foreground caption-top">{names[k]}</TableCaption>
+                <TableCaption className="mt-0 mb-2 text-left font-semibold text-foreground caption-top">
+                  {names[k]}
+                </TableCaption>
                 <TableHeader>
                   <TableRow>
                     <TableHead scope="col">
@@ -257,8 +348,12 @@ function FileSection({ file }: { file: MetricsFile }) {
                       {m.confusionMatrix[r].map((v, c) => (
                         <TableCell
                           key={c}
-                          style={{ background: `rgba(11,110,114,${(0.08 + (0.5 * v) / max).toFixed(2)})` }}
-                          className={r === c ? "text-right font-semibold" : "text-right"}
+                          style={{
+                            background: `rgba(11,110,114,${(0.08 + (0.5 * v) / max).toFixed(2)})`,
+                          }}
+                          className={
+                            r === c ? "text-right font-semibold" : "text-right"
+                          }
                         >
                           {v}
                         </TableCell>
@@ -282,7 +377,8 @@ function FileSection({ file }: { file: MetricsFile }) {
           <ul className="list-disc space-y-1.5 pl-5">
             {keys.map((k) => (
               <li key={k}>
-                <strong className="font-semibold">{names[k]}:</strong> {file.models[k]!.testSetDescription}
+                <strong className="font-semibold">{names[k]}:</strong>{" "}
+                {file.models[k]!.testSetDescription}
               </li>
             ))}
           </ul>

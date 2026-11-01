@@ -33,7 +33,10 @@ export function ConsentGate({ children }: { children: ReactNode }) {
       <AlertDescription>
         {state === "checking" ? t.gate.checking : t.gate.redirecting}{" "}
         {state === "denied" && (
-          <Link href={`/${locale}/consent/`} className="font-medium text-primary underline">
+          <Link
+            href={`/${locale}/consent/`}
+            className="font-medium text-primary underline"
+          >
             {t.gate.link}
           </Link>
         )}

@@ -7,10 +7,17 @@ import { useI18n } from "./I18nProvider";
 export function UrgentGuide() {
   const { t } = useI18n();
   return (
-    <Alert variant="destructive" role="note" aria-labelledby="urgent-title" data-testid="urgent-guide">
+    <Alert
+      variant="destructive"
+      role="note"
+      aria-labelledby="urgent-title"
+      data-testid="urgent-guide"
+    >
       <TriangleAlert aria-hidden="true" />
       <AlertTitle>
-        <h2 id="urgent-title" className="font-semibold">{t.urgent.title}</h2>
+        <h2 id="urgent-title" className="font-semibold">
+          {t.urgent.title}
+        </h2>
       </AlertTitle>
       <AlertDescription>
         <p>{t.urgent.intro}</p>

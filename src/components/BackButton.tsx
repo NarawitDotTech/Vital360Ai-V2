@@ -10,7 +10,8 @@ import { useI18n } from "./I18nProvider";
 export function parentPath(locale: string, pathname: string): string | null {
   const rest = pathname.replace(/^\/(th|en)(?=\/|$)/, "").replace(/\/+$/, "");
   if (!rest) return null; // home
-  if (/^\/capture\/[^/]+$/.test(rest) || rest === "/results") return `/${locale}/capture/`;
+  if (/^\/capture\/[^/]+$/.test(rest) || rest === "/results")
+    return `/${locale}/capture/`;
   return `/${locale}/`;
 }
 

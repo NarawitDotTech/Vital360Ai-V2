@@ -63,7 +63,9 @@ export function ConsentForm() {
       <Alert variant="warning" role="note" aria-labelledby="consent-important">
         <TriangleAlert aria-hidden="true" />
         <AlertTitle>
-          <h2 id="consent-important" className="font-semibold">{t.consent.notMedicalTitle}</h2>
+          <h2 id="consent-important" className="font-semibold">
+            {t.consent.notMedicalTitle}
+          </h2>
         </AlertTitle>
         <AlertDescription>{t.consent.notMedical}</AlertDescription>
       </Alert>
@@ -80,7 +82,10 @@ export function ConsentForm() {
               aria-describedby={error ? `${checkId}-err` : undefined}
               className="mt-0.5"
             />
-            <Label htmlFor={checkId} className="min-h-8 cursor-pointer items-start font-normal">
+            <Label
+              htmlFor={checkId}
+              className="min-h-8 cursor-pointer items-start font-normal"
+            >
               {t.consent.checkbox}
             </Label>
           </div>
@@ -91,14 +96,22 @@ export function ConsentForm() {
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
-      <Button type="button" size="lg" className="w-full" onClick={agree} disabled={busy}>
+      <Button
+        type="button"
+        size="lg"
+        className="w-full"
+        onClick={agree}
+        disabled={busy}
+      >
         <Check aria-hidden="true" />
         {t.consent.agree}
       </Button>
       <Button asChild variant="ghost" size="lg" className="self-center">
         <Link href={`/${locale}/`}>{t.consent.decline}</Link>
       </Button>
-      <p className="text-sm text-muted-foreground">{format(t.consent.version, { version: CONSENT_VERSION })}</p>
+      <p className="text-sm text-muted-foreground">
+        {format(t.consent.version, { version: CONSENT_VERSION })}
+      </p>
     </div>
   );
 }

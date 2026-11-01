@@ -9,8 +9,20 @@ interface Ctx {
 }
 const I18nContext = createContext<Ctx | null>(null);
 
-export function I18nProvider({ locale, dict, children }: { locale: Locale; dict: Dict; children: ReactNode }) {
-  return <I18nContext.Provider value={{ locale, t: dict }}>{children}</I18nContext.Provider>;
+export function I18nProvider({
+  locale,
+  dict,
+  children,
+}: {
+  locale: Locale;
+  dict: Dict;
+  children: ReactNode;
+}) {
+  return (
+    <I18nContext.Provider value={{ locale, t: dict }}>
+      {children}
+    </I18nContext.Provider>
+  );
 }
 
 export function useI18n(): Ctx {

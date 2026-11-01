@@ -6,7 +6,8 @@ function flatten(obj: unknown, prefix = ""): Record<string, string> {
   if (Array.isArray(obj)) {
     obj.forEach((v, i) => Object.assign(out, flatten(v, `${prefix}[${i}]`)));
   } else if (obj && typeof obj === "object") {
-    for (const [k, v] of Object.entries(obj)) Object.assign(out, flatten(v, prefix ? `${prefix}.${k}` : k));
+    for (const [k, v] of Object.entries(obj))
+      Object.assign(out, flatten(v, prefix ? `${prefix}.${k}` : k));
   } else {
     out[prefix] = String(obj);
   }
@@ -22,7 +23,8 @@ describe("i18n", () => {
   });
 
   it("has no empty strings", () => {
-    for (const [k, v] of [...Object.entries(th), ...Object.entries(en)]) expect(v.trim(), k).not.toBe("");
+    for (const [k, v] of [...Object.entries(th), ...Object.entries(en)])
+      expect(v.trim(), k).not.toBe("");
   });
 
   it("uses the same placeholders in both languages", () => {
@@ -32,7 +34,12 @@ describe("i18n", () => {
 
   it("Thai strings contain Thai text (except brand and technical terms)", () => {
     const thai = /[฀-๿]/;
-    const allowed = new Set(["meta.appName", "header.switchLabel", "header.switchText", "root.linkEn"]);
+    const allowed = new Set([
+      "meta.appName",
+      "header.switchLabel",
+      "header.switchText",
+      "root.linkEn",
+    ]);
     for (const [k, v] of Object.entries(th)) {
       if (allowed.has(k) || k.startsWith("dashboard.")) continue;
       expect(thai.test(v), k).toBe(true);

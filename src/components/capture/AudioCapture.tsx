@@ -23,7 +23,9 @@ export function AudioCapture() {
   const abortRef = useRef<AbortController | null>(null);
   const primaryRef = useRef<HTMLButtonElement>(null);
   const prevActive = useRef(false);
-  const [phase, setPhase] = useState<"idle" | "ambient" | "recording" | "analysing">("idle");
+  const [phase, setPhase] = useState<
+    "idle" | "ambient" | "recording" | "analysing"
+  >("idle");
   const [left, setLeft] = useState(RECORD_SEC);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -66,12 +68,18 @@ export function AudioCapture() {
       }
       setPhase("analysing");
       const { inference } = await import("@/inference");
-      const p = await inference.predict({ modality: "audio", samples: res.samples, sampleRate: res.sampleRate });
+      const p = await inference.predict({
+        modality: "audio",
+        samples: res.samples,
+        sampleRate: res.sampleRate,
+      });
       setSessionResult(p);
       router.push(`/${locale}/results/`);
     } catch (e) {
       if ((e as Error)?.name === "AbortError") return;
-      const denied = (e as Error)?.name === "NotAllowedError" || (e as Error)?.name === "NotFoundError";
+      const denied =
+        (e as Error)?.name === "NotAllowedError" ||
+        (e as Error)?.name === "NotFoundError";
       setMessage(denied ? t.audio.micOff : t.common.problem);
       setPhase("idle");
     }
@@ -91,7 +99,11 @@ export function AudioCapture() {
 
   return (
     <div className="flex flex-col gap-5">
-      <CaptureSteps title={t.audio.title} steps={[t.audio.step1, t.audio.step2, t.audio.step3]} spoken={t.audio.spoken} />
+      <CaptureSteps
+        title={t.audio.title}
+        steps={[t.audio.step1, t.audio.step2, t.audio.step3]}
+        spoken={t.audio.spoken}
+      />
 
       {message && (
         <Alert variant="warning" role="alert">
@@ -110,14 +122,19 @@ export function AudioCapture() {
           <CardContent className="gap-3">
             {/* announced at milestones only (start, 5 s left), not every second */}
             <p role="status" className="sr-only">
-              {left <= 5 ? format(t.audio.remaining, { n: 5 }) : t.audio.recording}
+              {left <= 5
+                ? format(t.audio.remaining, { n: 5 })
+                : t.audio.recording}
             </p>
             <p className="flex items-center gap-2 text-lg font-semibold">
               <Mic aria-hidden="true" className="size-5 text-primary" />
               {t.audio.recording}
             </p>
             <Waveform />
-            <Progress value={((RECORD_SEC - left) / RECORD_SEC) * 100} aria-label={t.audio.recording} />
+            <Progress
+              value={((RECORD_SEC - left) / RECORD_SEC) * 100}
+              aria-label={t.audio.recording}
+            />
             <p className="text-muted-foreground" aria-hidden="true">
               {format(t.audio.remaining, { n: left })}
             </p>
@@ -129,18 +146,34 @@ export function AudioCapture() {
           <Loader2 aria-hidden="true" className="animate-spin" />
           <AlertDescription>
             {t.common.working}
-            <span className="mt-2 block"><ScanBar /></span>
+            <span className="mt-2 block">
+              <ScanBar />
+            </span>
           </AlertDescription>
         </Alert>
       )}
 
       {active ? (
-        <Button ref={primaryRef} type="button" variant="outline" size="lg" className="w-full" onClick={stop}>
+        <Button
+          ref={primaryRef}
+          type="button"
+          variant="outline"
+          size="lg"
+          className="w-full"
+          onClick={stop}
+        >
           <Square aria-hidden="true" />
           {t.audio.stop}
         </Button>
       ) : (
-        <Button ref={primaryRef} type="button" size="lg" className="w-full" onClick={start} disabled={phase === "analysing"}>
+        <Button
+          ref={primaryRef}
+          type="button"
+          size="lg"
+          className="w-full"
+          onClick={start}
+          disabled={phase === "analysing"}
+        >
           <Mic aria-hidden="true" />
           {t.audio.start}
         </Button>

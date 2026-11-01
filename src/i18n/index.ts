@@ -17,8 +17,13 @@ export function getDict(locale: string): Dict {
 }
 
 /** Replace {name} placeholders. Unknown placeholders are left as-is. */
-export function format(template: string, vars: Record<string, string | number>): string {
-  return template.replace(/\{(\w+)\}/g, (m, k: string) => (k in vars ? String(vars[k]) : m));
+export function format(
+  template: string,
+  vars: Record<string, string | number>,
+): string {
+  return template.replace(/\{(\w+)\}/g, (m, k: string) =>
+    k in vars ? String(vars[k]) : m,
+  );
 }
 
 /** BCP-47 tags for Intl / speech. */

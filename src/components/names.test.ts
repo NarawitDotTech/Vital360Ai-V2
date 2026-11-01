@@ -3,7 +3,13 @@ import { alternatives, canNameMatch, className } from "./names";
 import { dictionaries } from "@/i18n";
 
 const r = dictionaries.en.results;
-const pred = (over: object) => ({ modality: "skin" as const, modelVersion: "skin-v1.0.0", label: "nevus", probs: { nevus: 0.6, melanoma: 0.25, eczema: 0.1, zzz: 0.05 }, ...over });
+const pred = (over: object) => ({
+  modality: "skin" as const,
+  modelVersion: "skin-v1.0.0",
+  label: "nevus",
+  probs: { nevus: 0.6, melanoma: 0.25, eczema: 0.1, zzz: 0.05 },
+  ...over,
+});
 
 describe("class names", () => {
   it("names skin classes and prefixes audio ones", () => {
@@ -17,11 +23,16 @@ describe("class names", () => {
     expect(canNameMatch(pred({ modality: "resp" }), r)).toBe(false);
   });
   it("lists the next two named alternatives", () => {
-    expect(alternatives(pred({}) as never, r).map((a) => a.key)).toEqual(["melanoma", "eczema"]);
+    expect(alternatives(pred({}) as never, r).map((a) => a.key)).toEqual([
+      "melanoma",
+      "eczema",
+    ]);
   });
   it("every skin class in the manifest has a plain name in both languages", async () => {
     const m = (await import("../../public/models/manifest.json")).default;
     const skin = m.models.find((x) => x.id === "skin")!;
-    for (const l of skin.labels) for (const d of [dictionaries.en, dictionaries.th]) expect(d.results.names[l], l).toBeTruthy();
+    for (const l of skin.labels)
+      for (const d of [dictionaries.en, dictionaries.th])
+        expect(d.results.names[l], l).toBeTruthy();
   });
 });

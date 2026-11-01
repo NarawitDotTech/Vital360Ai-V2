@@ -25,14 +25,21 @@ export function CameraControls({
   const { t } = useI18n();
   const [multi, setMulti] = useState(false);
   // torch state belongs to one stream; a new stream (switch/stop) starts fresh and off
-  const [torch, setTorchState] = useState<{ stream: MediaStream | null; on: boolean; failed: boolean }>({
+  const [torch, setTorchState] = useState<{
+    stream: MediaStream | null;
+    on: boolean;
+    failed: boolean;
+  }>({
     stream: null,
     on: false,
     failed: false,
   });
   const mine = torch.stream === stream;
   const torchOn = mine && torch.on;
-  const torchOk = facing === "environment" && !(mine && torch.failed) && getTorchSupport(stream);
+  const torchOk =
+    facing === "environment" &&
+    !(mine && torch.failed) &&
+    getTorchSupport(stream);
 
   useEffect(() => {
     let alive = true;
@@ -52,12 +59,28 @@ export function CameraControls({
   return (
     <div className="absolute bottom-3 right-3 z-10 flex gap-2">
       {torchOk && (
-        <button type="button" className={BTN} aria-label={t.camera.torch} aria-pressed={torchOn} onClick={toggleTorch}>
-          {torchOn ? <Zap aria-hidden="true" className="size-6" /> : <ZapOff aria-hidden="true" className="size-6" />}
+        <button
+          type="button"
+          className={BTN}
+          aria-label={t.camera.torch}
+          aria-pressed={torchOn}
+          onClick={toggleTorch}
+        >
+          {torchOn ? (
+            <Zap aria-hidden="true" className="size-6" />
+          ) : (
+            <ZapOff aria-hidden="true" className="size-6" />
+          )}
         </button>
       )}
       {multi && (
-        <button type="button" className={BTN} aria-label={t.camera.switch} onClick={onFlip} disabled={flipDisabled}>
+        <button
+          type="button"
+          className={BTN}
+          aria-label={t.camera.switch}
+          onClick={onFlip}
+          disabled={flipDisabled}
+        >
           <SwitchCamera aria-hidden="true" className="size-6" />
         </button>
       )}

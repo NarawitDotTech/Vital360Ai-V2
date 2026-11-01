@@ -33,7 +33,9 @@ export function RespCapture() {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [facing, setFacing] = useState<Facing>("environment");
   const [aspect, setAspect] = useState(4 / 3);
-  const [phase, setPhase] = useState<"idle" | "measuring" | "analysing">("idle");
+  const [phase, setPhase] = useState<"idle" | "measuring" | "analysing">(
+    "idle",
+  );
   const [left, setLeft] = useState(SECONDS);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -77,7 +79,8 @@ export function RespCapture() {
         const v = videoRef.current;
         if (!v) return;
         v.srcObject = stream;
-        v.onloadedmetadata = () => v.videoWidth && setAspect(v.videoWidth / v.videoHeight);
+        v.onloadedmetadata = () =>
+          v.videoWidth && setAspect(v.videoWidth / v.videoHeight);
         void v.play().catch(() => {});
       });
     } catch {
@@ -139,11 +142,16 @@ export function RespCapture() {
     const ac = new AbortController();
     abortRef.current = ac;
     try {
-      const [{ collectMotion }, { inference, frameMotion }] = await Promise.all([
-        import("@/capture/video"),
-        import("@/inference"),
-      ]);
-      const { signal, fps } = await collectMotion({ video: v, seconds: SECONDS, frameMotion, onTick: setLeft, signal: ac.signal });
+      const [{ collectMotion }, { inference, frameMotion }] = await Promise.all(
+        [import("@/capture/video"), import("@/inference")],
+      );
+      const { signal, fps } = await collectMotion({
+        video: v,
+        seconds: SECONDS,
+        frameMotion,
+        onTick: setLeft,
+        signal: ac.signal,
+      });
       stopCamera(); // recording done: release the camera (and flash) before analysing
       const issue = checkMotionSignal(signal, fps);
       if (issue) {
@@ -163,18 +171,45 @@ export function RespCapture() {
     }
   }
 
-  const box = { left: `${CHEST_BOX.x * 100}%`, top: `${CHEST_BOX.y * 100}%`, width: `${CHEST_BOX.w * 100}%`, height: `${CHEST_BOX.h * 100}%` };
+  const box = {
+    left: `${CHEST_BOX.x * 100}%`,
+    top: `${CHEST_BOX.y * 100}%`,
+    width: `${CHEST_BOX.w * 100}%`,
+    height: `${CHEST_BOX.h * 100}%`,
+  };
 
   return (
     <div className="flex flex-col gap-5">
-      <CaptureSteps title={t.resp.title} steps={[t.resp.step1, t.resp.step2, t.resp.step3]} spoken={t.resp.spoken} />
+      <CaptureSteps
+        title={t.resp.title}
+        steps={[t.resp.step1, t.resp.step2, t.resp.step3]}
+        spoken={t.resp.spoken}
+      />
 
       {cameraOn && (
-        <div className="video-frame" style={{ aspectRatio: String(aspect), maxHeight: "65dvh" }}>
-          <video ref={videoRef} playsInline muted aria-label={t.resp.guide} style={facing === "user" ? { transform: "scaleX(-1)" } : undefined} />
-          <div className="guide-box guide-free" style={box} aria-hidden="true" />
+        <div
+          className="video-frame"
+          style={{ aspectRatio: String(aspect), maxHeight: "65dvh" }}
+        >
+          <video
+            ref={videoRef}
+            playsInline
+            muted
+            aria-label={t.resp.guide}
+            style={facing === "user" ? { transform: "scaleX(-1)" } : undefined}
+          />
+          <div
+            className="guide-box guide-free"
+            style={box}
+            aria-hidden="true"
+          />
           <p className="guide-label">{t.resp.guide}</p>
-          <CameraControls stream={stream} facing={facing} onFlip={switchCamera} flipDisabled={phase !== "idle"} />
+          <CameraControls
+            stream={stream}
+            facing={facing}
+            onFlip={switchCamera}
+            flipDisabled={phase !== "idle"}
+          />
         </div>
       )}
 
@@ -189,16 +224,26 @@ export function RespCapture() {
           <CardContent className="gap-3">
             {/* announced at milestones only (start, 10 s, 5 s), not every second */}
             <p role="status" className="sr-only">
-              {left <= 5 ? format(t.resp.remaining, { n: 5 }) : left <= 10 ? format(t.resp.remaining, { n: 10 }) : t.resp.measuring}
+              {left <= 5
+                ? format(t.resp.remaining, { n: 5 })
+                : left <= 10
+                  ? format(t.resp.remaining, { n: 10 })
+                  : t.resp.measuring}
             </p>
             <p className="flex items-center gap-2 text-lg font-semibold">
               <Video aria-hidden="true" className="size-5 text-primary" />
               {t.resp.measuring}
             </p>
             <div className="flex items-center gap-4">
-              <CountdownRing fraction={(SECONDS - left) / SECONDS} label={String(left)} />
+              <CountdownRing
+                fraction={(SECONDS - left) / SECONDS}
+                label={String(left)}
+              />
               <div className="flex-1">
-                <Progress value={((SECONDS - left) / SECONDS) * 100} aria-label={t.resp.measuring} />
+                <Progress
+                  value={((SECONDS - left) / SECONDS) * 100}
+                  aria-label={t.resp.measuring}
+                />
                 <p className="mt-2 text-muted-foreground" aria-hidden="true">
                   {format(t.resp.remaining, { n: left })}
                 </p>
@@ -212,24 +257,44 @@ export function RespCapture() {
           <Loader2 aria-hidden="true" className="animate-spin" />
           <AlertDescription>
             {t.common.working}
-            <span className="mt-2 block"><ScanBar /></span>
+            <span className="mt-2 block">
+              <ScanBar />
+            </span>
           </AlertDescription>
         </Alert>
       )}
 
       {cameraOn ? (
         <div className="flex flex-col gap-3">
-          <Button ref={primaryRef} type="button" size="lg" className="w-full" onClick={measure} disabled={phase !== "idle"}>
+          <Button
+            ref={primaryRef}
+            type="button"
+            size="lg"
+            className="w-full"
+            onClick={measure}
+            disabled={phase !== "idle"}
+          >
             <Video aria-hidden="true" />
             {t.resp.start}
           </Button>
-          <Button type="button" variant="outline" size="lg" onClick={stopCamera}>
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            onClick={stopCamera}
+          >
             <X aria-hidden="true" />
             {t.resp.stopCamera}
           </Button>
         </div>
       ) : (
-        <Button ref={primaryRef} type="button" size="lg" className="w-full" onClick={startCamera}>
+        <Button
+          ref={primaryRef}
+          type="button"
+          size="lg"
+          className="w-full"
+          onClick={startCamera}
+        >
           <Video aria-hidden="true" />
           {t.resp.openCamera}
         </Button>

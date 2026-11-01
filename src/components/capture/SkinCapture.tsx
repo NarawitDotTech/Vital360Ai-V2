@@ -6,7 +6,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useI18n } from "@/components/I18nProvider";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { fileToImageData, openCamera, stopStream, type Facing, videoToGuideImage } from "@/capture/camera";
+import {
+  fileToImageData,
+  openCamera,
+  stopStream,
+  type Facing,
+  videoToGuideImage,
+} from "@/capture/camera";
 import { checkImage } from "@/capture/quality";
 import { setSessionResult } from "@/session/results";
 import { CameraControls } from "./CameraControls";
@@ -168,14 +174,29 @@ export function SkinCapture() {
 
   return (
     <div className="flex flex-col gap-5">
-      <CaptureSteps title={t.skin.title} steps={[t.skin.step1, t.skin.step2, t.skin.step3]} spoken={t.skin.spoken} />
+      <CaptureSteps
+        title={t.skin.title}
+        steps={[t.skin.step1, t.skin.step2, t.skin.step3]}
+        spoken={t.skin.spoken}
+      />
 
       {cameraOn && (
         <div className="video-frame" style={{ aspectRatio: "4 / 3" }}>
-          <video ref={videoRef} playsInline muted aria-label={t.skin.guide} style={facing === "user" ? { transform: "scaleX(-1)" } : undefined} />
+          <video
+            ref={videoRef}
+            playsInline
+            muted
+            aria-label={t.skin.guide}
+            style={facing === "user" ? { transform: "scaleX(-1)" } : undefined}
+          />
           <div className="guide-box" aria-hidden="true" />
           <p className="guide-label">{t.skin.guide}</p>
-          <CameraControls stream={stream} facing={facing} onFlip={switchCamera} flipDisabled={busy} />
+          <CameraControls
+            stream={stream}
+            facing={facing}
+            onFlip={switchCamera}
+            flipDisabled={busy}
+          />
         </div>
       )}
 
@@ -189,31 +210,59 @@ export function SkinCapture() {
           <Loader2 aria-hidden="true" className="animate-spin" />
           <AlertDescription>
             {t.skin.analyzing}
-            <span className="mt-2 block"><ScanBar /></span>
+            <span className="mt-2 block">
+              <ScanBar />
+            </span>
           </AlertDescription>
         </Alert>
       )}
 
       <div className="flex flex-col gap-3">
         {cameraOn ? (
-          <Button ref={primaryRef} type="button" size="lg" className="w-full" onClick={takePhoto} disabled={busy}>
+          <Button
+            ref={primaryRef}
+            type="button"
+            size="lg"
+            className="w-full"
+            onClick={takePhoto}
+            disabled={busy}
+          >
             <Camera aria-hidden="true" />
             {t.skin.takePhoto}
           </Button>
         ) : (
-          <Button ref={primaryRef} type="button" size="lg" className="w-full" onClick={startCamera} disabled={busy}>
+          <Button
+            ref={primaryRef}
+            type="button"
+            size="lg"
+            className="w-full"
+            onClick={startCamera}
+            disabled={busy}
+          >
             <Camera aria-hidden="true" />
             {t.skin.openCamera}
           </Button>
         )}
         <div className="grid gap-3 sm:grid-cols-2">
           {cameraOn && (
-            <Button type="button" variant="outline" size="lg" onClick={stopCamera} disabled={busy}>
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              onClick={stopCamera}
+              disabled={busy}
+            >
               <X aria-hidden="true" />
               {t.skin.stopCamera}
             </Button>
           )}
-          <Button type="button" variant="outline" size="lg" onClick={() => fileRef.current?.click()} disabled={busy}>
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            onClick={() => fileRef.current?.click()}
+            disabled={busy}
+          >
             <ImageUp aria-hidden="true" />
             {t.skin.chooseFile}
           </Button>

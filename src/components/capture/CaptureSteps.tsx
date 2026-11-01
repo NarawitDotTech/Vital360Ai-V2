@@ -6,7 +6,15 @@ import { SpeakButton } from "@/components/SpeakButton";
 import { Card, CardContent } from "@/components/ui/card";
 
 /** Shared header for the capture screens: title, 3 numbered steps (an actual sequence), spoken prompt. */
-export function CaptureSteps({ title, steps, spoken }: { title: string; steps: string[]; spoken: string }) {
+export function CaptureSteps({
+  title,
+  steps,
+  spoken,
+}: {
+  title: string;
+  steps: string[];
+  spoken: string;
+}) {
   const { t } = useI18n();
   return (
     <>

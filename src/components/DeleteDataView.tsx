@@ -12,7 +12,9 @@ import { PageTitle } from "./PageTitle";
 
 export function DeleteDataView() {
   const { locale, t } = useI18n();
-  const [step, setStep] = useState<"idle" | "confirm" | "busy" | "done" | "error">("idle");
+  const [step, setStep] = useState<
+    "idle" | "confirm" | "busy" | "done" | "error"
+  >("idle");
 
   async function wipe() {
     setStep("busy");
@@ -70,17 +72,36 @@ export function DeleteDataView() {
             </CardTitle>
           </CardHeader>
           <CardContent className="gap-3">
-            <Button type="button" variant="destructive" size="lg" className="w-full" onClick={wipe} disabled={step === "busy"}>
+            <Button
+              type="button"
+              variant="destructive"
+              size="lg"
+              className="w-full"
+              onClick={wipe}
+              disabled={step === "busy"}
+            >
               <Trash2 aria-hidden="true" />
               {t.deleteData.confirm}
             </Button>
-            <Button type="button" variant="outline" size="lg" onClick={() => setStep("idle")} disabled={step === "busy"}>
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              onClick={() => setStep("idle")}
+              disabled={step === "busy"}
+            >
               {t.deleteData.keep}
             </Button>
           </CardContent>
         </Card>
       ) : (
-        <Button type="button" variant="destructive" size="lg" className="w-full" onClick={() => setStep("confirm")}>
+        <Button
+          type="button"
+          variant="destructive"
+          size="lg"
+          className="w-full"
+          onClick={() => setStep("confirm")}
+        >
           <Trash2 aria-hidden="true" />
           {t.deleteData.button}
         </Button>

@@ -19,5 +19,10 @@ function inlineSvg(): string {
 }
 
 export function BrandLogo() {
-  return <span className="inline-flex shrink-0 overflow-hidden rounded-lg" dangerouslySetInnerHTML={{ __html: inlineSvg() }} />;
+  return (
+    <span
+      className="inline-flex shrink-0 overflow-hidden rounded-lg"
+      dangerouslySetInnerHTML={{ __html: inlineSvg() }}
+    />
+  );
 }

@@ -13,17 +13,27 @@ import { Disclaimer } from "./Disclaimer";
 import { useI18n } from "./I18nProvider";
 import { PageTitle } from "./PageTitle";
 import { ResultCard, resultSpeech } from "./ResultCard";
+import { SummaryCard } from "./SummaryCard";
 import { SpeakButton } from "./SpeakButton";
 import { UrgentGuide } from "./UrgentGuide";
+import { isMockModel } from "./MockNotice";
 
 export function ResultsView() {
   const { locale, t } = useI18n();
   const results = useSessionResults();
-  const parts = useMemo(() => (results === null ? null : sessionParts(results)), [results]);
+  const parts = useMemo(
+    () => (results === null ? null : sessionParts(results)),
+    [results],
+  );
   // fusion result tagged with the modalities it was computed from, so stale results are never shown
   const key = parts ? parts.map((p) => p.modality).join(",") : "";
-  const [fusionState, setFusionState] = useState<{ key: string; value: Prediction | null } | null>(null);
-  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [fusionState, setFusionState] = useState<{
+    key: string;
+    value: Prediction | null;
+  } | null>(null);
+  const [saveState, setSaveState] = useState<
+    "idle" | "saving" | "saved" | "error"
+  >("idle");
 
   useEffect(() => {
     if (!parts || parts.length < 2) return;
@@ -38,7 +48,9 @@ export function ResultsView() {
   }, [parts, key]);
 
   const fusing = !!parts && parts.length >= 2 && fusionState?.key !== key;
-  const fusion = fusionState?.key === key ? fusionState.value : null;
+  // the combined model is untrained (demo): hide it rather than contradict the AI summary
+  const fusedRaw = fusionState?.key === key ? fusionState.value : null;
+  const fusion = fusedRaw && !isMockModel(fusedRaw.modelVersion) ? fusedRaw : null;
 
   if (parts === null) return <p role="status">{t.common.loading}</p>;
 
@@ -69,7 +81,9 @@ export function ResultsView() {
           confidence: p.confidence,
           probs: p.probs,
           modelVersion: p.modelVersion,
-          ...(p.extras?.breathsPerMin !== undefined ? { breathsPerMin: p.extras.breathsPerMin } : {}),
+          ...(p.extras?.breathsPerMin !== undefined
+            ? { breathsPerMin: p.extras.breathsPerMin }
+            : {}),
         });
       }
       setSaveState("saved");
@@ -82,13 +96,17 @@ export function ResultsView() {
     <div className="flex flex-col gap-5">
       <PageTitle>{t.results.title}</PageTitle>
 
+      <SummaryCard parts={parts} fusion={fusion} />
+
       {fusing && (
         <Alert role="status">
           <Loader2 aria-hidden="true" className="animate-spin" />
           <AlertDescription>{t.results.combinedPending}</AlertDescription>
         </Alert>
       )}
-      {fusion && <p className="text-lg font-semibold">{t.results.combinedTitle}</p>}
+      {fusion && (
+        <p className="text-lg font-semibold">{t.results.combinedTitle}</p>
+      )}
       <ResultCard p={primary} />
       <SpeakButton text={resultSpeech(primary, t)} />
 
@@ -107,8 +125,18 @@ export function ResultsView() {
       <Disclaimer />
 
       <div className="flex flex-col gap-3">
-        <Button type="button" size="lg" className="w-full" onClick={save} disabled={saveState === "saving" || saveState === "saved"}>
-          {saveState === "saved" ? <Check aria-hidden="true" /> : <Save aria-hidden="true" />}
+        <Button
+          type="button"
+          size="lg"
+          className="w-full"
+          onClick={save}
+          disabled={saveState === "saving" || saveState === "saved"}
+        >
+          {saveState === "saved" ? (
+            <Check aria-hidden="true" />
+          ) : (
+            <Save aria-hidden="true" />
+          )}
           {saveState === "saved" ? t.results.saved : t.results.save}
         </Button>
         {saveState === "error" && (

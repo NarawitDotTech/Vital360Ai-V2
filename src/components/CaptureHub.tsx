@@ -1,6 +1,14 @@
 "use client";
 
-import { Camera, ChevronRight, CircleCheck, ClipboardList, Mic, Video } from "lucide-react";
+import {
+  Camera,
+  ChevronRight,
+  CircleCheck,
+  ClipboardList,
+  Mic,
+  Sparkles,
+  Video,
+} from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -15,12 +23,30 @@ import { SpeakButton } from "./SpeakButton";
 export function CaptureHub() {
   const { locale, t } = useI18n();
   const results = useSessionResults();
-  const done = useMemo<Set<Modality>>(() => doneModalities(results ?? []), [results]);
+  const done = useMemo<Set<Modality>>(
+    () => doneModalities(results ?? []),
+    [results],
+  );
 
   const items = [
-    { id: "skin", label: t.capture.skin, hint: t.capture.skinHint, Icon: Camera },
-    { id: "audio", label: t.capture.audio, hint: t.capture.audioHint, Icon: Mic },
-    { id: "resp", label: t.capture.resp, hint: t.capture.respHint, Icon: Video },
+    {
+      id: "skin",
+      label: t.capture.skin,
+      hint: t.capture.skinHint,
+      Icon: Camera,
+    },
+    {
+      id: "audio",
+      label: t.capture.audio,
+      hint: t.capture.audioHint,
+      Icon: Mic,
+    },
+    {
+      id: "resp",
+      label: t.capture.resp,
+      hint: t.capture.respHint,
+      Icon: Video,
+    },
   ] as const;
 
   return (
@@ -29,12 +55,19 @@ export function CaptureHub() {
       <p>{t.capture.intro}</p>
       <ul className="flex flex-col gap-3">
         {items.map(({ id, label, hint, Icon }, i) => (
-          <li key={id} className="v-enter" style={{ "--i": i + 1 } as React.CSSProperties}>
+          <li
+            key={id}
+            className="v-enter"
+            style={{ "--i": i + 1 } as React.CSSProperties}
+          >
             <Link
               href={`/${locale}/capture/${id}/`}
               className="flex min-h-20 items-center gap-4 rounded-xl border bg-card p-4 text-foreground no-underline shadow-sm v-press hover:bg-accent"
             >
-              <span aria-hidden="true" className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-accent text-primary">
+              <span
+                aria-hidden="true"
+                className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-accent text-primary"
+              >
                 <Icon className="size-6" />
               </span>
               <span className="flex min-w-0 flex-1 flex-col">
@@ -42,27 +75,49 @@ export function CaptureHub() {
                 <span className="text-sm text-muted-foreground">{hint}</span>
               </span>
               {done.has(id) && (
-                <Badge variant="outline" className="border-tier-green-border bg-tier-green-bg text-tier-green-fg">
+                <Badge
+                  variant="outline"
+                  className="border-tier-green-border bg-tier-green-bg text-tier-green-fg"
+                >
                   <CircleCheck aria-hidden="true" />
                   {t.capture.done}
                 </Badge>
               )}
-              <ChevronRight aria-hidden="true" className="size-5 shrink-0 text-muted-foreground" />
+              <ChevronRight
+                aria-hidden="true"
+                className="size-5 shrink-0 text-muted-foreground"
+              />
             </Link>
           </li>
         ))}
       </ul>
       {done.size > 0 ? (
-        <Button asChild size="lg" className="w-full">
-          <Link href={`/${locale}/results/`}>
-            <ClipboardList aria-hidden="true" />
-            {t.capture.viewResults}
-          </Link>
-        </Button>
+        <>
+          <Button
+            asChild
+            size="lg"
+            className="w-full"
+            data-testid="see-summary"
+          >
+            <Link href={`/${locale}/results/`}>
+              <Sparkles aria-hidden="true" />
+              {t.capture.seeSummary}
+            </Link>
+          </Button>
+          <Button asChild variant="outline" size="lg" className="w-full">
+            <Link href={`/${locale}/results/`}>
+              <ClipboardList aria-hidden="true" />
+              {t.capture.viewResults}
+            </Link>
+          </Button>
+        </>
       ) : (
         <p className="text-muted-foreground">{t.capture.noneYet}</p>
       )}
-      <SpeakButton text={`${t.capture.title}. ${t.capture.intro}`} label={t.capture.speak} />
+      <SpeakButton
+        text={`${t.capture.title}. ${t.capture.intro}`}
+        label={t.capture.speak}
+      />
     </div>
   );
 }
