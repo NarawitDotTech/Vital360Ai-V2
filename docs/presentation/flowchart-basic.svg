@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 760" width="720" height="760" font-family="Tahoma, Verdana, 'Noto Sans Thai', sans-serif" font-size="14" text-anchor="middle">
+<defs><marker id="a" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z"/></marker>
+<style>.s{fill:#fff;stroke:#000;stroke-width:1}.l{fill:none;stroke:#000;stroke-width:1;marker-end:url(#a)}</style></defs>
+<rect width="720" height="760" fill="#fff"/>
+<text x="360.0" y="40" font-size="18" font-weight="700">Vitals 360 AI — Flowchart</text>
+<rect x="115.0" y="70.0" width="150" height="40" rx="20" class="s"/><text x="190" y="95">Start</text>
+<rect x="85.0" y="150.0" width="210" height="40" class="s"/><text x="190" y="175">Open Vitals 360 AI</text>
+<path d="M190 222.0L280.0 270L190 318.0L100.0 270Z" class="s"/>
+<text x="190" y="266">Agree to</text>
+<text x="190" y="284">consent?</text>
+<rect x="85.0" y="355.0" width="210" height="40" class="s"/><text x="190" y="380">Choose a screening</text>
+<rect x="65.0" y="430.0" width="250" height="40" class="s"/><text x="190" y="455">Capture (photo / video / sound)</text>
+<path d="M190 502.0L280.0 550L190 598.0L100.0 550Z" class="s"/>
+<text x="190" y="546">Quality</text>
+<text x="190" y="564">OK?</text>
+<circle cx="190" cy="650" r="16" class="s"/><text x="190" y="655">A</text>
+<path d="M190 110V150" class="l"/>
+<path d="M190 190V222" class="l"/>
+<path d="M190 318V355" class="l"/>
+<path d="M190 395V430" class="l"/>
+<path d="M190 470V502" class="l"/>
+<path d="M190 598V634" class="l"/>
+<text x="198" y="345" text-anchor="start">Yes</text>
+<text x="198" y="620" text-anchor="start">Yes</text>
+<path d="M280 270H315V170H297" class="l"/>
+<text x="290" y="300" text-anchor="start">No</text>
+<path d="M100 550H50V450H63" class="l"/>
+<text x="90" y="580" text-anchor="end">No</text>
+<circle cx="40" cy="375" r="16" class="s"/><text x="40" y="380">B</text>
+<path d="M56 375H83" class="l"/>
+<circle cx="530" cy="90" r="16" class="s"/><text x="530" y="95">A</text>
+<rect x="425.0" y="150.0" width="210" height="40" class="s"/><text x="530" y="175">Run AI on the phone</text>
+<rect x="415.0" y="230.0" width="230" height="40" class="s"/><text x="530" y="255">Show result + AI summary</text>
+<path d="M530 302.0L620.0 350L530 398.0L440.0 350Z" class="s"/>
+<text x="530" y="346">Do another</text>
+<text x="530" y="364">check?</text>
+<path d="M530 432.0L620.0 480L530 528.0L440.0 480Z" class="s"/>
+<text x="530" y="476">Save to</text>
+<text x="530" y="494">history?</text>
+<rect x="425.0" y="560.0" width="210" height="40" class="s"/><text x="530" y="585">Save to history</text>
+<rect x="455.0" y="640.0" width="150" height="40" rx="20" class="s"/><text x="530" y="665">End</text>
+<path d="M530 106V150" class="l"/>
+<path d="M530 190V230" class="l"/>
+<path d="M530 270V302" class="l"/>
+<path d="M530 398V432" class="l"/>
+<path d="M530 528V560" class="l"/>
+<path d="M530 600V640" class="l"/>
+<text x="538" y="422" text-anchor="start">No</text>
+<text x="538" y="550" text-anchor="start">Yes</text>
+<path d="M620 350H664" class="l"/>
+<circle cx="680" cy="350" r="16" class="s"/><text x="680" y="355">B</text>
+<text x="630" y="340" text-anchor="start">Yes</text>
+<path d="M620 480H680V660H607" class="l"/>
+<text x="630" y="470" text-anchor="start">No</text>
+</svg>
