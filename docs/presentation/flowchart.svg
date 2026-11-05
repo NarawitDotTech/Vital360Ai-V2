@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" font-family="Roboto, 'Noto Sans Thai', 'Leelawadee UI', Tahoma, sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0b6e72"/></marker>
+    <style>
+      .box{fill:#fff;stroke:#0b6e72;stroke-width:2.5}
+      .key{fill:#0b6e72}
+      .t{font-size:22px;font-weight:700;fill:#0f2a2c}
+      .s{font-size:17px;fill:#41595b}
+      .tw{font-size:22px;font-weight:700;fill:#fff}
+      .sw{font-size:17px;fill:#d9f4f5}
+      .ln{stroke:#0b6e72;stroke-width:2.5;fill:none;marker-end:url(#a)}
+      .num{font-size:15px;font-weight:700;fill:#fff}
+    </style>
+  </defs>
+  <rect width="1600" height="900" fill="#f4f8f8"/>
+
+  <text x="800" y="62" text-anchor="middle" font-size="38" font-weight="700" fill="#0f2a2c">Vitals 360 AI — How it works</text>
+  <text x="800" y="98" text-anchor="middle" font-size="21" fill="#41595b">ขั้นตอนการทำงาน · Screening, not diagnosis</text>
+
+  <!-- privacy zone -->
+  <rect x="690" y="140" width="895" height="600" rx="24" fill="#e3f6f6" stroke="#23c2c6" stroke-width="2" stroke-dasharray="10 8"/>
+  <text x="1135" y="172" text-anchor="middle" font-size="18" font-weight="700" fill="#0b6e72">🔒 Runs only on your phone — photos, video and sound never leave it · ประมวลผลในเครื่องเท่านั้น</text>
+
+  <!-- 1 start -->
+  <rect class="key" x="40" y="390" width="190" height="100" rx="50"/>
+  <text class="tw" x="135" y="433" text-anchor="middle">Open app</text>
+  <text class="sw" x="135" y="460" text-anchor="middle">เปิดแอป (PWA)</text>
+
+  <!-- 2 consent -->
+  <rect class="box" x="270" y="380" width="190" height="120" rx="16"/>
+  <text class="t" x="365" y="428" text-anchor="middle">Consent</text>
+  <text class="s" x="365" y="455" text-anchor="middle">ยินยอม (PDPA)</text>
+  <text class="s" x="365" y="478" text-anchor="middle">TH / EN</text>
+
+  <!-- 3 choose -->
+  <rect class="box" x="500" y="380" width="170" height="120" rx="16"/>
+  <text class="t" x="585" y="428" text-anchor="middle">Choose</text>
+  <text class="s" x="585" y="455" text-anchor="middle">เลือกการ</text>
+  <text class="s" x="585" y="478" text-anchor="middle">คัดกรอง</text>
+
+  <path class="ln" d="M230 440H266"/>
+  <path class="ln" d="M460 440H496"/>
+
+  <!-- branches -->
+  <path class="ln" d="M670 440C690 440 690 270 736 270"/>
+  <path class="ln" d="M670 440H736"/>
+  <path class="ln" d="M670 440C690 440 690 610 736 610"/>
+
+  <!-- capture boxes -->
+  <rect class="box" x="740" y="205" width="260" height="130" rx="16"/>
+  <text class="t" x="870" y="248" text-anchor="middle">📷 Skin photo</text>
+  <text class="s" x="870" y="276" text-anchor="middle">ถ่ายผิวหนังในกรอบ</text>
+  <text class="s" x="870" y="300" text-anchor="middle">+ blur / light check</text>
+
+  <rect class="box" x="740" y="375" width="260" height="130" rx="16"/>
+  <text class="t" x="870" y="418" text-anchor="middle">🎥 Breathing video</text>
+  <text class="s" x="870" y="446" text-anchor="middle">วิดีโอหน้าอก 20 วินาที</text>
+  <text class="s" x="870" y="470" text-anchor="middle">+ motion check</text>
+
+  <rect class="box" x="740" y="545" width="260" height="130" rx="16"/>
+  <text class="t" x="870" y="588" text-anchor="middle">🎙️ Cough / lungs</text>
+  <text class="s" x="870" y="616" text-anchor="middle">อัดเสียงไอ / หายใจ</text>
+  <text class="s" x="870" y="640" text-anchor="middle">+ noise check</text>
+
+  <path class="ln" d="M1000 270H1056"/>
+  <path class="ln" d="M1000 440H1056"/>
+  <path class="ln" d="M1000 610H1056"/>
+
+  <!-- AI boxes -->
+  <rect class="key" x="1060" y="205" width="230" height="130" rx="16"/>
+  <text class="tw" x="1175" y="248" text-anchor="middle">Skin AI model</text>
+  <text class="sw" x="1175" y="276" text-anchor="middle">20 classes · 3.8 MB</text>
+  <text class="sw" x="1175" y="300" text-anchor="middle">MobileNetV3 (ONNX)</text>
+
+  <rect class="key" x="1060" y="375" width="230" height="130" rx="16"/>
+  <text class="tw" x="1175" y="418" text-anchor="middle">Breath rate</text>
+  <text class="sw" x="1175" y="446" text-anchor="middle">motion → filter → FFT</text>
+  <text class="sw" x="1175" y="470" text-anchor="middle">ครั้ง / นาที</text>
+
+  <rect x="1060" y="545" width="230" height="130" rx="16" fill="#8aa4a6"/>
+  <text class="tw" x="1175" y="588" text-anchor="middle">Sound AI</text>
+  <text class="sw" x="1175" y="616" text-anchor="middle">log-mel spectrogram</text>
+  <text class="sw" x="1175" y="640" text-anchor="middle">(demo — in training)</text>
+
+  <!-- merge -->
+  <path class="ln" d="M1290 270C1320 270 1320 410 1346 410"/>
+  <path class="ln" d="M1290 440H1346"/>
+  <path class="ln" d="M1290 610C1320 610 1320 470 1346 470"/>
+
+  <rect class="box" x="1350" y="350" width="220" height="180" rx="16" stroke-width="3.5"/>
+  <text class="t" x="1460" y="392" text-anchor="middle">✨ AI summary</text>
+  <text class="s" x="1460" y="420" text-anchor="middle">สรุปผลโดย AI</text>
+  <circle cx="1405" cy="455" r="13" fill="#2e9e5b"/>
+  <circle cx="1445" cy="455" r="13" fill="#e0a21b"/>
+  <circle cx="1485" cy="455" r="13" fill="#d64545"/>
+  <circle cx="1525" cy="455" r="13" fill="#9aa5a6"/>
+  <text class="s" x="1460" y="495" text-anchor="middle">what to do next</text>
+  <text class="s" x="1460" y="517" text-anchor="middle">+ read aloud 🔊</text>
+
+  <!-- save -->
+  <path class="ln" d="M1460 530V776"/>
+  <rect class="box" x="1290" y="780" width="280" height="90" rx="16"/>
+  <text class="t" x="1430" y="818" text-anchor="middle">💾 Save to history</text>
+  <text class="s" x="1430" y="846" text-anchor="middle">optional · delete anytime</text>
+
+  <!-- legend -->
+  <g font-size="18" fill="#0f2a2c">
+    <circle cx="60" cy="795" r="11" fill="#2e9e5b"/><text x="80" y="801">Nothing of concern · ไม่พบสัญญาณน่ากังวล</text>
+    <circle cx="560" cy="795" r="11" fill="#e0a21b"/><text x="580" y="801">Worth a clinician's look · ควรให้แพทย์ดู</text>
+    <circle cx="60" cy="840" r="11" fill="#d64545"/><text x="80" y="846">See a clinician soon · ควรพบแพทย์โดยเร็ว</text>
+    <circle cx="560" cy="840" r="11" fill="#9aa5a6"/><text x="580" y="846">Can't tell — retake · ยังบอกไม่ได้</text>
+  </g>
+</svg>
