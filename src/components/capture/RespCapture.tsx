@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { format } from "@/i18n";
-import { openCamera, stopStream, type Facing } from "@/capture/camera";
+import { openCamera, stopStream, type Facing, whenVideoReady } from "@/capture/camera";
 import { checkMotionSignal } from "@/capture/quality";
 import { CHEST_BOX } from "@/capture/video";
 import { setSessionResult } from "@/session/results";
@@ -56,6 +56,15 @@ export function RespCapture() {
     };
   }, [stopCamera]);
 
+  // attach the stream once React has actually mounted the <video> (a requestAnimationFrame can fire before the commit)
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v || !stream || v.srcObject === stream) return;
+    v.onloadedmetadata = () => v.videoWidth && setAspect(v.videoWidth / v.videoHeight);
+    v.srcObject = stream;
+    void v.play().catch(() => {});
+  }, [stream, cameraOn]);
+
   // the primary button is swapped (open <-> start): keep keyboard focus on the new one
   useEffect(() => {
     if (prevCameraOn.current !== cameraOn) primaryRef.current?.focus();
@@ -75,14 +84,6 @@ export function RespCapture() {
       streamRef.current = stream;
       setStream(stream);
       setCameraOn(true);
-      requestAnimationFrame(() => {
-        const v = videoRef.current;
-        if (!v) return;
-        v.srcObject = stream;
-        v.onloadedmetadata = () =>
-          v.videoWidth && setAspect(v.videoWidth / v.videoHeight);
-        void v.play().catch(() => {});
-      });
     } catch {
       if (mountedRef.current) setMessage(t.resp.cameraOff);
     } finally {
@@ -132,7 +133,7 @@ export function RespCapture() {
 
   async function measure() {
     const v = videoRef.current;
-    if (!v || !v.videoWidth) {
+    if (!v || !(await whenVideoReady(v))) {
       setMessage(t.common.problem);
       return;
     }

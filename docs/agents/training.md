@@ -27,6 +27,10 @@ Scope: real on-device models trained on this machine (4 CPU cores, 15 GB RAM, no
 - **Decision rule:** `skin_decide.py` = `calibrate.ts` `finalizeByThresholds` (+ `darkSpotArea`); `skin2_tune.py` picks T, t_red (val urgent sensitivity >= 0.90), guard floor, t_amber, uncertain threshold on VALIDATION only; `skin2_dark.py` precomputes the dark-spot area for val/test.
 - **Manifest:** `tierRule: "thresholds"` with `tierThresholds`, `guard`, `darkSpot` (all optional fields, `"sum"` / `"label"` entries still work).
 
+## Tried after v1.1 and NOT shipped (skin-v1.1.0 kept)
+- **Test-time augmentation** (`skin3_tta_logits.py`, `skin3_tta_eval.py`; mean of logits over flips / 90 deg turns; T, t_red, t_amber, guard re-tuned on VALIDATION per variant; results `results/skin-v1.1-tta-eval.json`): v1.1 with 8 views: overall top-1 0.752 -> 0.759, specificity 0.838 -> 0.847, urgent sensitivity 0.923 -> 0.923, PAD tier accuracy 0.870 -> 0.859, PAD top-1 0.779 -> 0.789; 4 flips: sensitivity 0.916, PAD tier 0.859. Gains of <= 1 point (inside the CI) for 4-8x latency: rejected.
+- **v1.2 candidate** (`skin3_train.py`: continue v1.1, CutMix/MixUp p 0.5, EMA 0.995, LR 8e-5/6e-4, 10 epochs, ~50 min; export int8 3.8 MB; `results/skin-v1.2-candidate-tta-eval.json`): validation macro-F1 0.477 -> 0.496, val acc 0.730 -> 0.740, but on TEST (no TTA) overall top-1 0.752 -> 0.754, tier accuracy 0.702 -> 0.694, urgent sensitivity 0.923 -> 0.918, specificity 0.838 -> 0.842, healthy false alarm 0.010 -> 0.014; PAD top-1 0.779 -> 0.797, PAD specificity 0.890 -> 0.881. With 8-view TTA top-1 0.763, specificity 0.850, sensitivity 0.911. Not a non-trivial improvement; the 224 px frozen-front MobileNetV3 is data-limited (lesion top-1 plateaued at about 0.70). Larger gains would need a higher input size / bigger backbone and a re-built cache from the raw images (not present on disk), or more phone-photo data.
+
 ## Reproduce skin-v1.1.0 (after the v1.0.0 steps below have produced `runs/ft19` and `cache/images_all.npy`)
 ```bash
 cd training/cpu; P=/home/user/ml/venv/bin/python

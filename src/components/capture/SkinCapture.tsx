@@ -12,6 +12,7 @@ import {
   stopStream,
   type Facing,
   videoToGuideImage,
+  whenVideoReady,
 } from "@/capture/camera";
 import { checkImage } from "@/capture/quality";
 import { setSessionResult } from "@/session/results";
@@ -51,6 +52,14 @@ export function SkinCapture() {
     };
   }, [stopCamera]);
 
+  // attach the stream once React has actually mounted the <video> (a requestAnimationFrame can fire before the commit)
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v || !stream || v.srcObject === stream) return;
+    v.srcObject = stream;
+    void v.play().catch(() => {});
+  }, [stream, cameraOn]);
+
   // the primary button is swapped (open <-> take photo): keep keyboard focus on the new one
   useEffect(() => {
     if (prevCameraOn.current !== cameraOn) primaryRef.current?.focus();
@@ -70,14 +79,6 @@ export function SkinCapture() {
       streamRef.current = stream;
       setStream(stream);
       setCameraOn(true);
-      // the <video> element is mounted by the state change above
-      requestAnimationFrame(() => {
-        const v = videoRef.current;
-        if (v) {
-          v.srcObject = stream;
-          void v.play().catch(() => {});
-        }
-      });
     } catch {
       if (mountedRef.current) setMessage(t.skin.cameraOff);
     } finally {
@@ -146,11 +147,12 @@ export function SkinCapture() {
 
   async function takePhoto() {
     const v = videoRef.current;
-    if (!v || !v.videoWidth) {
+    setBusy(true);
+    if (!v || !(await whenVideoReady(v))) {
       setMessage(t.common.problem);
+      setBusy(false);
       return;
     }
-    setBusy(true);
     setMessage(null);
     const img = videoToGuideImage(v); // only the square under the guide box, so the model sees the spot, not the whole arm
     stopCamera(); // photo taken: release the camera (and flash) before analysing

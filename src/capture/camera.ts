@@ -127,3 +127,17 @@ export async function fileToImageData(file: File): Promise<ImageData> {
     bmp.close();
   }
 }
+
+/** Resolves true once the video has a frame (tapping the shutter right after opening the camera is common), false after `ms`. */
+export function whenVideoReady(v: HTMLVideoElement, ms = 4000): Promise<boolean> {
+  if (v.videoWidth) return Promise.resolve(true);
+  return new Promise((resolve) => {
+    const done = () => {
+      clearTimeout(timer);
+      v.removeEventListener("loadeddata", done);
+      resolve(v.videoWidth > 0);
+    };
+    const timer = setTimeout(done, ms);
+    v.addEventListener("loadeddata", done);
+  });
+}
