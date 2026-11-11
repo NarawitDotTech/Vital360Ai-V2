@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
   output: "export",
   trailingSlash: true,
   images: { unoptimized: true },
+  // styled, bilingual 404 for URLs that match no route (src/app/global-not-found.tsx)
+  experimental: { globalNotFound: true },
   turbopack: {
     rules: {
       "*.css": {
