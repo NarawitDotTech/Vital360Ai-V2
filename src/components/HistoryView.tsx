@@ -1,7 +1,7 @@
 "use client";
 
 import { CircleCheck, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -26,6 +26,12 @@ export function HistoryView() {
   const [error, setError] = useState(false);
   const [confirmAll, setConfirmAll] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const noticeRef = useRef<HTMLDivElement>(null);
+
+  // the delete button disappears with its row: move keyboard focus to the confirmation instead of losing it
+  useEffect(() => {
+    if (notice) noticeRef.current?.focus();
+  }, [notice]);
 
   const [version, setVersion] = useState(0);
   const reload = () => setVersion((v) => v + 1);
@@ -79,15 +85,19 @@ export function HistoryView() {
     <div className="flex flex-col gap-5">
       <PageTitle>{t.history.title}</PageTitle>
       <p className="text-muted-foreground">{t.history.note}</p>
-      <Disclaimer />
-      <UrgentGuide />
       {error && (
         <Alert variant="destructive" role="alert">
           <AlertDescription>{t.history.loadFailed}</AlertDescription>
         </Alert>
       )}
       {notice && (
-        <Alert variant="success" role="status">
+        <Alert
+          ref={noticeRef}
+          tabIndex={-1}
+          variant="success"
+          role="status"
+          className="outline-none"
+        >
           <CircleCheck aria-hidden="true" />
           <AlertDescription>{notice}</AlertDescription>
         </Alert>
@@ -193,6 +203,8 @@ export function HistoryView() {
           )}
         </>
       )}
+      <Disclaimer />
+      <UrgentGuide />
     </div>
   );
 }

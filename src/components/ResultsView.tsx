@@ -2,11 +2,11 @@
 
 import { Check, History, Loader2, RotateCcw, Save } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Prediction } from "@/inference/types";
 import { sessionParts } from "@/session/results";
 import { useSessionResults } from "@/session/useSession";
-import { addHistory } from "@/storage/db";
+import { addHistory, newId } from "@/storage/db";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Disclaimer } from "./Disclaimer";
@@ -31,6 +31,11 @@ export function ResultsView() {
     key: string;
     value: Prediction | null;
   } | null>(null);
+  // stable ids per modality: retrying after a partial failure overwrites instead of duplicating entries
+  const saveIds = useRef<{ at: string; ids: Map<string, string> }>({
+    at: "",
+    ids: new Map(),
+  });
   const [saveState, setSaveState] = useState<
     "idle" | "saving" | "saved" | "error"
   >("idle");
@@ -71,9 +76,14 @@ export function ResultsView() {
 
   async function save() {
     setSaveState("saving");
+    const ids = saveIds.current;
+    if (!ids.at) ids.at = new Date().toISOString();
     try {
       for (const p of shown) {
+        if (!ids.ids.has(p.modality)) ids.ids.set(p.modality, newId());
         await addHistory({
+          id: ids.ids.get(p.modality),
+          createdAt: ids.at,
           locale,
           modality: p.modality,
           tier: p.tier,

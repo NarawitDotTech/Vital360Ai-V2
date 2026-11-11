@@ -7,7 +7,9 @@ function Table({ className, ...props }: React.ComponentProps<"table">) {
   return (
     <div
       data-slot="table-container"
-      className="relative w-full overflow-x-auto"
+      // scrollable region: must be reachable by keyboard (WCAG 2.1.1)
+      tabIndex={0}
+      className="relative w-full overflow-x-auto rounded-md focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
       <table
         data-slot="table"

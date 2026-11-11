@@ -33,6 +33,8 @@ export async function recordMono(opts: RecordOptions): Promise<RecordResult> {
   });
   const AC: typeof AudioContext = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
   const ctx = new AC();
+  // Safari/iOS can start the context suspended: without resume() no audio ever arrives and the check hangs
+  if (ctx.state === "suspended") await ctx.resume().catch(() => {});
   const sampleRate = ctx.sampleRate;
   const source = ctx.createMediaStreamSource(stream);
   const proc = ctx.createScriptProcessor(4096, 1, 1);

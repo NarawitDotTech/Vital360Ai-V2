@@ -21,3 +21,11 @@
 - Wording: th "เริ่มคัดกรอง", "ประวัติการคัดกรอง" and the other screening nouns/verbs (kept "ตรวจ" for verify/doctor's exam); en "Screening history", "Screen something else", etc. Key parity kept. E2E link name updated to "เริ่มคัดกรอง".
 - Removed dead CSS (.btn, .card, .notice, .tier, table.data, details, progress, .stack, .page).
 - Gzip of all scripts in each page's HTML (incl. the ~39 KB nomodule polyfill chunk, as in the earlier report): before 174.5-179.3 KB, after 187.3-194.9 KB (results is the max).
+
+## QA pass (polish)
+- History: entries now come before the disclaimer/urgent guide (the long red box pushed the list below the fold); after a delete, focus moves to the "deleted" notice (the button vanished with its row).
+- Results save uses stable ids per modality, so retrying after a partial failure overwrites instead of duplicating.
+- Dashboard tables: scroll container is keyboard focusable (axe scrollable-region-focusable).
+- audio.ts: resume a suspended AudioContext (Safari/iOS) so recording cannot hang.
+- Open: the unmatched-route 404 page is Next's default (English, unstyled, no link home). Needs `experimental.globalNotFound` in next.config.ts plus src/app/global-not-found.tsx.
+- e2e/qa.spec.ts covers the above.
