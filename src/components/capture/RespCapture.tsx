@@ -96,14 +96,14 @@ export function RespCapture() {
     openingRef.current = true;
     const prev = facing;
     const next: Facing = prev === "environment" ? "user" : "environment";
-    stopStream(streamRef.current); // also turns the torch off
+    await stopStream(streamRef.current); // also turns the torch off; the old camera must be free before opening the other
     streamRef.current = null;
     setStream(null);
     try {
       let s: MediaStream;
       let used = next;
       try {
-        s = await openCamera(next);
+        s = await openCamera(next, true);
       } catch {
         used = prev; // new camera refused: go back to the old one
         s = await openCamera(prev);

@@ -1,19 +1,27 @@
 // Browser camera / canvas helpers (client only).
 
-export async function openCamera(facing: "environment" | "user" = "environment"): Promise<MediaStream> {
+/** `strict` asks for exactly that camera (used when flipping: "ideal" can silently hand back the camera that is still open). */
+export async function openCamera(facing: "environment" | "user" = "environment", strict = false): Promise<MediaStream> {
   if (!navigator.mediaDevices?.getUserMedia) throw new Error("no getUserMedia");
-  return navigator.mediaDevices.getUserMedia({
-    video: { facingMode: { ideal: facing }, width: { ideal: 1280 }, height: { ideal: 960 } },
-    audio: false,
-  });
+  const open = (facingMode: ConstrainDOMString) =>
+    navigator.mediaDevices.getUserMedia({
+      video: { facingMode, width: { ideal: 1280 }, height: { ideal: 960 } },
+      audio: false,
+    });
+  if (!strict) return open({ ideal: facing });
+  try {
+    return await open({ exact: facing });
+  } catch {
+    return open({ ideal: facing });
+  }
 }
 
-export function stopStream(stream: MediaStream | null | undefined): void {
+/** Resolves once every track has really stopped: a phone cannot open the other camera while this one is still held. */
+export async function stopStream(stream: MediaStream | null | undefined): Promise<void> {
   if (!stream) return;
-  const stop = () => stream.getTracks().forEach((t) => t.stop());
   // Some Android phones keep the flash lit after track.stop(): switch it off explicitly first.
-  if (getTorchSupport(stream)) void setTorch(stream, false).finally(stop);
-  else stop();
+  if (getTorchSupport(stream)) await setTorch(stream, false).catch(() => false);
+  stream.getTracks().forEach((t) => t.stop());
 }
 
 export type Facing = "environment" | "user";
